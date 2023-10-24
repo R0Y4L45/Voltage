@@ -1,18 +1,9 @@
-html {
-  font-size: 14px;
-}
+@import url('https://rsms.me/inter/inter.css');
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+:root {
+    --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
 }
 
 body {
-  margin-bottom: 60px;
+    font-feature-settings: "cv03", "cv04", "cv11";
 }
