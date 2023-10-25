@@ -36,8 +36,6 @@ public class Program
                 pattern: "{controller=MainPage}/{action=Index}/{id?}");
         });
 
-
-
         app.Run();
     }
 }

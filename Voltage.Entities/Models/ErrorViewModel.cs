@@ -1,4 +1,4 @@
-namespace Voltage.Models;
+﻿namespace Voltage.Models;
 
 public class ErrorViewModel
 {
