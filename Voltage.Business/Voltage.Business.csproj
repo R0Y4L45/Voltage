@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Voltage.Entities\Voltage.Entities.csproj" />
+    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Abstract\" />
+    <ProjectReference Include="..\Voltage.Entities\Voltage.Entities.csproj" />
   </ItemGroup>
 
 </Project>

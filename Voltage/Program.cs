@@ -13,19 +13,19 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
         {
-            _.Password.RequiredLength = 5; //Uzunlugu.
-            _.Password.RequireNonAlphanumeric = false; //Alfanumerik -
-            _.Password.RequireLowercase = true; //Balaca herf +
-            _.Password.RequireUppercase = true; //Boyuk herf +
-            _.Password.RequireDigit = true; //Reqem +
+            _.Password.RequiredLength = 5;
+            _.Password.RequireNonAlphanumeric = false;
+            _.Password.RequireLowercase = true;
+            _.Password.RequireUppercase = true;
+            _.Password.RequireDigit = true;
 
-            _.User.RequireUniqueEmail = true; //Email mustb be unique
-            _.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._"; //Username can contain them.
+            _.User.RequireUniqueEmail = true;
+            _.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
 
-            _.SignIn.RequireConfirmedEmail = true;
+            //_.SignIn.RequireConfirmedEmail = true;
         }).AddPasswordValidator<CustomIdentityValidation>()
           .AddEntityFrameworkStores<VoltageDbContext>()
           .AddDefaultTokenProviders();
