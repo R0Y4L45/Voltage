@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Voltage.Business.Services;
 using Voltage.Entities.Entity;
-using Voltage.Models;
+using Voltage.Core.Models;
 
 namespace Voltage.Controllers;
 
@@ -35,7 +35,7 @@ public class AccountController : Controller
                 if ((bool)new LogInService(_signInManager, _userManager)?.LogIn(model).Result!)
                     return View();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 
             }

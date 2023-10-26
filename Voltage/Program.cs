@@ -11,12 +11,12 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddDbContext<VoltageDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
         builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                         .AddEntityFrameworkStores<VoltageDbContext>()
                         .AddDefaultTokenProviders();
 
-        builder.Services.AddAuthentication();
+        //builder.Services.AddAuthentication();
 
         var app = builder.Build();
 
@@ -38,11 +38,11 @@ public class Program
             endpoints.MapAreaControllerRoute(
                 name: "ForeAdminarea",
                 areaName: "Admin",
-                pattern: "foradmin/{controller=Admin}/{action=AdminPage}");
+                pattern: "foradmin/{controller=VoltageAdmin}/{action=Index}");
 
             endpoints.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=MainPage}/{action=Index}/{id?}");
+                pattern: "{controller=Account}/{action=Login}/{id?}");
         });
 
         app.Run();

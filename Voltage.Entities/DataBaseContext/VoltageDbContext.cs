@@ -16,8 +16,14 @@ public class VoltageDbContext : IdentityDbContext<User, IdentityRole, string>
         if (!optionsBuilder.IsConfigured)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder();
-            string conn = builder.Configuration["ConnectionStrings:default"];
+            string conn = builder.Configuration["ConnectionStrings:sqlConn"];
             optionsBuilder.UseSqlServer(conn);
         }
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity<User>().Property(_ => _.DateOfBirth).IsRequired();
+        base.OnModelCreating(builder);  
     }
 }

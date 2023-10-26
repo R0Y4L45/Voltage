@@ -6,5 +6,5 @@ namespace Voltage.Entities.Entity;
 public class User : IdentityUser, IEntity
 {
     public string? Photo { get; set; }
-    public DateOnly? DateOfBirth { get; set; } = null!;
+    public DateTime DateOfBirth { get; set; }
 }

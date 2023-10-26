@@ -1,4 +1,4 @@
-﻿namespace Voltage.Models;
+﻿namespace Voltage.Core.Models;
 
 public class LogInViewModel
 {
