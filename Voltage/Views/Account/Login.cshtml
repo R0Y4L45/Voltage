@@ -22,7 +22,7 @@
 <body>
     <script src="~/dist/js/demo-theme.min.js"></script>
 
-    <div class="page page-center">
+@*     <div class="page page-center">
         <div class="container container-tight py-4">
             <div class="text-center mb-4">
                 <a href="." class="navbar-brand navbar-brand-autodark">
@@ -89,14 +89,14 @@
                 Don't have account yet? <a href="/Account/SignUp" tabindex="-1">Sign up</a>
             </div>
         </div>
-    </div>
+    </div> *@
 
     @* yoxlamaq meqsedi ile yazilib *@
-    @*     <form asp-area="" asp-controller="Account" asp-action="Login">
+        <form asp-area="" asp-controller="Account" asp-action="Login">
     <input asp-for="@Model.Email" />
     <input asp-for="@Model.Password" />
     <button type="submit"></button>
-    </form> *@
+    </form>
 
     <script src="~/dist/js/tabler.min.js"></script>
     <script src="~/dist/js/demo.min.js"></script>

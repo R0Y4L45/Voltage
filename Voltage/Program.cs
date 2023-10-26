@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Voltage.Entities.DataBaseContext;
 using Voltage.Entities.Entity;
+using Voltage.Helper.Validations;
 
 namespace Voltage;
 
@@ -13,11 +14,23 @@ public class Program
         builder.Services.AddControllersWithViews();
 
         builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
-        builder.Services.AddIdentity<User, IdentityRole>()
-                        .AddEntityFrameworkStores<VoltageDbContext>()
-                        .AddDefaultTokenProviders();
+        builder.Services.AddIdentity<User, IdentityRole>(_ =>
+        {
+            _.Password.RequiredLength = 5; //Uzunlugu.
+            _.Password.RequireNonAlphanumeric = false; //Alfanumerik -
+            _.Password.RequireLowercase = true; //Balaca herf +
+            _.Password.RequireUppercase = true; //Boyuk herf +
+            _.Password.RequireDigit = true; //Reqem +
 
-        //builder.Services.AddAuthentication();
+            _.User.RequireUniqueEmail = true; //Email mustb be unique
+            _.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._"; //Username can contain them.
+
+            _.SignIn.RequireConfirmedEmail = true;
+        }).AddPasswordValidator<CustomIdentityValidation>()
+          .AddEntityFrameworkStores<VoltageDbContext>()
+          .AddDefaultTokenProviders();
+
+        builder.Services.AddAuthentication();
 
         var app = builder.Build();
 
@@ -32,6 +45,7 @@ public class Program
 
         app.UseRouting();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(

@@ -2,7 +2,7 @@
 using Voltage.Entities.Entity;
 using Voltage.Core.Models;
 
-namespace Voltage.Business.Services;
+namespace Voltage.Business.Services.Concrete;
 
 public class LogInService
 {

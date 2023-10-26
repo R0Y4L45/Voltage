@@ -1,10 +1,9 @@
-﻿using App.Business.Services;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using Voltage.Business.Services;
 using Voltage.Entities.Entity;
 using Voltage.Core.Models;
+using Voltage.Business.Services.Concrete;
 
 namespace Voltage.Controllers;
 
@@ -38,7 +37,6 @@ public class AccountController : Controller
                 //bu errror sehifeye yonlendirmemelidir. Bunu ele-bele qoymusam burada sene men message gonderecem sen onu login terefde gostereceksen...)
                 return RedirectToAction("error", new { area = "", message = ex.Message });
             }
-            return View();
         }
         return View();
     }
@@ -51,15 +49,19 @@ public class AccountController : Controller
     {
         try
         {
-            if (new SignUpService(_userManager, _roleManager).SignUp(model).Result)
+            IdentityResult result = new SignUpService(_userManager, _roleManager).SignUp(model).Result;
+
+            if (result.Succeeded)
                 return RedirectToAction("login", new { area = "" });
+
+            result.Errors.ToList().ForEach(_ => ModelState.AddModelError(_.Code, _.Description));
+            return View();
         }
         catch (Exception)
         {
             //yuxarida oldugu kimi message sene gonderilir sen ekranaa verirsen...
             return RedirectToAction("error", new { area = "" });
         }
-        return View();
     }
 
     public IActionResult ForgotPassword()

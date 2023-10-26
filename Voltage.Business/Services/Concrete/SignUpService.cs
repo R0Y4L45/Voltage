@@ -2,7 +2,7 @@
 using Voltage.Entities.Entity;
 using Voltage.Core.Models;
 
-namespace App.Business.Services;
+namespace Voltage.Business.Services.Concrete;
 
 public class SignUpService
 {
@@ -15,7 +15,7 @@ public class SignUpService
         _roleManager = roleManager;
     }
 
-    public async Task<bool> SignUp(SignUpViewModel model)
+    public async Task<IdentityResult> SignUp(SignUpViewModel model)
     {
         if (await _userManager.FindByEmailAsync(model.Email) == null)
         {
@@ -29,7 +29,8 @@ public class SignUpService
                     Photo = model.Photo ?? "default url"
                 };
 
-                if ((await _userManager.CreateAsync(user, model.Password)).Succeeded)
+                IdentityResult result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
                 {
                     if (!await _roleManager.RoleExistsAsync("User"))
                     {
@@ -42,10 +43,10 @@ public class SignUpService
                             throw new Exception("Failed to add role");
                     }
 
-                    return (await _userManager.AddToRoleAsync(user, "User")).Succeeded;
+                    return await _userManager.AddToRoleAsync(user, "User");
                 }
 
-                throw new Exception("User failed to register");
+                return result;
             }
 
             throw new Exception("This username was used");
