@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Voltage.Business\Voltage.Business.csproj" />
+		<ProjectReference Include="..\Voltage.Entities\Voltage.Entities.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

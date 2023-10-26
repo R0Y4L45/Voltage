@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Voltage.Controllers
 {
-    //Bunu user-lerin sehifesine atacam yeqin ki, sen ne dusunursen??
+    [Authorize]
     public class MainPageController : Controller
     {
         public IActionResult Index()

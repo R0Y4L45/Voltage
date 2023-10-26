@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Voltage.Entities.Entity;
-using Voltage.Core.Models;
+using Voltage.Entities.Models.ViewModels;
 
 namespace Voltage.Business.Services.Concrete;
 
