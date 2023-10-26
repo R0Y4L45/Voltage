@@ -11,8 +11,8 @@ namespace Voltage.Controllers;
 public class AccountController : Controller
 {
     private UserManager<User> _userManager;
-    private RoleManager<IdentityRole> _roleManager;
     private SignInManager<User> _signInManager;
+    private RoleManager<IdentityRole> _roleManager;
     public AccountController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager)
     {
         _userManager = userManager;
@@ -20,12 +20,10 @@ public class AccountController : Controller
         _signInManager = signInManager;
     }
 
-    public IActionResult Login()
-    {
-        return View(new LogInViewModel());
-    }
+    public IActionResult Login() => View();
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Login(LogInViewModel model)
     {
         if (ModelState.IsValid)
@@ -33,20 +31,34 @@ public class AccountController : Controller
             try
             {
                 if ((bool)new LogInService(_signInManager, _userManager)?.LogIn(model).Result!)
-                    return View();
+                    return RedirectToAction("index", "VoltageUser", new { area = "User" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                
+                //bu errror sehifeye yonlendirmemelidir. Bunu ele-bele qoymusam burada sene men message gonderecem sen onu login terefde gostereceksen...)
+                return RedirectToAction("error", new { area = "", message = ex.Message });
             }
-            return View(model);
+            return View();
         }
         return View();
     }
 
+    public IActionResult SignUp() => View();
 
-    public IActionResult Register()
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult SignUp(SignUpViewModel model)
     {
+        try
+        {
+            if (new SignUpService(_userManager, _roleManager).SignUp(model).Result)
+                return RedirectToAction("login", new { area = "" });
+        }
+        catch (Exception)
+        {
+            //yuxarida oldugu kimi message sene gonderilir sen ekranaa verirsen...
+            return RedirectToAction("error", new { area = "" });
+        }
         return View();
     }
 
@@ -55,9 +67,17 @@ public class AccountController : Controller
         return View();
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult ForgotPassword(string email)
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View();
+    }
+
+    //Isetesen Error page yaza bilersen ki, user, admin ve ya her hansi bir methoda sehv bir sey gonderilen zaman bu sehife erroru gostersin...
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error(string message)
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Voltage.Entities.DataBaseContext;
+using Voltage.Entities.Entity;
 
 namespace Voltage;
 
@@ -12,7 +13,7 @@ public class Program
         builder.Services.AddControllersWithViews();
 
         builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
-        builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+        builder.Services.AddIdentity<User, IdentityRole>()
                         .AddEntityFrameworkStores<VoltageDbContext>()
                         .AddDefaultTokenProviders();
 
@@ -33,17 +34,22 @@ public class Program
 
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapAreaControllerRoute(
-                name: "ForeAdminarea",
-                areaName: "Admin",
-                pattern: "foradmin/{controller=VoltageAdmin}/{action=Index}");
+        app.MapControllerRoute(
+            name: "UserArea",
+            pattern: "user/{controller=VoltageUser}/{action=Index}/{id?}",
+            defaults: new { area = "user" }
+            );
 
-            endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Account}/{action=Login}/{id?}");
-        });
+        app.MapControllerRoute(
+            name: "adminArea",
+            pattern: "foradmin/{controller=VoltageAdmin}/{action=Index}/{id?}",
+            defaults: new { area = "admin" }
+            );
+
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Account}/{action=Login}/{id?}"
+            );
 
         app.Run();
     }

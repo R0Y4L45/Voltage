@@ -17,9 +17,9 @@ public class SignUpService
 
     public async Task<bool> SignUp(SignUpViewModel model)
     {
-        if (_userManager.FindByEmailAsync(model.Email) == null)
+        if (await _userManager.FindByEmailAsync(model.Email) == null)
         {
-            if (_userManager.FindByNameAsync(model.UserName) == null)
+            if (await _userManager.FindByNameAsync(model.UserName) == null)
             {
                 User user = new User
                 {

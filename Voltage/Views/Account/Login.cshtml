@@ -10,18 +10,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>@ViewData["Title"] - Voltage</title>
-    
+
     <link href="~/dist/css/tabler.min.css" rel="stylesheet" />
     <link href="~/dist/css/tabler-flags.min.css" rel="stylesheet" />
     <link href="~/dist/css/tabler-payments.min.css" rel="stylesheet" />
     <link href="~/dist/css/tabler-vendors.min.css" rel="stylesheet" />
     <link href="~/dist/css/demo.min.css" rel="stylesheet" />
-    <link href="~/Voltage.styles.css" rel="stylesheet"  />
-    <link href="~/css/site.css" rel="stylesheet"  />
+    <link href="~/Voltage.styles.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body>
     <script src="~/dist/js/demo-theme.min.js"></script>
-    
+
     <div class="page page-center">
         <div class="container container-tight py-4">
             <div class="text-center mb-4">
@@ -32,10 +32,10 @@
             <div class="card card-md">
                 <div class="card-body">
                     <h2 class="h2 text-center mb-4">Login to your account</h2>
-                    <form autocomplete="off" novalidate >
+                    <form asp-area="" asp-controller="Account" asp-action="Login" autocomplete="off" novalidate>
                         <div class="mb-3">
                             <label class="form-label">Email address</label>
-                            <input type="email"class="form-control" placeholder="example@email.com" autocomplete="off">
+                            <input type="email" class="form-control" placeholder="example@email.com" autocomplete="off">
                         </div>
                         <div class="mb-2">
                             <label class="form-label">
@@ -60,7 +60,7 @@
                             </label>
                         </div>
                         <div class="form-footer">
-                            <button type="submit" class="btn btn-primary w-100" >Sign in</button>
+                            <button type="submit" class="btn btn-primary w-100">Sign in</button>
                         </div>
                     </form>
                 </div>
@@ -86,10 +86,17 @@
                 </div>
             </div>
             <div class="text-center text-secondary mt-3">
-                Don't have account yet? <a href="/Account/Register" tabindex="-1">Sign up</a>
+                Don't have account yet? <a href="/Account/SignUp" tabindex="-1">Sign up</a>
             </div>
         </div>
     </div>
+
+    @* yoxlamaq meqsedi ile yazilib *@
+    @*     <form asp-area="" asp-controller="Account" asp-action="Login">
+    <input asp-for="@Model.Email" />
+    <input asp-for="@Model.Password" />
+    <button type="submit"></button>
+    </form> *@
 
     <script src="~/dist/js/tabler.min.js"></script>
     <script src="~/dist/js/demo.min.js"></script>
