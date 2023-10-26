@@ -26,5 +26,4 @@ public class LogInService
 
         throw new Exception("User not found. Please, check email and try again.");
     }
-
 }

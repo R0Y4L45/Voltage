@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Voltage.Entities.DataBaseContext;
+
 namespace Voltage;
 
 public class Program
@@ -5,9 +9,14 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
         builder.Services.AddControllersWithViews();
 
+        builder.Services.AddDbContext<VoltageDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
+        builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                        .AddEntityFrameworkStores<VoltageDbContext>()
+                        .AddDefaultTokenProviders();
+
+        builder.Services.AddAuthentication();
 
         var app = builder.Build();
 
