@@ -13,7 +13,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
         {
             _.Password.RequiredLength = 5;
@@ -27,6 +27,8 @@ public class Program
 
             //_.SignIn.RequireConfirmedEmail = true;
         }).AddPasswordValidator<CustomIdentityValidation>()
+          .AddUserValidator<CustomUserValidation>()
+          .AddErrorDescriber<CustomIdentityErrorDescriber>()
           .AddEntityFrameworkStores<VoltageDbContext>()
           .AddDefaultTokenProviders();
 

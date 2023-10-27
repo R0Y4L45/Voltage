@@ -36,9 +36,11 @@ public class AccountController : Controller
             catch (Exception ex)
             {
                 //bu errror sehifeye yonlendirmemelidir. Bunu ele-bele qoymusam burada sene men message gonderecem sen onu login terefde gostereceksen...)
-                return RedirectToAction("error", new { area = "", message = ex.Message });
+                //return RedirectToAction("error", new { area = "", message = ex.Message });
+                ModelState.AddModelError("Error", ex.Message);
             }
         }
+
         return View();
     }
 
@@ -56,13 +58,15 @@ public class AccountController : Controller
                 return RedirectToAction("login", new { area = "" });
 
             result.Errors.ToList().ForEach(_ => ModelState.AddModelError(_.Code, _.Description));
-            return View();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             //yuxarida oldugu kimi message sene gonderilir sen ekranaa verirsen...
-            return RedirectToAction("error", new { area = "" });
+            //return RedirectToAction("error", new { area = "" });
+            ModelState.AddModelError("Error", ex.Message);
         }
+
+        return View();
     }
 
     public IActionResult ForgotPassword()

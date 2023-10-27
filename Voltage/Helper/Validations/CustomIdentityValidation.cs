@@ -8,7 +8,7 @@ public class CustomIdentityValidation : IPasswordValidator<User>
     public Task<IdentityResult> ValidateAsync(UserManager<User> manager, User user, string password)
     {
         List<IdentityError> errors = new List<IdentityError>();
-        if (password.ToLower().Contains(user.UserName.ToLower())) //Password içerisinde username kontrolü
+        if (password.ToLower().Contains(user.UserName.ToLower())) 
             errors.Add(new IdentityError { Code = "PasswordContainsUserName", Description = "Please don't use username in the password" });
 
         if (!errors.Any())
