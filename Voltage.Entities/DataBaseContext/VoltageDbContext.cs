@@ -16,7 +16,7 @@ public class VoltageDbContext : IdentityDbContext<User, IdentityRole, string>
         if (!optionsBuilder.IsConfigured)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder();
-            string conn = builder.Configuration["ConnectionStrings:sqlConn"];
+            string conn = builder.Configuration["ConnectionStrings:sqlConn2"];
             optionsBuilder.UseSqlServer(conn);
         }
     }

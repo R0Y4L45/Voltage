@@ -3,50 +3,51 @@ using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Models;
 using MailKit.Net.Smtp;
 
-namespace Voltage.Business.Services.Concrete;
-
-public class EmailService :IEmailService
+namespace Voltage.Business.Services.Concrete
 {
-    private readonly EmailConfiguration _emailConfig;
-
-    public EmailService(EmailConfiguration emailConfig) => _emailConfig = emailConfig;
-
-    public void SendEmail(Message message)
+    public class EmailService : IEmailService
     {
-        var emailMessage = CreatedEmailMessage(message);
-        Send(emailMessage);
-    }
+        private readonly EmailConfiguration _emailConfig;
 
-    public MimeMessage CreatedEmailMessage(Message message)
-    {
-        var emailmessage = new MimeMessage();
-        emailmessage.From.Add(new MailboxAddress("email", _emailConfig.From));
-        emailmessage.To.AddRange(message.To);
-        emailmessage.Subject = message.Subject;
-        emailmessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };
+        public EmailService(EmailConfiguration emailConfig) => _emailConfig = emailConfig;
 
-        return emailmessage;
-    }
-
-    private void Send(MimeMessage mailMessage)
-    {
-        using var client = new SmtpClient();
-        try
+        public void SendEmail(Message message)
         {
-            client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);
-            client.AuthenticationMechanisms.Remove("X0AUTH2");
-            client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
-            client.Send(mailMessage);
-
+            var emailMessage = CreatedEmailMessage(message);
+            Send(emailMessage);
         }
-        catch (Exception ex)
+
+        public MimeMessage CreatedEmailMessage(Message message)
         {
-            Console.WriteLine(ex);
+            var emailmessage = new MimeMessage();
+            emailmessage.From.Add(new MailboxAddress("email", _emailConfig.From));
+            emailmessage.To.AddRange(message.To);
+            emailmessage.Subject = message.Subject;
+            emailmessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };
+
+            return emailmessage;
         }
-        finally
+
+        private void Send(MimeMessage mailMessage)
         {
-            client.Disconnect(true);
-            client?.Dispose();
+            using var client = new SmtpClient();
+            try
+            {
+                client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);
+                client.AuthenticationMechanisms.Remove("X0AUTH2");
+                client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
+                client.Send(mailMessage);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                client.Disconnect(true);
+                client?.Dispose();
+            }
         }
     }
 }

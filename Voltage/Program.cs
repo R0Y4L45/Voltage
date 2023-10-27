@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Voltage.Business.Services.Concrete;
+using Voltage.Business.Services.Abstract;
 using Voltage.Entities.DataBaseContext;
 using Voltage.Entities.Entity;
+using Voltage.Entities.Models;
 using Voltage.Helper.Validations;
+
 
 namespace Voltage;
 
@@ -13,7 +17,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
         {
             _.Password.RequiredLength = 5;
@@ -25,13 +29,18 @@ public class Program
             _.User.RequireUniqueEmail = true;
             _.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
 
-            //_.SignIn.RequireConfirmedEmail = true;
+            _.SignIn.RequireConfirmedEmail = true;
         }).AddPasswordValidator<CustomIdentityValidation>()
           .AddUserValidator<CustomUserValidation>()
           .AddErrorDescriber<CustomIdentityErrorDescriber>()
           .AddEntityFrameworkStores<VoltageDbContext>()
           .AddDefaultTokenProviders();
 
+        var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+        builder.Services.AddSingleton(emailConfig);
+        builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<IEmailConfirmationService, EmailConfirmationService>();
+        builder.Services.AddScoped<SignUpService>();
         builder.Services.AddAuthentication();
 
         var app = builder.Build();
