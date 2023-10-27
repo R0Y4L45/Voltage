@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Org.BouncyCastle.Asn1.Ocsp;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Entity;
-using Voltage.Entities.Models;
 using Voltage.Entities.Models.ViewModels;
 
 namespace Voltage.Business.Services.Concrete;
@@ -11,16 +9,14 @@ public class SignUpService
 {
     private UserManager<User> _userManager;
     private RoleManager<IdentityRole> _roleManager;
-    private readonly IEmailConfirmationService _emailConfirmationService;
 
-    public SignUpService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IEmailConfirmationService emailConfirmationService)
+    public SignUpService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _roleManager = roleManager;
-        _emailConfirmationService = emailConfirmationService;
     }
 
-    public async Task<IdentityResult> SignUp(SignUpViewModel model, string callbackUrl)
+    public async Task<IdentityResult> SignUp(SignUpViewModel model)
     {
         if (await _userManager.FindByEmailAsync(model.Email) == null)
         {
@@ -37,22 +33,19 @@ public class SignUpService
                 IdentityResult result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    bool emailSent = await _emailConfirmationService.SendEmailConfirmationAsync(user, callbackUrl);
-                    if (emailSent)
+                    if (!await _roleManager.RoleExistsAsync("User"))
                     {
-                        if (!await _roleManager.RoleExistsAsync("User"))
+                        IdentityRole role = new IdentityRole
                         {
-                            IdentityRole role = new IdentityRole
-                            {
-                                Name = "User"
-                            };
+                            Name = "User"
+                        };
 
-                            if (!(await _roleManager.CreateAsync(role)).Succeeded)
-                                throw new Exception("Failed to add role");
-                        }
-
-                        return await _userManager.AddToRoleAsync(user, "User");
+                        if (!(await _roleManager.CreateAsync(role)).Succeeded)
+                            throw new Exception("Failed to add role");
                     }
+
+                    return await _userManager.AddToRoleAsync(user, "User");
+
                 }
 
                 return result;

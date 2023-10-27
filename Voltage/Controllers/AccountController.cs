@@ -5,7 +5,7 @@ using Voltage.Entities.Entity;
 using Voltage.Core.Models;
 using Voltage.Business.Services.Concrete;
 using Voltage.Entities.Models.ViewModels;
-using Voltage.Business.Services.Abstract;
+using Voltage.Entities.Models;
 
 namespace Voltage.Controllers;
 
@@ -15,12 +15,14 @@ public class AccountController : Controller
     private SignInManager<User> _signInManager;
     private RoleManager<IdentityRole> _roleManager;
     private readonly SignUpService _signUpService;
-    public AccountController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager, SignUpService signUpService)
+    private readonly Business.Services.Abstract.IEmailService _emailService;
+    public AccountController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager, SignUpService signUpService, Business.Services.Abstract.IEmailService emailService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _signInManager = signInManager;
         _signUpService = signUpService;
+        _emailService = emailService;
     }
 
     public IActionResult Login() => View();
@@ -56,12 +58,17 @@ public class AccountController : Controller
     {
         try
         {
-            var callbackUrl = Url.Action("ConfirmEmail", "Account", null, Request.Scheme);
-            IdentityResult result = await _signUpService.SignUp(model, callbackUrl!);
-
+            IdentityResult result = await _signUpService.SignUp(model);
             if (result.Succeeded)
             {
-                var nvvm = new SignUpViewModel { UserName = model.UserName };
+                User user = await _userManager.FindByNameAsync(model.UserName);
+                string? token = await _userManager.GenerateEmailConfirmationTokenAsync(user),
+                    callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
+
+                Message message = new Message(new string[] { user.Email }, "Confirmation Email Link", callbackUrl!);
+                _emailService.SendEmail(message);
+
+                SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName };
                 return RedirectToAction("SuccessPage", nvvm);
             }
 

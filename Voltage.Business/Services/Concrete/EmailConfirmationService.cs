@@ -18,16 +18,14 @@ namespace Voltage.Business.Services.Concrete
 
         public async Task<bool> SendEmailConfirmationAsync(User user, string callbackUrl)
         {
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = callbackUrl + $"?token={token}&email={user.Email}";
-            var message = new Message(new string[] { user.Email }, "Confirmation Email Link", confirmationLink);
+            var message = new Message(new string[] { user.Email }, "Confirmation Email Link", callbackUrl);
 
             try
             {
                 _emailService.SendEmail(message);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
