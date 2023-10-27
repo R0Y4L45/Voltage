@@ -17,7 +17,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
         {
             _.Password.RequiredLength = 5;
@@ -39,7 +39,6 @@ public class Program
         var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
         builder.Services.AddSingleton(emailConfig);
         builder.Services.AddScoped<IEmailService, EmailService>();
-        builder.Services.AddScoped<IEmailConfirmationService, EmailConfirmationService>();
         builder.Services.AddScoped<SignUpService>();
         builder.Services.AddAuthentication();
 

@@ -1,4 +1,4 @@
-﻿@model LogInViewModel
+﻿@model SignUpViewModel
 
 @{
     Layout = null;
@@ -34,13 +34,12 @@
                 <div class="my-5">
                     <h2 class="h1">Dear @Model.UserName</h2>
                     <p class="fs-h3 text-secondary">
-                        We've sent you a magic link to <strong>@Model.Email</strong>.<br />
+                        We've sent you a magic link to <strong><a href="https://mail.google.com/">@Model.Email</a></strong>.<br />
                         Please click the link to confirm your address.
                     </p>
                 </div>
                     <div class="text-center text-secondary mt-3">
                         Can't see the email? Please check the spam folder.<br />
-                    
                     </div>
                 </div>
             </div>

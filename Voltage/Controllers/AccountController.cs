@@ -28,8 +28,6 @@ public class AccountController : Controller
     public IActionResult Login() => View();
     public IActionResult SignUp() => View();
 
-    public IActionResult SuccessPage() => View();
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Login(LogInViewModel model)
@@ -68,8 +66,8 @@ public class AccountController : Controller
                 Message message = new Message(new string[] { user.Email }, "Confirmation Email Link", callbackUrl!);
                 _emailService.SendEmail(message);
 
-                SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName };
-                return RedirectToAction("SuccessPage", nvvm);
+                SignUpViewModel nvvm = new SignUpViewModel { UserName = user.UserName ,Email = user.Email};
+                return View("MailCheck", nvvm);
             }
 
             result.Errors.ToList().ForEach(_ => ModelState.AddModelError(_.Code, _.Description));
