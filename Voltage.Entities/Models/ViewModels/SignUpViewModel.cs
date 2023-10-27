@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Voltage.Entities.Models.ViewModels
 {
@@ -14,9 +15,9 @@ namespace Voltage.Entities.Models.ViewModels
         public string Password { get; set; } = null!;
         [Compare("Password",ErrorMessage = "The Password and Confirm Password do not match")]
         public string ConfirmPassword { get; set; } = null!;
-        public string? Photo { get; set; }
 
         [Required(ErrorMessage = "Please choice birth of date")]
         public DateTime DateOfBirth { get; set; }
+        public IFormFile? Photo { get; set; }
     }
 }
