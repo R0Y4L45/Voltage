@@ -26,6 +26,7 @@ public class AccountController : Controller
     public IActionResult Login() => View();
     public IActionResult SignUp() => View();
     public IActionResult ForgotPassword()=>View();
+    public IActionResult TermsPolicy() => View();
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -97,6 +98,12 @@ public class AccountController : Controller
         return View();
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Login", "Account", new { area = "" });
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
