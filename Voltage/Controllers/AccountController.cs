@@ -13,13 +13,11 @@ public class AccountController : Controller
 {
     private UserManager<User> _userManager;
     private SignInManager<User> _signInManager;
-    private RoleManager<IdentityRole> _roleManager;
     private readonly SignUpService _signUpService;
     private readonly Business.Services.Abstract.IEmailService _emailService;
-    public AccountController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager, SignUpService signUpService, Business.Services.Abstract.IEmailService emailService)
+    public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, SignUpService signUpService, Business.Services.Abstract.IEmailService emailService)
     {
         _userManager = userManager;
-        _roleManager = roleManager;
         _signInManager = signInManager;
         _signUpService = signUpService;
         _emailService = emailService;
@@ -27,6 +25,7 @@ public class AccountController : Controller
 
     public IActionResult Login() => View();
     public IActionResult SignUp() => View();
+    public IActionResult ForgotPassword()=>View();
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -37,7 +36,7 @@ public class AccountController : Controller
             try
             {
                 if ((bool)new LogInService(_signInManager, _userManager)?.LogIn(model).Result!)
-                    return RedirectToAction("index", "VoltageUser", new { area = "User" });
+                    return RedirectToAction("index", "MainPage", new { area = "User" });
             }
             catch (Exception ex)
             {
@@ -98,10 +97,6 @@ public class AccountController : Controller
         return View();
     }
 
-    public IActionResult ForgotPassword()
-    {
-        return View();
-    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]

@@ -60,7 +60,7 @@ public class Program
 
         app.MapControllerRoute(
             name: "UserArea",
-            pattern: "user/{controller=VoltageUser}/{action=Index}/{id?}",
+            pattern: "Main/{controller=MainPage}/{action=Index}/{id?}",
             defaults: new { area = "user" }
             );
 

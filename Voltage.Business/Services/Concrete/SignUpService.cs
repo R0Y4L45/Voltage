@@ -21,13 +21,12 @@ public class SignUpService
         {
             if (await _userManager.FindByNameAsync(vm.UserName) == null)
             {
-                string path = (vm.Photo != null) ? await UploadFileHelper.UploadFile(vm.Photo) : "";
                 User user = new User
                 {
                     UserName = vm.UserName,
                     Email = vm.Email,
                     DateOfBirth = vm.DateOfBirth,
-                    Photo = path
+                    Photo = (vm.Photo != null) ? await UploadFileHelper.UploadFile(vm.Photo) : ""
                 };
 
                 IdentityResult result = await _userManager.CreateAsync(user, vm.Password);
