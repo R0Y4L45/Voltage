@@ -25,7 +25,7 @@ public class AccountController : Controller
 
     public IActionResult Login() => View();
     public IActionResult SignUp() => View();
-    public IActionResult ForgotPassword()=>View();
+    public IActionResult ForgotPassword() => View();
     public IActionResult TermsPolicy() => View();
 
     [HttpPost]
@@ -107,10 +107,65 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult ForgotPassword(string email)
+    public async Task<IActionResult> ForgotPassword(ForgotViewModel vm)
     {
+        if(ModelState.IsValid)
+        {
+            var user = await _userManager.FindByEmailAsync(vm.Email);
+            if(user != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
+                var message = new Message(new string[] { user.Email }, "Forgot password link", newlink!);
+                _emailService.SendEmail(message);
+                return View("ForgotPasswordConfirmation");
+            }
+            ModelState.AddModelError(string.Empty, "User not found");
+        }
+
         return View();
     }
+
+    public IActionResult ResetPassword(string token, string email)
+    {
+        var viewModel = new ResetPasswordViewModel
+        {
+            Token = token,
+            Email = email
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel vm)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = await _userManager.FindByEmailAsync(vm.Email);
+
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "User not found");
+                return View(vm);
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, vm.Token, vm.Password);
+
+            if (result.Succeeded)
+            {
+                return View("ResetPasswordConfirmation");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
+        return View(vm);
+    }
+
 
     //Isetesen Error page yaza bilersen ki, user, admin ve ya her hansi bir methoda sehv bir sey gonderilen zaman bu sehife erroru gostersin...
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
