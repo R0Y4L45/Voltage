@@ -15,21 +15,21 @@ public class SignUpService
         _roleManager = roleManager;
     }
 
-    public async Task<IdentityResult> SignUp(SignUpViewModel model)
+    public async Task<IdentityResult> SignUp(SignUpViewModel vm)
     {
-        if (await _userManager.FindByEmailAsync(model.Email) == null)
+        if (await _userManager.FindByEmailAsync(vm.Email) == null)
         {
-            if (await _userManager.FindByNameAsync(model.UserName) == null)
+            if (await _userManager.FindByNameAsync(vm.UserName) == null)
             {
                 User user = new User
                 {
-                    UserName = model.UserName,
-                    Email = model.Email,
-                    DateOfBirth = model.DateOfBirth,
-                    Photo = model.Photo ?? "default url"
+                    UserName = vm.UserName,
+                    Email = vm.Email,
+                    DateOfBirth = vm.DateOfBirth,
+                    Photo = (vm.Photo != null) ? await UploadFileHelper.UploadFile(vm.Photo) : ""
                 };
 
-                IdentityResult result = await _userManager.CreateAsync(user, model.Password);
+                IdentityResult result = await _userManager.CreateAsync(user, vm.Password);
                 if (result.Succeeded)
                 {
                     if (!await _roleManager.RoleExistsAsync("User"))
@@ -44,6 +44,7 @@ public class SignUpService
                     }
 
                     return await _userManager.AddToRoleAsync(user, "User");
+
                 }
 
                 return result;

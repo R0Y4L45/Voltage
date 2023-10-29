@@ -1,0 +1,47 @@
+﻿@model SignUpViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>@ViewData["Title"] - Voltage</title>
+
+    <link href="~/dist/css/tabler.min.css" rel="stylesheet" />
+    <link href="~/dist/css/tabler-flags.min.css" rel="stylesheet" />
+    <link href="~/dist/css/tabler-payments.min.css" rel="stylesheet" />
+    <link href="~/dist/css/tabler-vendors.min.css" rel="stylesheet" />
+    <link href="~/dist/css/demo.min.css" rel="stylesheet" />
+    <link href="~/Voltage.styles.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body class=" d-flex flex-column">
+    <script src="~/dist/js/demo-theme.min.js"></script>
+
+    <div class="page page-center">
+        <div class="container container-tight py-4">
+            <div class="text-center mb-4">
+                <a href="." class="navbar-brand navbar-brand-autodark">
+                    <img src="/dist/img/logos/logo-white.svg" width="110" height="32" alt="Tabler" class="navbar-brand-image">
+                </a>
+            </div>
+            <div class="text-center">
+                <div class="my-5">
+                    <h2 class="h1">Dear @Model.UserName</h2>
+                    <p class="fs-h3 text-secondary">
+                        Зlease click<strong><a href="/MainPage/Index"> here </a></strong>to complete your certification and access your account.<br />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/dist/js/tabler.min.js"></script>
+    <script src="~/dist/js/demo.min.js"></script>
+</body>
+</html>

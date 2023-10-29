@@ -5,7 +5,7 @@
 	'use strict';
 
 	var themeStorageKey = "tablerTheme";
-	var defaultTheme = "light";
+	var defaultTheme = "dark";
 	var selectedTheme;
 	var params = new Proxy(new URLSearchParams(window.location.search), {
 		get: function get(searchParams, prop) {
@@ -19,7 +19,7 @@
 		var storedTheme = localStorage.getItem(themeStorageKey);
 		selectedTheme = storedTheme ? storedTheme : defaultTheme;
 	}
-	if (selectedTheme === 'dark') {
+	if (selectedTheme === 'light') {
 		document.body.setAttribute("data-bs-theme", selectedTheme);
 	} else {
 		document.body.removeAttribute("data-bs-theme");

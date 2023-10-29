@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Voltage.Controllers
+namespace Voltage.Areas.User.Controllers
 {
+    [Area("User")]
     [Authorize]
     public class MainPageController : Controller
     {

@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Voltage.Business.Services.Concrete;
+using Voltage.Business.Services.Abstract;
 using Voltage.Entities.DataBaseContext;
 using Voltage.Entities.Entity;
+using Voltage.Entities.Models;
 using Voltage.Helper.Validations;
+
 
 namespace Voltage;
 
@@ -25,11 +29,17 @@ public class Program
             _.User.RequireUniqueEmail = true;
             _.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
 
-            //_.SignIn.RequireConfirmedEmail = true;
+            _.SignIn.RequireConfirmedEmail = true;
         }).AddPasswordValidator<CustomIdentityValidation>()
+          .AddUserValidator<CustomUserValidation>()
+          .AddErrorDescriber<CustomIdentityErrorDescriber>()
           .AddEntityFrameworkStores<VoltageDbContext>()
           .AddDefaultTokenProviders();
 
+        var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+        builder.Services.AddSingleton(emailConfig);
+        builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<SignUpService>();
         builder.Services.AddAuthentication();
 
         var app = builder.Build();
@@ -50,7 +60,7 @@ public class Program
 
         app.MapControllerRoute(
             name: "UserArea",
-            pattern: "user/{controller=VoltageUser}/{action=Index}/{id?}",
+            pattern: "Main/{controller=MainPage}/{action=Index}/{id?}",
             defaults: new { area = "user" }
             );
 
