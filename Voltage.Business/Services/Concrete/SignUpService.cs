@@ -58,7 +58,8 @@ public class SignUpService : ISignUpService
     }
 
     public async Task<User> GetUserByEmailAsync(string email) => await _userManager.FindByEmailAsync(email);
-    public async Task<string> GenerateToken(User user) => await _userManager.GeneratePasswordResetTokenAsync(user);
+    public async Task<string> GenerateResetTokenAsync(User user) => await _userManager.GeneratePasswordResetTokenAsync(user);
+    public async Task<string> GenerateEmailTokenAsync(User user) => await _userManager.GenerateEmailConfirmationTokenAsync(user);
     public async Task<IdentityResult> ConfirmEmailAsync(User user, string token) => await _userManager.ConfirmEmailAsync(user, token);
     public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password) => await _userManager.ResetPasswordAsync(user, token, password);
 }

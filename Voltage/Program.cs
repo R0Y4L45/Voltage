@@ -65,7 +65,7 @@ public class Program
 
         app.MapControllerRoute(
             name: "UserArea",
-            pattern: "Main/{controller=MainPage}/{action=Index}/{id?}",
+            pattern: "user/{controller=MainPage}/{action=Index}/{id?}",
             defaults: new { area = "user" }
             );
 

@@ -59,7 +59,7 @@ public class AccountController : Controller
             IdentityResult result = await _signUpService.SignUpAsync(model);
             if (result.Succeeded)
             {
-                string? token = await _signUpService.GenerateToken(await _signUpService.GetUserByEmailAsync(model.Email)),
+                string? token = await _signUpService.GenerateEmailTokenAsync(await _signUpService.GetUserByEmailAsync(model.Email)),
                     callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = model.Email }, Request.Scheme);
 
                 Message message = new Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
@@ -87,14 +87,13 @@ public class AccountController : Controller
     {
         if (await _signUpService.GetUserByEmailAsync(email) is User user)
         {
-            IdentityResult result = await _signUpService.ConfirmEmailAsync(user, token);
-            
-            if (result.Succeeded)
+            if ((await _signUpService.ConfirmEmailAsync(user, token)).Succeeded)
             {
                 SignUpViewModel model = new SignUpViewModel { UserName = user.UserName };
                 return View("SuccessPage", model);
             }
         }
+
         return View();
     }
 
@@ -113,7 +112,7 @@ public class AccountController : Controller
         {
             if(await _signUpService.GetUserByEmailAsync(model.Email) is User user)
             {
-                string? token = await _signUpService.GenerateToken(user),
+                string? token = await _signUpService.GenerateResetTokenAsync(user),
                     newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
                 Message message = new Message(new string[] { user.Email }, "Forgot password link", newlink!);
                 

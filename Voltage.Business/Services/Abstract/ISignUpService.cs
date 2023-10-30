@@ -10,5 +10,6 @@ public interface ISignUpService
     Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
     Task<IdentityResult> ConfirmEmailAsync(User user, string token);
     Task<User> GetUserByEmailAsync(string email);
-    Task<string> GenerateToken(User user);
+    Task<string> GenerateResetTokenAsync(User user);
+    Task<string> GenerateEmailTokenAsync(User user);
 }
