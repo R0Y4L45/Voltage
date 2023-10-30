@@ -8,7 +8,6 @@ public interface IEntityRepository<TEntity, TContext>
     where TEntity : class, IEntity, new()
     where TContext : DbContext
 {
-    TContext Context { get; }
     TEntity Get(Expression<Func<TEntity, bool>> filter = null!);
     IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> filter = null!);
     void Add(TEntity entity);

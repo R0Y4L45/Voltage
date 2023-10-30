@@ -1,6 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-namespace Voltage.Helper;
+﻿namespace Voltage.Helper;
 
 public static class StringExtensionClass
 {

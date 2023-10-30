@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Entity;
 using Voltage.Entities.Models.ViewModels;
 
 namespace Voltage.Business.Services.Concrete;
 
-public class LogInService
+public class LogInService : ILogInService
 {
     private readonly SignInManager<User> _signInManager;
     private readonly UserManager<User> _userManager;
@@ -14,7 +15,7 @@ public class LogInService
         _userManager = userManager;
     }
 
-    public async Task<bool> LogIn(LogInViewModel model)
+    public async Task<bool> LogInAsync(LogInViewModel model)
     {
         await _signInManager.SignOutAsync();
         User user = await _userManager.FindByEmailAsync(model.Email);
@@ -49,4 +50,6 @@ public class LogInService
 
         throw new Exception("Such user not exist");
     }
+
+    public async Task SignOutAsync() => await _signInManager.SignOutAsync();
 }

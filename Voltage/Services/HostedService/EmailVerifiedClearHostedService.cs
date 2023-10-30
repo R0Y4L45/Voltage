@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Voltage.Business.Services.Abstract;
 using Voltage.Entities.DataBaseContext;
-using Voltage.Entities.Entity;
 
 namespace Voltage.Services.HostedService;
 
 public class EmailVerifiedClearHostedService : IHostedService, IDisposable
 {
-    private Timer? _timer;
     private readonly IServiceProvider _provider;
+    private IUserModifierService? _userModifier;
+    private Timer? _timer;
 
     public EmailVerifiedClearHostedService(IServiceProvider provider)
     {
@@ -16,22 +16,17 @@ public class EmailVerifiedClearHostedService : IHostedService, IDisposable
 
     private void DoWork(object state)
     {
-        IServiceScope scope = _provider.CreateScope();
-        VoltageDbContext? context = scope.ServiceProvider.GetService<VoltageDbContext>();
+        _userModifier = _provider.CreateScope().ServiceProvider.GetService<IUserModifierService>();
 
-        foreach (var item in context!.Users)
-        {
+        foreach (var item in _userModifier!.GetList())
             if(!item.EmailConfirmed)
-            {
-                context.Users.Remove(item);
-                context.SaveChanges();
-            }
-        }
+                _userModifier.Delete(item);
+        //Console.WriteLine("User was deleted => " + DateTime.Now.ToString());
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _timer = new Timer(DoWork!, new VoltageDbContext(), TimeSpan.Zero, TimeSpan.FromMinutes(3));
+        _timer = new Timer(DoWork!, null, TimeSpan.Zero, TimeSpan.FromDays(1));
 
         return Task.CompletedTask;
     }

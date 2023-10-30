@@ -39,11 +39,14 @@ public class Program
 
         EmailConfiguration emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
         builder.Services.AddSingleton(emailConfig);
-        builder.Services.AddScoped<IEmailService, EmailService>();
-        builder.Services.AddScoped<SignUpService>();
+        builder.Services.AddSingleton<IEmailService, EmailService>();
+        builder.Services.AddScoped<ISignUpService, SignUpService>();
+        builder.Services.AddScoped<ILogInService, LogInService>();
+        builder.Services.AddScoped<IUserModifierService, UserModifierService>();
+        
         builder.Services.AddAuthentication();
 
-        builder.Services.AddHostedService(_ => new EmailVerifiedClearHostedService(_));
+        builder.Services.AddHostedService<EmailVerifiedClearHostedService>();
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())

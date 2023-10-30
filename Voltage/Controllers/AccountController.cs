@@ -6,20 +6,20 @@ using Voltage.Core.Models;
 using Voltage.Business.Services.Concrete;
 using Voltage.Entities.Models.ViewModels;
 using Voltage.Entities.Models;
+using Voltage.Business.Services.Abstract;
 
 namespace Voltage.Controllers;
 
 public class AccountController : Controller
 {
-    private UserManager<User> _userManager;
-    private SignInManager<User> _signInManager;
-    private readonly SignUpService _signUpService;
-    private readonly Business.Services.Abstract.IEmailService _emailService;
-    public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, SignUpService signUpService, Business.Services.Abstract.IEmailService emailService)
+    private readonly ISignUpService _signUpService;
+    private readonly ILogInService _logInService;
+    private readonly IEmailService _emailService;
+
+    public AccountController(ISignUpService signUpService, ILogInService logInService, IEmailService emailService)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
         _signUpService = signUpService;
+        _logInService = logInService;
         _emailService = emailService;
     }
 
@@ -36,7 +36,7 @@ public class AccountController : Controller
         {
             try
             {
-                if ((bool)new LogInService(_signInManager, _userManager)?.LogIn(model).Result!)
+                if (_logInService.LogInAsync(model).Result!) 
                     return RedirectToAction("index", "MainPage", new { area = "User" });
             }
             catch (Exception ex)
@@ -56,17 +56,17 @@ public class AccountController : Controller
     {
         try
         {
-            IdentityResult result = await _signUpService.SignUp(model);
+            IdentityResult result = await _signUpService.SignUpAsync(model);
             if (result.Succeeded)
             {
-                User user = await _userManager.FindByNameAsync(model.UserName);
-                string? token = await _userManager.GenerateEmailConfirmationTokenAsync(user),
-                    callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
+                string? token = await _signUpService.GenerateToken(await _signUpService.GetUserByEmailAsync(model.Email)),
+                    callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = model.Email }, Request.Scheme);
 
-                Message message = new Message(new string[] { user.Email }, "Confirmation Email Link", callbackUrl!);
+                Message message = new Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
                 _emailService.SendEmail(message);
 
-                SignUpViewModel nvvm = new SignUpViewModel { UserName = user.UserName ,Email = user.Email};
+                SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName ,Email = model.Email};
+                //await Console.Out.WriteLineAsync("User was added => " + DateTime.Now.ToString());
                 return View("MailCheck", nvvm);
             }
 
@@ -85,14 +85,14 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> ConfirmEmail(string token, string email)
     {
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user != null)
+        if (await _signUpService.GetUserByEmailAsync(email) is User user)
         {
-            var result = await _userManager.ConfirmEmailAsync(user, token);
+            IdentityResult result = await _signUpService.ConfirmEmailAsync(user, token);
+            
             if (result.Succeeded)
             {
-                var vm = new SignUpViewModel { UserName = user.UserName };
-                return View("SuccessPage", vm);
+                SignUpViewModel model = new SignUpViewModel { UserName = user.UserName };
+                return View("SuccessPage", model);
             }
         }
         return View();
@@ -101,25 +101,26 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> Logout()
     {
-        await _signInManager.SignOutAsync();
+        await _logInService.SignOutAsync();
         return RedirectToAction("Login", "Account", new { area = "" });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ForgotPassword(ForgotViewModel vm)
+    public async Task<IActionResult> ForgotPassword(ForgotViewModel model)
     {
         if(ModelState.IsValid)
         {
-            var user = await _userManager.FindByEmailAsync(vm.Email);
-            if(user != null)
+            if(await _signUpService.GetUserByEmailAsync(model.Email) is User user)
             {
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
-                var message = new Message(new string[] { user.Email }, "Forgot password link", newlink!);
+                string? token = await _signUpService.GenerateToken(user),
+                    newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
+                Message message = new Message(new string[] { user.Email }, "Forgot password link", newlink!);
+                
                 _emailService.SendEmail(message);
                 return View("ForgotPasswordConfirmation");
             }
+
             ModelState.AddModelError(string.Empty, "User not found");
         }
 
@@ -128,7 +129,7 @@ public class AccountController : Controller
 
     public IActionResult ResetPassword(string token, string email)
     {
-        var viewModel = new ResetPasswordViewModel
+        ResetPasswordViewModel viewModel = new ResetPasswordViewModel
         {
             Token = token,
             Email = email
@@ -139,19 +140,19 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel vm)
+    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
     {
         if (ModelState.IsValid)
         {
-            var user = await _userManager.FindByEmailAsync(vm.Email);
+            User user = await _signUpService.GetUserByEmailAsync(model.Email);
 
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "User not found");
-                return View(vm);
+                return View(model);
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, vm.Token, vm.Password);
+            IdentityResult result = await _signUpService.ResetPasswordAsync(user, model.Token, model.Password);
 
             if (result.Succeeded)
             {
@@ -163,10 +164,9 @@ public class AccountController : Controller
                 ModelState.AddModelError(string.Empty, error.Description);
             }
         }
-        return View(vm);
+        return View(model);
     }
-
-
+    
     //Isetesen Error page yaza bilersen ki, user, admin ve ya her hansi bir methoda sehv bir sey gonderilen zaman bu sehife erroru gostersin...
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error(string message)
