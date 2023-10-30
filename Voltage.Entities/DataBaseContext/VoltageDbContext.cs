@@ -1,4 +1,4 @@
-﻿ using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ public class VoltageDbContext : IdentityDbContext<User, IdentityRole, string>
         if (!optionsBuilder.IsConfigured)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder();
-            string conn = builder.Configuration["ConnectionStrings:sqlConn2"];
+            string conn = builder.Configuration["ConnectionStrings:sqlConn"];
             optionsBuilder.UseSqlServer(conn);
         }
     }
@@ -24,6 +24,6 @@ public class VoltageDbContext : IdentityDbContext<User, IdentityRole, string>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<User>().Property(_ => _.DateOfBirth).IsRequired();
-        base.OnModelCreating(builder);  
+        base.OnModelCreating(builder);
     }
 }

@@ -6,7 +6,8 @@ using Voltage.Entities.DataBaseContext;
 using Voltage.Entities.Entity;
 using Voltage.Entities.Models;
 using Voltage.Helper.Validations;
-
+using Voltage.Services.HostedService;
+using Voltage.Entities.Models.ViewModels;
 
 namespace Voltage;
 
@@ -17,11 +18,11 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
         {
-            _.Password.RequiredLength = 5;
-            _.Password.RequireNonAlphanumeric = false;
+            _.Password.RequiredLength = 6;
+            _.Password.RequireNonAlphanumeric = true;
             _.Password.RequireLowercase = true;
             _.Password.RequireUppercase = true;
             _.Password.RequireDigit = true;
@@ -36,12 +37,13 @@ public class Program
           .AddEntityFrameworkStores<VoltageDbContext>()
           .AddDefaultTokenProviders();
 
-        var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+        EmailConfiguration emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
         builder.Services.AddSingleton(emailConfig);
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddScoped<SignUpService>();
         builder.Services.AddAuthentication();
 
+        builder.Services.AddHostedService(_ => new EmailVerifiedClearHostedService(_));
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())

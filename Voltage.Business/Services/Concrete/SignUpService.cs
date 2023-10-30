@@ -23,8 +23,8 @@ public class SignUpService
             {
                 User user = new User
                 {
-                    UserName = vm.UserName,
-                    Email = vm.Email,
+                    UserName = vm.UserName.Trim(),
+                    Email = vm.Email.Trim(),
                     DateOfBirth = vm.DateOfBirth,
                     Photo = (vm.Photo != null) ? await UploadFileHelper.UploadFile(vm.Photo) : ""
                 };
