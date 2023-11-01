@@ -6,6 +6,8 @@ using Voltage.Core.Models;
 using Voltage.Entities.Models.ViewModels;
 using Voltage.Entities.Models;
 using Voltage.Business.Services.Abstract;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Voltage.Controllers;
 
@@ -22,21 +24,92 @@ public class AccountController : Controller
         _emailService = emailService;
     }
 
+    [HttpGet]
     public IActionResult Login() => View();
+    [HttpGet]
     public IActionResult SignUp() => View();
+    [HttpGet]
     public IActionResult ForgotPassword() => View();
+    [HttpGet]
     public IActionResult TermsPolicy() => View();
+
+    [HttpGet]
+    public async Task<IActionResult> Logout()
+    {
+        await _logInService.SignOutAsync();
+        return RedirectToAction("Login", "Account", new { area = "" });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ConfirmEmail(string token, string email)
+    {
+        if (await _signUpService.GetUserByEmailAsync(email) is User user)
+        {
+            if ((await _signUpService.ConfirmEmailAsync(user, token)).Succeeded)
+            {
+                SignUpViewModel model = new SignUpViewModel { UserName = user.UserName };
+                return View("SuccessPage", model);
+            }
+        }
+
+        return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ExternalLogin(string provider, string returnUrl = null)
+    {
+        var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "" });
+        var externalLoginViewModel = await _logInService.GetExternalLoginProperties(provider, redirectUrl!);
+        return new ChallengeResult(provider, new AuthenticationProperties
+        {
+            RedirectUri = externalLoginViewModel.RedirectUrl
+        });
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+    {
+        if (remoteError != null)
+        {
+            return RedirectToAction("Login");
+        }
+
+        var httpContext = HttpContext;
+        var externalLoginInfo = await _logInService.GetExternalLoginInfoAsync(httpContext);
+
+        if (externalLoginInfo == null)
+        {
+            return RedirectToAction(nameof(Error));
+        }
+
+        var result = await _logInService.ExternalLoginSignInAsync(externalLoginInfo);
+        if (result.Succeeded)
+        {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+            else
+                return RedirectToAction("index", "MainPage", new { area = "User" });
+        }
+        else
+        {
+            return RedirectToAction(nameof(Error));
+        }
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Login(LogInViewModel model)
+    public IActionResult Login(LogInViewModel model, string ReturnUrl)
     {
         if (ModelState.IsValid)
         {
             try
             {
                 if (_logInService.LogInAsync(model).Result!)
+                {
+                    ViewBag.ReturnUrl = ReturnUrl;
                     return RedirectToAction("index", "MainPage", new { area = "User" });
+                }
             }
             catch (Exception ex)
             {
@@ -79,28 +152,6 @@ public class AccountController : Controller
         }
 
         return View();
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> ConfirmEmail(string token, string email)
-    {
-        if (await _signUpService.GetUserByEmailAsync(email) is User user)
-        {
-            if ((await _signUpService.ConfirmEmailAsync(user, token)).Succeeded)
-            {
-                SignUpViewModel model = new SignUpViewModel { UserName = user.UserName };
-                return View("SuccessPage", model);
-            }
-        }
-
-        return View();
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> Logout()
-    {
-        await _logInService.SignOutAsync();
-        return RedirectToAction("Login", "Account", new { area = "" });
     }
 
     [HttpPost]

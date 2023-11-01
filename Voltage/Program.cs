@@ -37,6 +37,14 @@ public class Program
           .AddEntityFrameworkStores<VoltageDbContext>()
           .AddDefaultTokenProviders();
 
+        builder.Services.AddAuthentication()
+        .AddGoogle(options =>
+        {
+            var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+            options.ClientId = googleAuthNSection["ClientId"]!;
+            options.ClientSecret = googleAuthNSection["ClientSecret"]!;
+        });
+
 
         EmailConfiguration emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
         builder.Services.AddSingleton(emailConfig);
@@ -44,11 +52,8 @@ public class Program
         builder.Services.AddScoped<ISignUpService, SignUpService>();
         builder.Services.AddScoped<ILogInService, LogInService>();
         builder.Services.AddScoped<IUserModifierService, UserModifierService>();
-        
         builder.Services.AddSignalR();
-
         builder.Services.AddAuthentication();
-
         builder.Services.AddHostedService<EmailVerifiedClearHostedService>();
         var app = builder.Build();
 

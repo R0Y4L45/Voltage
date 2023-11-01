@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Entity;
 using Voltage.Entities.Models.ViewModels;
@@ -9,10 +10,39 @@ public class LogInService : ILogInService
 {
     private readonly SignInManager<User> _signInManager;
     private readonly UserManager<User> _userManager;
-    public LogInService(SignInManager<User> signInManager, UserManager<User> userManager)
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public LogInService(SignInManager<User> signInManager, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public async Task<ExternalLoginViewModel> GetExternalLoginProperties(string provider, string redirectUrl)
+    {
+        var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+
+        
+        var providerDisplayName = provider;
+
+        var externalLoginViewModel = new ExternalLoginViewModel
+        {
+            Provider = providerDisplayName,
+            RedirectUrl = properties.RedirectUri
+        };
+
+        return externalLoginViewModel;
+    }
+
+    public async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(HttpContext context)
+    {
+        return await _signInManager.GetExternalLoginInfoAsync();
+    }
+
+    public async Task<SignInResult> ExternalLoginSignInAsync(ExternalLoginInfo info)
+
+    {
+        return await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
     }
 
     public async Task<bool> LogInAsync(LogInViewModel model)
