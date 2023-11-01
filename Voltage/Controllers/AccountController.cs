@@ -157,7 +157,7 @@ public class AccountController : Controller
                     });
                 }
                 
-                ModelState.AddModelError("Errors", "Password was used");
+                ModelState.AddModelError("PasswordErrors", "Password was used");
             }
 
             ModelState.AddModelError("Errors", "User not found");
