@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Voltage.Entities.Entity;
 using Voltage.Core.Models;
-using Voltage.Business.Services.Concrete;
 using Voltage.Entities.Models.ViewModels;
 using Voltage.Entities.Models;
 using Voltage.Business.Services.Abstract;
@@ -36,7 +35,7 @@ public class AccountController : Controller
         {
             try
             {
-                if (_logInService.LogInAsync(model).Result!) 
+                if (_logInService.LogInAsync(model).Result!)
                     return RedirectToAction("index", "MainPage", new { area = "User" });
             }
             catch (Exception ex)
@@ -65,7 +64,7 @@ public class AccountController : Controller
                 Message message = new Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
                 _emailService.SendEmail(message);
 
-                SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName ,Email = model.Email};
+                SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName, Email = model.Email };
                 //await Console.Out.WriteLineAsync("User was added => " + DateTime.Now.ToString());
                 return View("MailCheck", nvvm);
             }
@@ -108,14 +107,14 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ForgotPassword(ForgotViewModel model)
     {
-        if(ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            if(await _signUpService.GetUserByEmailAsync(model.Email) is User user)
+            if (await _signUpService.GetUserByEmailAsync(model.Email) is User user)
             {
                 string? token = await _signUpService.GenerateResetTokenAsync(user),
                     newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
                 Message message = new Message(new string[] { user.Email }, "Forgot password link", newlink!);
-                
+
                 _emailService.SendEmail(message);
                 return View("ForgotPasswordConfirmation");
             }
@@ -143,29 +142,30 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            User user = await _signUpService.GetUserByEmailAsync(model.Email);
-
-            if (user == null)
+            if (_signUpService.GetUserByEmailAsync(model.Email).Result is User user)
             {
-                ModelState.AddModelError(string.Empty, "User not found");
-                return View(model);
+                if (!await _signUpService.CheckPasswordAsync(user, model.Password))
+                {
+                    IdentityResult result = await _signUpService.ResetPasswordAsync(user, model.Token, model.Password);
+
+                    if (result.Succeeded)
+                        return View("ResetPasswordConfirmation");
+
+                    result.Errors.ToList().ForEach(_ =>
+                    {
+                        ModelState.AddModelError("Errors", _.Description);
+                    });
+                }
+                
+                ModelState.AddModelError("Errors", "Password was used");
             }
 
-            IdentityResult result = await _signUpService.ResetPasswordAsync(user, model.Token, model.Password);
-
-            if (result.Succeeded)
-            {
-                return View("ResetPasswordConfirmation");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+            ModelState.AddModelError("Errors", "User not found");
         }
+
         return View(model);
     }
-    
+
     //Isetesen Error page yaza bilersen ki, user, admin ve ya her hansi bir methoda sehv bir sey gonderilen zaman bu sehife erroru gostersin...
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error(string message)

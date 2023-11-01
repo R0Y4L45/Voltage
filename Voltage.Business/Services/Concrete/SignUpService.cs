@@ -27,7 +27,7 @@ public class SignUpService : ISignUpService
                     UserName = model.UserName.Trim(),
                     Email = model.Email.Trim(),
                     DateOfBirth = model.DateOfBirth,
-                    Photo = (model.Photo != null) ? await UploadFileHelper.UploadFile(model.Photo) : ""
+                    Photo = (model.Photo != null) ? await UploadFileHelper.UploadFile(model.Photo) : "https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
                 };
 
                 IdentityResult result = await _userManager.CreateAsync(user, model.Password);
@@ -62,4 +62,5 @@ public class SignUpService : ISignUpService
     public async Task<string> GenerateEmailTokenAsync(User user) => await _userManager.GenerateEmailConfirmationTokenAsync(user);
     public async Task<IdentityResult> ConfirmEmailAsync(User user, string token) => await _userManager.ConfirmEmailAsync(user, token);
     public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password) => await _userManager.ResetPasswordAsync(user, token, password);
+    public async Task<bool> CheckPasswordAsync(User user, string password) => await _userManager.CheckPasswordAsync(user, password);
 }
