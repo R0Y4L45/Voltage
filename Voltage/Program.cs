@@ -7,7 +7,7 @@ using Voltage.Entities.Entity;
 using Voltage.Entities.Models;
 using Voltage.Helper.Validations;
 using Voltage.Services.HostedService;
-using Voltage.Entities.Models.ViewModels;
+using Voltage.Hubs;
 
 namespace Voltage;
 
@@ -37,6 +37,7 @@ public class Program
           .AddEntityFrameworkStores<VoltageDbContext>()
           .AddDefaultTokenProviders();
 
+
         EmailConfiguration emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
         builder.Services.AddSingleton(emailConfig);
         builder.Services.AddSingleton<IEmailService, EmailService>();
@@ -44,6 +45,8 @@ public class Program
         builder.Services.AddScoped<ILogInService, LogInService>();
         builder.Services.AddScoped<IUserModifierService, UserModifierService>();
         
+        builder.Services.AddSignalR();
+
         builder.Services.AddAuthentication();
 
         builder.Services.AddHostedService<EmailVerifiedClearHostedService>();
@@ -58,6 +61,7 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
+        app.MapHub<MessageHub>("/chatHub");
         app.UseRouting();
 
         app.UseAuthentication();

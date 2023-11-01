@@ -63,4 +63,5 @@ public class SignUpService : ISignUpService
     public async Task<IdentityResult> ConfirmEmailAsync(User user, string token) => await _userManager.ConfirmEmailAsync(user, token);
     public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password) => await _userManager.ResetPasswordAsync(user, token, password);
     public async Task<bool> CheckPasswordAsync(User user, string password) => await _userManager.CheckPasswordAsync(user, password);
+    public async Task<User> GetUserByName(string name) => await _userManager.FindByNameAsync(name);
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using Voltage.Business.Services.Abstract;
 using UserEntity = Voltage.Entities.Entity.User;
 
 namespace Voltage.Areas.User.Controllers;
@@ -9,18 +11,31 @@ namespace Voltage.Areas.User.Controllers;
 [Authorize(Roles = "User, Admin")]
 public class MainPageController : Controller
 {
-    private readonly UserManager<UserEntity> _userManager;
-    public UserEntity? UserEntity { get; set; }
+    private readonly ISignUpService _signUpService;
 
-    public MainPageController(UserManager<UserEntity> userManager)
+    public MainPageController(ISignUpService signUpService)
     {
-        _userManager = userManager;
+        _signUpService = signUpService;
     }
 
     public IActionResult Index()
     {
-        TempData["ProfilePhoto"] = _userManager.FindByNameAsync(User.Identity?.Name).Result.Photo;
+        TempData["ProfilePhoto"] = _signUpService.GetUserByName(User.Identity?.Name!).Result.Photo;
 
         return View();
+    }
+
+    public IActionResult Message()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public string GetUserId([FromBody] string name = "null")
+    {
+        if (name != "null")
+            return JsonSerializer.Serialize(_signUpService?.GetUserByName(name)?.Result.Id);
+
+        return "null";
     }
 }

@@ -13,4 +13,5 @@ public interface ISignUpService
     Task<string> GenerateResetTokenAsync(User user);
     Task<string> GenerateEmailTokenAsync(User user);
     Task<bool> CheckPasswordAsync(User user, string password);
+    Task<User> GetUserByName(string name);
 }
