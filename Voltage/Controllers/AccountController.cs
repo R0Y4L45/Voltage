@@ -99,7 +99,7 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Login(LogInViewModel model, string ReturnUrl)
+    public IActionResult Login(LogInViewModel model)
     {
         if (ModelState.IsValid)
         {
@@ -107,7 +107,6 @@ public class AccountController : Controller
             {
                 if (_logInService.LogInAsync(model).Result!)
                 {
-                    ViewBag.ReturnUrl = ReturnUrl;
                     return RedirectToAction("index", "MainPage", new { area = "User" });
                 }
             }
