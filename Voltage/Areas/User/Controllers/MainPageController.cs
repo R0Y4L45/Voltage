@@ -27,7 +27,7 @@ public class MainPageController : Controller
 
     public IActionResult Message()
     {
-        return View();
+        return View(_signUpService.GetAllUsers().Result);
     }
 
     [HttpPost]

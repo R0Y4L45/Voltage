@@ -106,9 +106,7 @@ public class AccountController : Controller
             try
             {
                 if (_logInService.LogInAsync(model).Result!)
-                {
                     return RedirectToAction("index", "MainPage", new { area = "User" });
-                }
             }
             catch (Exception ex)
             {

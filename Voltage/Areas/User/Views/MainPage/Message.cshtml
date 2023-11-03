@@ -1,7 +1,17 @@
-﻿@{
+﻿@using Voltage.Entities.Entity;
+@model List<User>
+@{
     Layout = "";
 }
 <div class="container">
+    <div class="row">
+        <ul>
+            @foreach (var item in Model)
+            {
+                <li><a onclick="ClickToMessage('@item.UserName')">@item.UserName</a></li>
+            }
+        </ul>
+    </div>
     <div class="row">
         <div class="col-3">Connection Id</div>
         <div class="col-6"><span id="connectionId" /></div>
