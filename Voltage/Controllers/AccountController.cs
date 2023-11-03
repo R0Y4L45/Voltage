@@ -8,6 +8,8 @@ using Voltage.Entities.Models;
 using Voltage.Business.Services.Abstract;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http;
 
 namespace Voltage.Controllers;
 
@@ -56,7 +58,7 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> ExternalLogin(string provider, string returnUrl = null)
+    public async Task<IActionResult> ExternalLogin(string provider)
     {
         var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "" });
         var externalLoginViewModel = await _logInService.GetExternalLoginProperties(provider, redirectUrl!);
@@ -68,22 +70,21 @@ public class AccountController : Controller
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+    public IActionResult ExternalLoginCallback(string returnUrl, string remoteError)
     {
         if (remoteError != null)
         {
             return RedirectToAction("Login");
         }
 
-        var httpContext = HttpContext;
-        var externalLoginInfo = await _logInService.GetExternalLoginInfoAsync(httpContext);
+        var externalLoginInfo = _logInService.GetExternalLoginInfoAsync(HttpContext).Result;
 
         if (externalLoginInfo == null)
         {
             return RedirectToAction(nameof(Error));
         }
 
-        var result = await _logInService.ExternalLoginSignInAsync(externalLoginInfo);
+        var result = _logInService.ExternalLoginSignInAsync(externalLoginInfo).Result;
         if (result.Succeeded)
         {
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))

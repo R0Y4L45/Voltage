@@ -21,10 +21,7 @@ public class LogInService : ILogInService
     public async Task<ExternalLoginViewModel> GetExternalLoginProperties(string provider, string redirectUrl)
     {
         var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-
-        
         var providerDisplayName = provider;
-
         var externalLoginViewModel = new ExternalLoginViewModel
         {
             Provider = providerDisplayName,
