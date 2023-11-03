@@ -39,9 +39,7 @@ document.getElementById("sendToUser").addEventListener("click", function (event)
 });
 
 function ClickToMessage(username) {
-    window.alert("yes");
-    
-    let data = JSON.stringify(username.toString());
+    let data = JSON.stringify(username);
 
     fetch('GetUserId', {
         method: 'POST',
