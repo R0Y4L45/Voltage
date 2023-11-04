@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using System.Security.Claims;
+using Voltage.Business.CustomHelpers;
 
 namespace Voltage.Controllers;
 
@@ -108,7 +109,11 @@ public class AccountController : Controller
         {
             var userEmail = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email);
             var userName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Name);
-            var user = new User { UserName = "Niko12_", Email = userEmail };
+            var usernameGenerator = new GenerateUserName(_userModifierService);
+            var generatedUsername = await usernameGenerator.GenerateRandomUsername(userName);
+
+            var user = new User { UserName = generatedUsername, Email = userEmail };
+            
 
             var createdResult = _userModifierService.CreateAsync(user).Result;
             if(createdResult.Succeeded)
@@ -116,6 +121,7 @@ public class AccountController : Controller
                 var addLoginResult = _logInService.AddLoginAsync(user, externalLoginInfo).Result;
                 if(addLoginResult.Succeeded)
                 {
+                    await _userModifierService.AddToRoleAsync(user, "User");
                     string? token = await _signUpService.GenerateEmailTokenAsync(await _signUpService.GetUserByEmailAsync(user.Email)),
                     callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Voltage.Business.Services.Concrete
+namespace Voltage.Business.CustomHelpers
 {
     public class UploadFileHelper
     {

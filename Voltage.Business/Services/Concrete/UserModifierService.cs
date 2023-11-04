@@ -36,8 +36,19 @@ public class UserModifierService : IUserModifierService
 
     public IEnumerable<User> GetList(Expression<Func<User, bool>> filter = null!) => _userManager.Users.ToList();
 
+    public async Task<bool> IsUsernameExistsAsync(string username)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+        return user != null;
+    }
+
     public bool Update(User entity)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<IdentityResult> AddToRoleAsync(User user, string roleName)
+    {
+        return await _userManager.AddToRoleAsync(user, roleName);
     }
 }
