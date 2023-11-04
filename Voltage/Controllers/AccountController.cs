@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http;
+using System.Security.Claims;
 
 namespace Voltage.Controllers;
 
@@ -18,12 +19,14 @@ public class AccountController : Controller
     private readonly ISignUpService _signUpService;
     private readonly ILogInService _logInService;
     private readonly IEmailService _emailService;
+    private readonly IUserModifierService _userModifierService;
 
-    public AccountController(ISignUpService signUpService, ILogInService logInService, IEmailService emailService)
+    public AccountController(ISignUpService signUpService, ILogInService logInService, IEmailService emailService, IUserModifierService userModifierService)
     {
         _signUpService = signUpService;
         _logInService = logInService;
         _emailService = emailService;
+        _userModifierService = userModifierService;
     }
 
     [HttpGet]
@@ -60,13 +63,13 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> ExternalLogin(string returnUrl)
     {
-        var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "", returnUrl = returnUrl });
+        var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "",  returnUrl });
         return new ChallengeResult("Google", await _logInService.GetExternalLoginProperties(redirectUrl!));
     }
 
     [AllowAnonymous]
     [HttpGet]
-    public IActionResult ExternalLoginCallback(string returnUrl, string remoteError)
+    public async Task<IActionResult> ExternalLoginCallback(string returnUrl, string remoteError)
     {
         if (remoteError != null)
         {
@@ -88,10 +91,43 @@ public class AccountController : Controller
             else
                 return RedirectToAction("index", "MainPage", new { area = "User" });
         }
+
+        var existsUser = await _logInService.FindByLoginAsync(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
+        if(existsUser != null)
+        {
+            var signInResult = _logInService.ExternalLoginSignInAsync(externalLoginInfo).Result;
+            if(signInResult.Succeeded)
+            {
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
+                else
+                    return RedirectToAction("index", "MainPage", new { area = "User" });
+            }
+        }
         else
         {
-            return RedirectToAction(nameof(Error));
+            var userEmail = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email);
+            var userName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Name);
+            var user = new User { UserName = "Niko12_", Email = userEmail };
+
+            var createdResult = _userModifierService.CreateAsync(user).Result;
+            if(createdResult.Succeeded)
+            {
+                var addLoginResult = _logInService.AddLoginAsync(user, externalLoginInfo).Result;
+                if(addLoginResult.Succeeded)
+                {
+                    string? token = await _signUpService.GenerateEmailTokenAsync(await _signUpService.GetUserByEmailAsync(user.Email)),
+                    callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
+
+                    Message message = new Message(new string[] { user.Email }, "Confirmation Email Link", callbackUrl!);
+                    _emailService.SendEmail(message);
+
+                    SignUpViewModel nvvm = new SignUpViewModel { UserName = user.UserName, Email = user.Email };
+                    return View("MailCheck", nvvm);
+                }
+            }
         }
+        return RedirectToAction("Login");
     }
 
     [HttpPost]
@@ -126,13 +162,12 @@ public class AccountController : Controller
             if (result.Succeeded)
             {
                 string? token = await _signUpService.GenerateEmailTokenAsync(await _signUpService.GetUserByEmailAsync(model.Email)),
-                    callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = model.Email }, Request.Scheme);
+                callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = model.Email }, Request.Scheme);
 
                 Message message = new Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
                 _emailService.SendEmail(message);
 
                 SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName, Email = model.Email };
-                //await Console.Out.WriteLineAsync("User was added => " + DateTime.Now.ToString());
                 return View("MailCheck", nvvm);
             }
 

@@ -18,7 +18,8 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
+        builder.Services.Configure<DataProtectionTokenProviderOptions>(_ => _.TokenLifespan = TimeSpan.FromHours(1));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
         {
             _.Password.RequiredLength = 6;
@@ -38,10 +39,10 @@ public class Program
           .AddDefaultTokenProviders();
 
         builder.Services.AddAuthentication()
-        .AddGoogle(options =>
+        .AddGoogle(_ =>
         {
-            options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-            options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+            _.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+            _.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
         });
 
 

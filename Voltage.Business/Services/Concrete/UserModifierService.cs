@@ -19,6 +19,11 @@ public class UserModifierService : IUserModifierService
         throw new NotImplementedException();
     }
 
+    public async Task<IdentityResult> CreateAsync(User user)
+    {
+        return await _userManager.CreateAsync(user);
+    }
+
     public void Delete(User entity)
     {
         _userManager.DeleteAsync(entity).Wait();

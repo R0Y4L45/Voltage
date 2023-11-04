@@ -19,6 +19,11 @@ public class LogInService : ILogInService
         _httpContextAccessor = httpContextAccessor;
     }
 
+    public async Task<User> FindByLoginAsync(string loginProvider, string providerKey)
+    {
+        return await _userManager.FindByLoginAsync(loginProvider, providerKey);
+    }
+
     public async Task<AuthenticationProperties> GetExternalLoginProperties(string redirectUrl)
     {
         return await Task.FromResult(_signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl));
@@ -31,7 +36,7 @@ public class LogInService : ILogInService
 
     public async Task<SignInResult> ExternalLoginSignInAsync(ExternalLoginInfo info)
     {
-        return await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, true);
+        return await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false, true);
     }
 
     public async Task<bool> LogInAsync(LogInViewModel model)
@@ -71,4 +76,9 @@ public class LogInService : ILogInService
     }
 
     public async Task SignOutAsync() => await _signInManager.SignOutAsync();
+
+    public async Task<IdentityResult> AddLoginAsync(User user, ExternalLoginInfo info)
+    {
+        return await _userManager.AddLoginAsync(user, info);
+    }
 }

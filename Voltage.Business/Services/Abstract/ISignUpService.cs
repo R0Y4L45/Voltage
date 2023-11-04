@@ -13,6 +13,7 @@ public interface ISignUpService
     Task<User> GetUserByEmailAsync(string email);
     Task<string> GenerateResetTokenAsync(User user);
     Task<string> GenerateEmailTokenAsync(User user);
+    Task<string>GenerateEmailConfirmationTokenAsync(User user);
     Task<bool> CheckPasswordAsync(User user, string password);
     Task<User> GetUserByName(string name);
     Task<List<User>> GetAllUsers(Expression<Func<User, bool>> filter = null!);
