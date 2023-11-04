@@ -58,14 +58,10 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> ExternalLogin(string provider)
+    public async Task<IActionResult> ExternalLogin(string returnUrl)
     {
-        var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "" });
-        var externalLoginViewModel = await _logInService.GetExternalLoginProperties(provider, redirectUrl!);
-        return new ChallengeResult(provider, new AuthenticationProperties
-        {
-            RedirectUri = externalLoginViewModel.RedirectUrl
-        });
+        var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "", returnUrl = returnUrl });
+        return new ChallengeResult("Google", await _logInService.GetExternalLoginProperties(redirectUrl!));
     }
 
     [AllowAnonymous]
@@ -77,7 +73,7 @@ public class AccountController : Controller
             return RedirectToAction("Login");
         }
 
-        var externalLoginInfo = _logInService.GetExternalLoginInfoAsync(HttpContext).Result;
+        var externalLoginInfo = _logInService.GetExternalLoginInfoAsync().Result;
 
         if (externalLoginInfo == null)
         {

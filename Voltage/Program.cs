@@ -18,7 +18,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
         {
             _.Password.RequiredLength = 6;
@@ -40,9 +40,8 @@ public class Program
         builder.Services.AddAuthentication()
         .AddGoogle(options =>
         {
-            var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
-            options.ClientId = googleAuthNSection["ClientId"]!;
-            options.ClientSecret = googleAuthNSection["ClientSecret"]!;
+            options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+            options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
         });
 
 

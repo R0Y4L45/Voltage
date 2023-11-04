@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Voltage.Entities.Models.ViewModels;
 
@@ -8,7 +9,7 @@ public interface ILogInService
 {
     Task<bool> LogInAsync(LogInViewModel model);
     Task SignOutAsync();
-    Task<ExternalLoginViewModel> GetExternalLoginProperties(string provider, string redirectUrl);
-    Task<ExternalLoginInfo> GetExternalLoginInfoAsync(HttpContext context);
+    Task<AuthenticationProperties> GetExternalLoginProperties(string redirectUrl);
+    Task<ExternalLoginInfo> GetExternalLoginInfoAsync();
     Task<SignInResult> ExternalLoginSignInAsync(ExternalLoginInfo info);
 }

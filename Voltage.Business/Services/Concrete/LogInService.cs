@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Entity;
@@ -18,28 +19,19 @@ public class LogInService : ILogInService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<ExternalLoginViewModel> GetExternalLoginProperties(string provider, string redirectUrl)
+    public async Task<AuthenticationProperties> GetExternalLoginProperties(string redirectUrl)
     {
-        var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-        var providerDisplayName = provider;
-        var externalLoginViewModel = new ExternalLoginViewModel
-        {
-            Provider = providerDisplayName,
-            RedirectUrl = properties.RedirectUri
-        };
-
-        return externalLoginViewModel;
+        return await Task.FromResult(_signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl));
     }
 
-    public async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(HttpContext context)
+    public async Task<ExternalLoginInfo> GetExternalLoginInfoAsync()
     {
         return await _signInManager.GetExternalLoginInfoAsync();
     }
 
     public async Task<SignInResult> ExternalLoginSignInAsync(ExternalLoginInfo info)
-
     {
-        return await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+        return await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, true);
     }
 
     public async Task<bool> LogInAsync(LogInViewModel model)
