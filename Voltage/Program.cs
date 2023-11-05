@@ -17,9 +17,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
-
         builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
         builder.Services.Configure<DataProtectionTokenProviderOptions>(_ => _.TokenLifespan = TimeSpan.FromHours(1));
+        builder.Services.ConfigureApplicationCookie(_=> _.ExpireTimeSpan = TimeSpan.FromHours(1));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
         {
             _.Password.RequiredLength = 6;
@@ -27,6 +27,9 @@ public class Program
             _.Password.RequireLowercase = true;
             _.Password.RequireUppercase = true;
             _.Password.RequireDigit = true;
+
+            _.Lockout.MaxFailedAccessAttempts = 3;
+            _.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
 
             _.User.RequireUniqueEmail = true;
             _.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";

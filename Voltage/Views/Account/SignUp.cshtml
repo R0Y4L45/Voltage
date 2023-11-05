@@ -209,9 +209,9 @@
                     <div class="mb-3">
                         <label class="form-label">Password</label>
                         <div class="input-group input-group-flat">
-                            <input type="password" asp-for="Password" class="form-control" placeholder="Password" autocomplete="off">
+                            <input type="password" asp-for="Password" id="password-input" class="form-control" placeholder="Password" autocomplete="off">
                             <span class="input-group-text">
-                                <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
+                                <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip" id="show-password-toggle">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
                                 </a>
                             </span>
@@ -221,9 +221,9 @@
                     <div class="mb-3">
                         <label class="form-label">Confirm Password</label>
                         <div class="input-group input-group-flat">
-                            <input type="password" asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" autocomplete="off">
+                            <input type="password" asp-for="ConfirmPassword" id="password-input2" class="form-control" placeholder="Confirm Password" autocomplete="off">
                             <span class="input-group-text">
-                                <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
+                                <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip" id="show-password-toggle2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
                                 </a>
                             </span>
@@ -232,7 +232,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-check">
-                            <input type="checkbox" class="form-check-input" />
+                            <input type="checkbox" class="form-check-input" asp-for="Agree"/>
                             <span class="form-check-label">Agree the <a href="/Account/TermsPolicy" tabindex="-1">terms and policy</a>.</span>
                         </label>
                     </div>
@@ -245,7 +245,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            <a href="#" class="btn w-100">
+                            <a  asp-controller="Account" asp-area="" asp-action="ExternalLogin" asp-route-provider="Google" asp-route-returnUrl="@ViewContext.HttpContext.Request.PathBase" class="btn w-100">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <path d="M17.788 5.108a9 9 0 1 0 3.212 6.892h-8"></path>
@@ -261,7 +261,6 @@
             </div>
         </div>
     </div>
-
-    
+    <script src="~/js/SignUpPasswordShow.js"></script>
 </body>
 </html>

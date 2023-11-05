@@ -46,7 +46,7 @@ public class LogInService : ILogInService
 
         if (user != null)
         {
-            SignInResult result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, true, true);
+            SignInResult result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe,true);
             if (result.Succeeded)
             {
                 await _userManager.ResetAccessFailedCountAsync(user);
@@ -67,7 +67,7 @@ public class LogInService : ILogInService
                     if (result.IsLockedOut)
                         throw new Exception("After 3 unsuccessful attempts your account is locked for 1 minute.");
                     else
-                        throw new Exception("Password is wrong. Check and try again."); 
+                        throw new Exception("Password is wrong. Check and try again.");
                 }
             }
         }

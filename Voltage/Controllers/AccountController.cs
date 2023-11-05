@@ -6,10 +6,7 @@ using Voltage.Core.Models;
 using Voltage.Entities.Models.ViewModels;
 using Voltage.Entities.Models;
 using Voltage.Business.Services.Abstract;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using System.Net.Http;
 using System.Security.Claims;
 using Voltage.Business.CustomHelpers;
 
@@ -164,20 +161,26 @@ public class AccountController : Controller
     {
         try
         {
-            IdentityResult result = await _signUpService.SignUpAsync(model);
-            if (result.Succeeded)
+            if (model.Agree)
             {
-                string? token = await _signUpService.GenerateEmailTokenAsync(await _signUpService.GetUserByEmailAsync(model.Email)),
-                callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = model.Email }, Request.Scheme);
+                IdentityResult result = await _signUpService.SignUpAsync(model);
+                if (result.Succeeded)
+                {
+                    string? token = await _signUpService.GenerateEmailTokenAsync(await _signUpService.GetUserByEmailAsync(model.Email)),
+                    callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = model.Email }, Request.Scheme);
 
-                Message message = new Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
-                _emailService.SendEmail(message);
+                    Message message = new Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
+                    _emailService.SendEmail(message);
 
-                SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName, Email = model.Email };
-                return View("MailCheck", nvvm);
+                    SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName, Email = model.Email };
+                    return View("MailCheck", nvvm);
+                }
+                result.Errors.ToList().ForEach(_ => ModelState.AddModelError(_.Code, _.Description));
             }
-
-            result.Errors.ToList().ForEach(_ => ModelState.AddModelError(_.Code, _.Description));
+            else
+            {
+                ModelState.AddModelError("Agree", "You must agree to the terms and policy to register.");
+            }
         }
         catch (Exception ex)
         {

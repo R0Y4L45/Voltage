@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const passwordInput = document.getElementById("password-input");
     const passwordInput2 = document.getElementById("password-input2");
     const showPasswordToggle = document.getElementById("show-password-toggle");
