@@ -19,7 +19,7 @@ namespace Voltage.Entities.Models.ViewModels
         public string ConfirmPassword { get; set; } = null!;
 
         [Required(ErrorMessage = "Please choice birth of date")]
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         [Required(ErrorMessage = "Please agree to the terms and policy")]
         [Display(Name = "Agree to the terms and policy")]

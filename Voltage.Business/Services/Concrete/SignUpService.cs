@@ -29,7 +29,7 @@ public class SignUpService : ISignUpService
                 {
                     UserName = model.UserName.Trim(),
                     Email = model.Email.Trim(),
-                    DateOfBirth = model.DateOfBirth,
+                    DateOfBirth = model.DateOfBirth ?? DateTime.Now,
                     Photo = (model.Photo != null) ? await UploadFileHelper.UploadFile(model.Photo) : "https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
                 };
 
