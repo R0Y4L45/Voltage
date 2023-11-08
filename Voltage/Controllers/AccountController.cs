@@ -122,7 +122,7 @@ public class AccountController : Controller
                     string? token = await _signUpService.GenerateEmailTokenAsync(await _signUpService.GetUserByEmailAsync(user.Email)),
                     callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
 
-                    Message message = new Message(new string[] { user.Email }, "Confirmation Email Link", callbackUrl!);
+                    Entities.Models.Message message = new Entities.Models.Message(new string[] { user.Email }, "Confirmation Email Link", callbackUrl!);
                     _emailService.SendEmail(message);
 
                     SignUpViewModel nvvm = new SignUpViewModel { UserName = user.UserName, Email = user.Email };
@@ -169,7 +169,7 @@ public class AccountController : Controller
                     string? token = await _signUpService.GenerateEmailTokenAsync(await _signUpService.GetUserByEmailAsync(model.Email)),
                     callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = model.Email }, Request.Scheme);
 
-                    Message message = new Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
+                    Entities.Models.Message message = new Entities.Models.Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
                     _emailService.SendEmail(message);
 
                     SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName, Email = model.Email };
@@ -202,7 +202,7 @@ public class AccountController : Controller
             {
                 string? token = await _signUpService.GenerateResetTokenAsync(user),
                     newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
-                Message message = new Message(new string[] { user.Email }, "Forgot password link", newlink!);
+                Entities.Models.Message message = new Entities.Models.Message(new string[] { user.Email }, "Forgot password link", newlink!);
 
                 _emailService.SendEmail(message);
                 return View("ForgotPasswordConfirmation");

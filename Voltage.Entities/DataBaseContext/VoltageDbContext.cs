@@ -8,6 +8,8 @@ namespace Voltage.Entities.DataBaseContext;
 
 public class VoltageDbContext : IdentityDbContext<User, IdentityRole, string>
 {
+    public DbSet<Message>? Message { get; set; }
+
     public VoltageDbContext() { }
     public VoltageDbContext(DbContextOptions<VoltageDbContext> optionsBuilder) : base(optionsBuilder) { }
 
@@ -24,6 +26,19 @@ public class VoltageDbContext : IdentityDbContext<User, IdentityRole, string>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<User>().Property(_ => _.DateOfBirth).IsRequired();
+
+        builder.Entity<Message>()
+            .HasOne(m => m.Sender)
+            .WithMany(u => u.SentMessages)
+            .HasForeignKey(m => m.SenderId)
+            .OnDelete(DeleteBehavior.Restrict); // You can specify the delete behavior as needed
+
+        builder.Entity<Message>()
+            .HasOne(m => m.Receiver)
+            .WithMany(u => u.ReceivedMessages)
+            .HasForeignKey(m => m.ReceiverId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         base.OnModelCreating(builder);
     }
 }

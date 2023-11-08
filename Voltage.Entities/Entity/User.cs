@@ -7,4 +7,8 @@ public class User : IdentityUser, IEntity
 {
     public string? Photo { get; set; }
     public DateTime DateOfBirth { get; set; }
+    
+    //Nav prop
+    public ICollection<Message>? SentMessages { get; set; }
+    public ICollection<Message>? ReceivedMessages { get; set; }
 }

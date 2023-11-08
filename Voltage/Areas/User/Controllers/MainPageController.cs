@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using Voltage.Business.Services.Abstract;
-using UserEntity = Voltage.Entities.Entity.User;
+using Voltage.Entities.Models;
 
 namespace Voltage.Areas.User.Controllers;
 
@@ -12,10 +10,12 @@ namespace Voltage.Areas.User.Controllers;
 public class MainPageController : Controller
 {
     private readonly ISignUpService _signUpService;
+    private readonly IMessageService _messageService;
 
-    public MainPageController(ISignUpService signUpService)
+    public MainPageController(ISignUpService signUpService, IMessageService messageService)
     {
         _signUpService = signUpService;
+        _messageService = messageService;
     }
 
     public IActionResult Index()
@@ -31,11 +31,28 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
-    public string GetUserId([FromBody] string name = "null")
+    public IActionResult GetUserId([FromBody] string name = "null")
     {
         if (name != "null")
-            return JsonSerializer.Serialize(_signUpService?.GetUserByName(name)?.Result.Id);
+            return Json(_signUpService?.GetUserByName(name)?.Result.Id);
 
-        return "null";
+        return Json("null") ;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AcceptMessage([FromBody] MessageAcceptModel message)
+    {
+        var sender = (await _signUpService.GetUserByName(message.Sender!)).Id;
+        var receiver = (await _signUpService.GetUserByName(message.Receiver!)).Id;
+        var m = new Entities.Entity.Message
+        {
+            SenderId = sender,
+            ReceiverId = receiver,
+            Content = message.Message ?? string.Empty
+        };
+
+        _messageService.Add(m);
+
+        return Json("null");
     }
 }
