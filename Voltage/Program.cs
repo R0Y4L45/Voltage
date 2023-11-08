@@ -17,7 +17,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
         builder.Services.Configure<DataProtectionTokenProviderOptions>(_ => _.TokenLifespan = TimeSpan.FromHours(1));
         builder.Services.ConfigureApplicationCookie(_=> _.ExpireTimeSpan = TimeSpan.FromHours(1));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>

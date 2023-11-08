@@ -19,11 +19,12 @@
     <link href="~/dist/css/demo.min.css" rel="stylesheet" />
     <link href="~/Voltage.styles.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <script src="~/dist/js/demo-theme.min.js"></script>
 
-     <div class="page page-center">
+    <div class="page page-center">
         <div class="container container-tight py-4">
             <div class="text-center mb-4">
                 <a href="." class="navbar-brand navbar-brand-autodark">
@@ -66,6 +67,7 @@
                                 <span class="form-check-label">Remember me on this device</span>
                             </label>
                         </div>
+                        <p id="lockoutMessage" style="display: none;">User is locked out. Remaining time: <span id="remainingLockoutTime"></span></p>
                         <div asp-validation-summary="All" class="text-danger"></div>
                         <div class="form-footer">
                             <button type="submit" class="btn btn-primary w-100">Sign in</button>
@@ -91,10 +93,29 @@
                 Don't have account yet? <a href="/Account/SignUp" tabindex="-1">Sign up</a>
             </div>
         </div>
-    </div> 
+    </div>
 
     <script src="~/js/LoginPasswordShow.js"></script>
     <script src="~/dist/js/tabler.min.js"></script>
     <script src="~/dist/js/demo.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var remainingTime = @((ViewBag.RemainingLockoutTime != null) ? ViewBag.RemainingLockoutTime.TotalMilliseconds : 0);
+        if (remainingTime > 0) {
+            var intervalId = setInterval(function () {
+                remainingTime -= 1000;
+                if (remainingTime <= 0) {
+                    clearInterval(intervalId);
+                } else {
+                    var remainingMinutes = Math.floor((remainingTime / 1000) / 60);
+                    var remainingSeconds = Math.floor((remainingTime / 1000) % 60);
+                    document.getElementById("remainingLockoutTime").innerText = remainingMinutes + " minutes and " + remainingSeconds + " seconds";
+                    document.getElementById("lockoutMessage").style.display = "block";
+                }
+            }, 1000);
+        } else {
+            document.getElementById("remainingLockoutTime").innerText = "User is not locked out.";
+        }
+    </script>
 </body>
 </html>

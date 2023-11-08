@@ -10,4 +10,5 @@ public interface IUserModifierService : IEntityRepository<User, VoltageDbContext
     Task<IdentityResult> CreateAsync(User user);
     Task<bool> IsUsernameExistsAsync(string username);
     Task<IdentityResult> AddToRoleAsync(User user, string roleName);
+    Task<List<User>> GetAllUsers();
 }

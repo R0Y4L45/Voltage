@@ -39,7 +39,7 @@ public class LogInService : ILogInService
         return await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false, true);
     }
 
-    public async Task<bool> LogInAsync(LogInViewModel model)
+    public async Task<(bool IsLocked, TimeSpan? RemainingLockoutTime)> LogInAsync(LogInViewModel model)
     {
         await _signInManager.SignOutAsync();
         User user = await _userManager.FindByEmailAsync(model.Email);
@@ -50,20 +50,34 @@ public class LogInService : ILogInService
             if (result.Succeeded)
             {
                 await _userManager.ResetAccessFailedCountAsync(user);
-                return await Task.FromResult(true);
+                return (false, null);
             }
             else
             {
                 int failcount = await _userManager.GetAccessFailedCountAsync(user);
                 if (result.IsLockedOut)
-                    throw new Exception("After 3 unsuccessful attempts your account is locked for 1 minute.");
+                {
+                    var remainingLockoutTime = await _userManager.GetLockoutEndDateAsync(user);
+                    if (remainingLockoutTime.HasValue)
+                    {
+                        var timeRemaining = remainingLockoutTime.Value - DateTimeOffset.UtcNow;
+                        return (true, timeRemaining);
+                    }
+                    else
+                    {
+                        return (true, null);
+                    }
+                }
                 else
+                {
                     throw new Exception("Password is wrong. Check and try again.");
+                }
             }
         }
 
         throw new Exception("Such user not exist");
     }
+
 
     public async Task SignOutAsync() => await _signInManager.SignOutAsync();
 

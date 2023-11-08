@@ -8,7 +8,7 @@ namespace Voltage.Business.Services.Abstract;
 
 public interface ILogInService
 {
-    Task<bool> LogInAsync(LogInViewModel model);
+    Task<(bool IsLocked, TimeSpan? RemainingLockoutTime)> LogInAsync(LogInViewModel model);
     Task SignOutAsync();
     Task<AuthenticationProperties> GetExternalLoginProperties(string redirectUrl);
     Task<ExternalLoginInfo> GetExternalLoginInfoAsync();

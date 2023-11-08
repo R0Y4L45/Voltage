@@ -135,14 +135,22 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Login(LogInViewModel model)
+    public async Task<IActionResult> Login(LogInViewModel model)
     {
         if (ModelState.IsValid)
         {
             try
             {
-                if (_logInService.LogInAsync(model).Result!)
+                var (isLocked, remainingLockoutTime) = await _logInService.LogInAsync(model);
+                if (isLocked)
+                {
+                    ViewBag.RemainingLockoutTime = remainingLockoutTime;
+                    return View("Login");
+                }
+                else
+                {
                     return RedirectToAction("index", "MainPage", new { area = "User" });
+                }
             }
             catch (Exception ex)
             {
@@ -151,7 +159,6 @@ public class AccountController : Controller
                 ModelState.AddModelError("Error", ex.Message);
             }
         }
-
         return View();
     }
 

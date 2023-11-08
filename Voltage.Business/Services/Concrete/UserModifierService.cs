@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Entity;
@@ -50,5 +51,11 @@ public class UserModifierService : IUserModifierService
     public async Task<IdentityResult> AddToRoleAsync(User user, string roleName)
     {
         return await _userManager.AddToRoleAsync(user, roleName);
+    }
+
+    public async Task<List<User>> GetAllUsers()
+    {
+        var users = await _userManager.Users.ToListAsync();
+        return users;
     }
 }
