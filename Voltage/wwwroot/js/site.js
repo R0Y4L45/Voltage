@@ -1,4 +1,8 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿window.onload = function () {
+    var appContainer = document.getElementById('app');
 
-// Write your JavaScript code.
+    appContainer.style.display = 'none';
+};
+
+window.onbeforeunload = function () {
+};

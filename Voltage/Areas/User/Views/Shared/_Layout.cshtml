@@ -15,7 +15,7 @@
     <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body>
-    <script src="dist/js/demo-theme.min.js?1692870487"></script>
+    <script src="dist/js/demo-theme.min.js"></script>
     <div class="page page-center" id="app">
         <div class="container container-slim py-4">
             <div class="text-center">
@@ -60,18 +60,7 @@
         </div>
     </div>
 
-    <script>
-        window.onload = function () {
-            var appContainer = document.getElementById('app');
-
-            appContainer.style.display = 'none';
-        };
-
-        window.onbeforeunload = function () {
-        };
-    </script>
-
- 
+    <script src="/js/site.js" defer asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     <!--js lib-->
