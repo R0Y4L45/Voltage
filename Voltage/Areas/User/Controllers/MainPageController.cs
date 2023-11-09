@@ -33,7 +33,10 @@ public class MainPageController : Controller
     }
 
     [HttpGet]
-    public IActionResult Profile()=>View();
+    public IActionResult Profile() => View();
+
+    [HttpGet]
+    public IActionResult Settings() => View();
 
     #region Mesages
     [HttpPost]
