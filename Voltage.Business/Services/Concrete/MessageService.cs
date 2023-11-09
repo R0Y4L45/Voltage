@@ -14,25 +14,26 @@ public class MessageService : IMessageService
         _context = context;
     }
 
-    public void Add(Message entity)
+    public async Task<int> AddAsync(Message entity)
     {
-        _context?.Add(entity);
-        _context?.SaveChanges();
+        _context?.AddAsync(entity);
+        return await _context!.SaveChangesAsync();
     }
+
 
     public void Delete(Message entity)
     {
         throw new NotImplementedException();
     }
 
-    public Message Get(Expression<Func<Message, bool>> filter = null)
+    public Message Get(Expression<Func<Message, bool>> filter = null!)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Message> GetList(Expression<Func<Message, bool>> filter = null)
+    public async Task<IEnumerable<Message>> GetListAsync(Expression<Func<Message, bool>> filter = null!)
     {
-        throw new NotImplementedException();
+        return await Task.FromResult(filter == null ? _context.Message! : _context.Message!.Where(filter));
     }
 
     public bool Update(Message entity)

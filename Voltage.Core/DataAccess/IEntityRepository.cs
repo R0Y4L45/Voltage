@@ -9,8 +9,8 @@ public interface IEntityRepository<TEntity, TContext>
     where TContext : DbContext
 {
     TEntity Get(Expression<Func<TEntity, bool>> filter = null!);
-    IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> filter = null!);
-    void Add(TEntity entity);
+    Task<IEnumerable<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> filter = null!);
+    Task<int> AddAsync(TEntity entity);
     void Delete(TEntity entity);
     bool Update(TEntity entity);
 }

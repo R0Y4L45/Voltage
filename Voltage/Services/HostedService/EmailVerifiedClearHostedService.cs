@@ -18,7 +18,7 @@ public class EmailVerifiedClearHostedService : IHostedService, IDisposable
     {
         _userModifier = _provider.CreateScope().ServiceProvider.GetService<IUserModifierService>();
 
-        foreach (var item in _userModifier!.GetList())
+        foreach (var item in _userModifier!.GetListAsync().Result)
             if(!item.EmailConfirmed)
                 _userModifier.Delete(item);
         //Console.WriteLine("User was deleted => " + DateTime.Now.ToString());

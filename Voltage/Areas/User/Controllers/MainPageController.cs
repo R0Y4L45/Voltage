@@ -36,23 +36,29 @@ public class MainPageController : Controller
         if (name != "null")
             return Json(_signUpService?.GetUserByName(name)?.Result.Id);
 
-        return Json("null") ;
+        return Json("null");
     }
 
     [HttpPost]
     public async Task<IActionResult> AcceptMessage([FromBody] MessageAcceptModel message)
     {
-        var sender = (await _signUpService.GetUserByName(message.Sender!)).Id;
-        var receiver = (await _signUpService.GetUserByName(message.Receiver!)).Id;
-        var m = new Entities.Entity.Message
-        {
-            SenderId = sender,
-            ReceiverId = receiver,
-            Content = message.Message ?? string.Empty
-        };
+        if (message.Sender != null && message.Receiver != null)
+            return Json(await _messageService.AddAsync(new Entities.Entity.Message
+            {
+                SenderId = message.Sender,
+                ReceiverId = message.Receiver,
+                Content = message.Message ?? string.Empty
+            }));
 
-        _messageService.Add(m);
+        return await Task.FromResult(Json(string.Empty));
+    }
 
-        return Json("null");
+    [HttpPost]
+    public async Task<IActionResult> TakeMessages([FromBody] string receiver)
+    {
+        string senderId = (await _signUpService.GetUserByName(User.Identity?.Name!)).Id,
+            recId = (await _signUpService.GetUserByName(receiver)).Id;
+
+        return Json(await _messageService.GetListAsync(_ => _.ReceiverId == recId && _.SenderId == senderId));
     }
 }
