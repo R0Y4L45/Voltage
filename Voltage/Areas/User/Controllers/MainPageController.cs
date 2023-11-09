@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Models;
+using Voltage.Entities.Models.ViewModels;
 
 namespace Voltage.Areas.User.Controllers;
 
@@ -11,11 +14,13 @@ public class MainPageController : Controller
 {
     private readonly ISignUpService _signUpService;
     private readonly IMessageService _messageService;
+    private readonly IMapper _mapper;
 
-    public MainPageController(ISignUpService signUpService, IMessageService messageService)
+    public MainPageController(ISignUpService signUpService, IMessageService messageService, IMapper mapper)
     {
         _signUpService = signUpService;
         _messageService = messageService;
+        _mapper = mapper;
     }
 
     public IActionResult Index()
@@ -59,6 +64,11 @@ public class MainPageController : Controller
         string senderId = (await _signUpService.GetUserByName(User.Identity?.Name!)).Id,
             recId = (await _signUpService.GetUserByName(receiver)).Id;
 
-        return Json(await _messageService.GetListAsync(_ => _.ReceiverId == recId && _.SenderId == senderId));
+        var d = (await _messageService.GetListAsync(_ => _.ReceiverId == recId && _.SenderId == senderId)).ToList();
+        List<MessageDto> messages = new List<MessageDto>();
+        foreach (var item in d)
+            messages.Add(_mapper.Map<MessageDto>(item));
+
+        return Json(messages);
     }
 }

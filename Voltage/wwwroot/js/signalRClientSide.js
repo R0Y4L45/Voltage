@@ -41,8 +41,8 @@ document.getElementById("sendToUser").addEventListener("click", async function (
 });
 
 async function ClickToMessage(username) {
-    let data = JSON.stringify(username), id, list;
-    await fetch('GetUserId', {
+    let data = JSON.stringify(username);
+    var d = await fetch('GetUserId', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -50,22 +50,24 @@ async function ClickToMessage(username) {
         body: data
     })
         .then(response => response.json())
-        .then(data => id = document.getElementById("receiverId").value = data)
+        .then(data => document.getElementById("receiverId").value = data)
         .catch(error => console.error(error));
 
-    list = await fetch('TakeMessages', {
+    var list = await FetchGetList(username);
+    console.log(list);
+}
+
+async function FetchGetList(receiver) {
+    return await fetch('TakeMessages', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: data
+        body: JSON.stringify(receiver)
     })
         .then(response => response.json())
-        .then(d => console.log(d))
+        .then(data => data)
         .catch(error => console.error(error));
-
-    if (list != null)
-        console.log(list);
 }
 
 async function MessageSaver(message, sender, receiver) {
