@@ -6,16 +6,16 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>@ViewData["Title"] - Voltage</title>
 
-    <link href="dist/css/tabler.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="dist/css/tabler-flags.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="dist/css/tabler-payments.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="dist/css/tabler-vendors.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="dist/css/demo.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/Voltage.styles.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+    
+    <link href="~/dist/css/tabler.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/dist/css/tabler-flags.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/dist/css/tabler-payments.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/dist/css/tabler-vendors.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/dist/css/demo.min.css" rel="stylesheet" asp-append-version="true"/>
+    <link href="/css/site.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body>
-    <script src="dist/js/demo-theme.min.js"></script>
+    <script src="~/dist/js/demo-theme.min.js"></script>
     <div class="page page-center" id="app">
         <div class="container container-slim py-4">
             <div class="text-center">
@@ -60,18 +60,18 @@
         </div>
     </div>
 
-    <script src="/js/site.js" defer asp-append-version="true"></script>
+    <script src="~/js/site.js" defer asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     <!--js lib-->
-    <script src="dist/libs/apexcharts/dist/apexcharts.min.js?1692870487" defer asp-append-version="true"></script>
-    <script src="dist/libs/jsvectormap/dist/js/jsvectormap.min.js?1692870487" defer asp-append-version="true"></script>
-    <script src="dist/libs/jsvectormap/dist/maps/world.js?1692870487" defer asp-append-version="true"></script>
-    <script src="dist/libs/jsvectormap/dist/maps/world-merc.js?1692870487" defer asp-append-version="true"></script>
+    <script src="~/dist/libs/apexcharts/dist/apexcharts.min.js?1692870487" defer asp-append-version="true"></script>
+    <script src="~/dist/libs/jsvectormap/dist/js/jsvectormap.min.js?1692870487" defer asp-append-version="true"></script>
+    <script src="~/dist/libs/jsvectormap/dist/maps/world.js?1692870487" defer asp-append-version="true"></script>
+    <script src="~/dist/libs/jsvectormap/dist/maps/world-merc.js?1692870487" defer asp-append-version="true"></script>
 
     <!--  -->
-    <script src="dist/js/tabler.min.js?1692870487" defer asp-append-version="true"></script>
-    <script src="dist/js/demo.min.js?1692870487" defer asp-append-version="true"></script>
+    <script src="~/dist/js/tabler.min.js?1692870487" defer asp-append-version="true"></script>
+    <script src="~/dist/js/demo.min.js?1692870487" defer asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

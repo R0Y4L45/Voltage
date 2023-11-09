@@ -4,7 +4,6 @@ using System.Diagnostics;
 using Voltage.Entities.Entity;
 using Voltage.Core.Models;
 using Voltage.Entities.Models.ViewModels;
-using Voltage.Entities.Models;
 using Voltage.Business.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -29,12 +28,16 @@ public class AccountController : Controller
 
     [HttpGet]
     public IActionResult Login() => View();
+
     [HttpGet]
     public IActionResult SignUp() => View();
+
     [HttpGet]
     public IActionResult ForgotPassword() => View();
+
     [HttpGet]
     public IActionResult TermsPolicy() => View();
+
 
     [HttpGet]
     public async Task<IActionResult> Logout()

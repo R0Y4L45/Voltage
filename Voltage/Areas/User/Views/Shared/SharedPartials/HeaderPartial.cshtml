@@ -57,12 +57,11 @@
                     <span class="avatar avatar-sm" style="background-image: url('@TempData["ProfilePhoto"]')"></span>
                     <div class="d-none d-xl-block ps-2">
                         <div>@User!.Identity!.Name</div>
-                        <div class="mt-1 small text-secondary">UI Designer</div>
+                        <div class="mt-1 small text-secondary">@User.Identity.IsAuthenticated</div>
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <a href="#" class="dropdown-item">Status</a>
-                    <a href="./profile.html" class="dropdown-item">Profile</a>
+                    <a asp-area="User" asp-controller="MainPage" asp-action="Profile" class="dropdown-item">Profile</a>
                     <a href="#" class="dropdown-item">Feedback</a>
                     <div class="dropdown-divider"></div>
                     <a href="./settings.html" class="dropdown-item">Settings</a>

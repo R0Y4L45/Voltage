@@ -18,6 +18,7 @@ public class MainPageController : Controller
         _messageService = messageService;
     }
 
+    [HttpGet]
     public IActionResult Index()
     {
         TempData["ProfilePhoto"] = _signUpService.GetUserByName(User.Identity?.Name!).Result.Photo;
@@ -25,11 +26,16 @@ public class MainPageController : Controller
         return View();
     }
 
+    [HttpGet]
     public IActionResult Message()
     {
         return View(_signUpService.GetAllUsers().Result);
     }
 
+    [HttpGet]
+    public IActionResult Profile()=>View();
+
+    #region Mesages
     [HttpPost]
     public IActionResult GetUserId([FromBody] string name = "null")
     {
@@ -55,4 +61,5 @@ public class MainPageController : Controller
 
         return Json("null");
     }
+    #endregion
 }
