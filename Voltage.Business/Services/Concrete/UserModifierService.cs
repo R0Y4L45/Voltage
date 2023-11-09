@@ -35,8 +35,6 @@ public class UserModifierService : IUserModifierService
         throw new NotImplementedException();
     }
 
-    public IEnumerable<User> GetList(Expression<Func<User, bool>> filter = null!) => _userManager.Users.ToList();
-
     public async Task<bool> IsUsernameExistsAsync(string username)
     {
         var user = await _userManager.FindByNameAsync(username);
@@ -57,5 +55,15 @@ public class UserModifierService : IUserModifierService
     {
         var users = await _userManager.Users.ToListAsync();
         return users;
+    }
+
+    public Task<int> AddAsync(User entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<User>> GetListAsync(Expression<Func<User, bool>> filter = null!)
+    {
+        return await Task.FromResult(filter == null ? _userManager.Users : _userManager.Users.Where(filter)); 
     }
 }

@@ -8,6 +8,7 @@ using Voltage.Entities.Models;
 using Voltage.Helper.Validations;
 using Voltage.Services.HostedService;
 using Voltage.Hubs;
+using Voltage.Helper;
 
 namespace Voltage;
 
@@ -17,7 +18,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
         builder.Services.Configure<DataProtectionTokenProviderOptions>(_ => _.TokenLifespan = TimeSpan.FromHours(1));
         builder.Services.ConfigureApplicationCookie(_=> _.ExpireTimeSpan = TimeSpan.FromHours(1));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
@@ -48,7 +49,6 @@ public class Program
             _.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
         });
 
-
         EmailConfiguration emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
         builder.Services.AddSingleton(emailConfig);
         builder.Services.AddSingleton<IEmailService, EmailService>();
@@ -59,6 +59,8 @@ public class Program
         builder.Services.AddSignalR();
         builder.Services.AddAuthentication();
         builder.Services.AddHostedService<EmailVerifiedClearHostedService>();
+        builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+        
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())
