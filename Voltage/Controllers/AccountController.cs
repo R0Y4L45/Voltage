@@ -67,7 +67,7 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> ExternalLogin(string returnUrl)
     {
-        var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "",  returnUrl });
+        var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "", returnUrl });
         return new ChallengeResult("Google", await _signInManagerService.GetExternalLoginProperties("Google", redirectUrl!));
     }
 
@@ -97,10 +97,10 @@ public class AccountController : Controller
         }
 
         var existsUser = await _userManagerService.FindByLoginAsync(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
-        if(existsUser != null)
+        if (existsUser != null)
         {
             var signInResult = await _signInManagerService.ExternalLoginSignInAsync(externalLoginInfo);
-            if(signInResult.Succeeded)
+            if (signInResult.Succeeded)
             {
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     return Redirect(returnUrl);
@@ -116,13 +116,13 @@ public class AccountController : Controller
             var generatedUsername = await usernameGenerator.GenerateRandomUsername(userName);
 
             var user = new User { UserName = generatedUsername, Email = userEmail };
-            
+
 
             var createdResult = _userManagerService.CreateAsync(user).Result;
-            if(createdResult.Succeeded)
+            if (createdResult.Succeeded)
             {
                 var addLoginResult = _userManagerService.AddLoginAsync(user, externalLoginInfo).Result;
-                if(addLoginResult.Succeeded)
+                if (addLoginResult.Succeeded)
                 {
                     await _userManagerService.AddToRoleAsync(user, "User");
                     string? token = await _userManagerService.GenerateEmailTokenAsync(await _userManagerService.FindByEmailAsync(user.Email)),
@@ -136,7 +136,7 @@ public class AccountController : Controller
                 }
             }
         }
-        return RedirectToAction("Login");
+        return RedirectToAction("Login", new { area = "" });
     }
 
     [HttpPost]
@@ -151,7 +151,7 @@ public class AccountController : Controller
                 if (isLocked)
                 {
                     ViewBag.RemainingLockoutTime = remainingLockoutTime;
-                    return View("Login");
+                    return View("Login", new { area = "" });
                 }
                 else
                 {
@@ -160,8 +160,6 @@ public class AccountController : Controller
             }
             catch (Exception ex)
             {
-                //bu errror sehifeye yonlendirmemelidir. Bunu ele-bele qoymusam burada sene men message gonderecem sen onu login terefde gostereceksen...)
-                //return RedirectToAction("error", new { area = "", message = ex.Message });
                 ModelState.AddModelError("Error", ex.Message);
             }
         }
@@ -197,8 +195,6 @@ public class AccountController : Controller
         }
         catch (Exception ex)
         {
-            //yuxarida oldugu kimi message sene gonderilir sen ekranaa verirsen...
-            //return RedirectToAction("error", new { area = "" });
             ModelState.AddModelError("Error", ex.Message);
         }
 
@@ -258,7 +254,7 @@ public class AccountController : Controller
                         ModelState.AddModelError("Errors", _.Description);
                     });
                 }
-                
+
                 ModelState.AddModelError("PasswordErrors", "Password was used");
             }
 
@@ -268,7 +264,6 @@ public class AccountController : Controller
         return View(model);
     }
 
-    //Isetesen Error page yaza bilersen ki, user, admin ve ya her hansi bir methoda sehv bir sey gonderilen zaman bu sehife erroru gostersin...
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error(string message)
     {
