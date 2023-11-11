@@ -4,11 +4,11 @@ namespace Voltage.Business.CustomHelpers;
 
 public class GenerateUserName
 {
-    private readonly IUserModifierService _userModifierService;
+    private readonly IUserManagerService _userManagerService;
 
-    public GenerateUserName(IUserModifierService userModifierService)
+    public GenerateUserName(IUserManagerService userManagerService)
     {
-        _userModifierService = userModifierService;
+        _userManagerService = userManagerService;
     }
 
     public async Task<string> GenerateRandomUsername(string originalName, int minLength = 8)
@@ -28,13 +28,11 @@ public class GenerateUserName
             username += allowedChars[random.Next(0, allowedChars.Length)];
             username += allowedNumbers[random.Next(0, allowedNumbers.Length)];
         }
-        while (await _userModifierService.IsUsernameExistsAsync(username))
+        while (await _userManagerService.FindByNameAsync(username) is not null)
         {
             username = baseName; 
             while (username.Length < minLength)
-            {
                 username += allowedChars[random.Next(0, allowedChars.Length)];
-            }
         }
 
         return username;

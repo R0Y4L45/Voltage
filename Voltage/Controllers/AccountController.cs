@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Voltage.Business.CustomHelpers;
 using Voltage.Entities.Models.HelperModels;
+using Voltage.Services.Abstract;
 
 namespace Voltage.Controllers;
 
@@ -16,14 +17,16 @@ public class AccountController : Controller
     private readonly ISignUpService _signUpService;
     private readonly ILogInService _logInService;
     private readonly IEmailService _emailService;
-    private readonly IUserModifierService _userModifierService;
+    private readonly IUserManagerService _userManagerService;
+    private readonly ISignInManagerService _signInManagerService;
 
-    public AccountController(ISignUpService signUpService, ILogInService logInService, IEmailService emailService, IUserModifierService userModifierService)
+    public AccountController(ISignUpService signUpService, ILogInService logInService, IEmailService emailService, IUserManagerService userManagerService, ISignInManagerService signInManagerService)
     {
         _signUpService = signUpService;
         _logInService = logInService;
         _emailService = emailService;
-        _userModifierService = userModifierService;
+        _userManagerService = userManagerService;
+        _signInManagerService = signInManagerService;
     }
 
     [HttpGet]
@@ -42,16 +45,16 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> Logout()
     {
-        await _logInService.SignOutAsync();
+        await _signInManagerService.SignOutAsync();
         return RedirectToAction("Login", "Account", new { area = "" });
     }
 
     [HttpGet]
     public async Task<IActionResult> ConfirmEmail(string token, string email)
     {
-        if (await _signUpService.GetUserByEmailAsync(email) is User user)
+        if (await _userManagerService.FindByEmailAsync(email) is User user)
         {
-            if ((await _signUpService.ConfirmEmailAsync(user, token)).Succeeded)
+            if ((await _userManagerService.ConfirmEmailAsync(user, token)).Succeeded)
             {
                 SignUpViewModel model = new SignUpViewModel { UserName = user.UserName };
                 return View("SuccessPage", model);
@@ -65,7 +68,7 @@ public class AccountController : Controller
     public async Task<IActionResult> ExternalLogin(string returnUrl)
     {
         var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "",  returnUrl });
-        return new ChallengeResult("Google", await _logInService.GetExternalLoginProperties(redirectUrl!));
+        return new ChallengeResult("Google", await _signInManagerService.GetExternalLoginProperties("Google", redirectUrl!));
     }
 
     [AllowAnonymous]
@@ -77,14 +80,14 @@ public class AccountController : Controller
             return RedirectToAction("Login");
         }
 
-        var externalLoginInfo = _logInService.GetExternalLoginInfoAsync().Result;
+        ExternalLoginInfo externalLoginInfo = await _signInManagerService.GetExternalLoginInfoAsync();
 
         if (externalLoginInfo == null)
         {
             return RedirectToAction(nameof(Error));
         }
 
-        var result = _logInService.ExternalLoginSignInAsync(externalLoginInfo).Result;
+        var result = await _signInManagerService.ExternalLoginSignInAsync(externalLoginInfo);
         if (result.Succeeded)
         {
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -93,10 +96,10 @@ public class AccountController : Controller
                 return RedirectToAction("index", "MainPage", new { area = "User" });
         }
 
-        var existsUser = await _logInService.FindByLoginAsync(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
+        var existsUser = await _userManagerService.FindByLoginAsync(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
         if(existsUser != null)
         {
-            var signInResult = _logInService.ExternalLoginSignInAsync(externalLoginInfo).Result;
+            var signInResult = await _signInManagerService.ExternalLoginSignInAsync(externalLoginInfo);
             if(signInResult.Succeeded)
             {
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -109,20 +112,20 @@ public class AccountController : Controller
         {
             var userEmail = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email);
             var userName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Name);
-            var usernameGenerator = new GenerateUserName(_userModifierService);
+            var usernameGenerator = new GenerateUserName(_userManagerService);
             var generatedUsername = await usernameGenerator.GenerateRandomUsername(userName);
 
             var user = new User { UserName = generatedUsername, Email = userEmail };
             
 
-            var createdResult = _userModifierService.CreateAsync(user).Result;
+            var createdResult = _userManagerService.CreateAsync(user).Result;
             if(createdResult.Succeeded)
             {
-                var addLoginResult = _logInService.AddLoginAsync(user, externalLoginInfo).Result;
+                var addLoginResult = _userManagerService.AddLoginAsync(user, externalLoginInfo).Result;
                 if(addLoginResult.Succeeded)
                 {
-                    await _userModifierService.AddToRoleAsync(user, "User");
-                    string? token = await _signUpService.GenerateEmailTokenAsync(await _signUpService.GetUserByEmailAsync(user.Email)),
+                    await _userManagerService.AddToRoleAsync(user, "User");
+                    string? token = await _userManagerService.GenerateEmailTokenAsync(await _userManagerService.FindByEmailAsync(user.Email)),
                     callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
 
                     E_Message message = new E_Message(new string[] { user.Email }, "Confirmation Email Link", callbackUrl!);
@@ -176,7 +179,7 @@ public class AccountController : Controller
                 IdentityResult result = await _signUpService.SignUpAsync(model);
                 if (result.Succeeded)
                 {
-                    string? token = await _signUpService.GenerateEmailTokenAsync(await _signUpService.GetUserByEmailAsync(model.Email)),
+                    string? token = await _userManagerService.GenerateEmailTokenAsync(await _userManagerService.FindByEmailAsync(model.Email)),
                     callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = model.Email }, Request.Scheme);
 
                     E_Message message = new E_Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
@@ -208,9 +211,9 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            if (await _signUpService.GetUserByEmailAsync(model.Email) is User user)
+            if (await _userManagerService.FindByEmailAsync(model.Email) is User user)
             {
-                string? token = await _signUpService.GenerateResetTokenAsync(user),
+                string? token = await _userManagerService.GenerateResetTokenAsync(user),
                     newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
                 E_Message message = new E_Message(new string[] { user.Email }, "Forgot password link", newlink!);
 
@@ -241,11 +244,11 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            if (_signUpService.GetUserByEmailAsync(model.Email).Result is User user)
+            if (_userManagerService.FindByEmailAsync(model.Email).Result is User user)
             {
-                if (!await _signUpService.CheckPasswordAsync(user, model.Password))
+                if (!await _userManagerService.CheckPasswordAsync(user, model.Password))
                 {
-                    IdentityResult result = await _signUpService.ResetPasswordAsync(user, model.Token, model.Password);
+                    IdentityResult result = await _userManagerService.ResetPasswordAsync(user, model.Token, model.Password);
 
                     if (result.Succeeded)
                         return View("ResetPasswordConfirmation");

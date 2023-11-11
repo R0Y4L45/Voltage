@@ -9,6 +9,8 @@ using Voltage.Services.HostedService;
 using Voltage.Hubs;
 using Voltage.Helper;
 using Voltage.Entities.Models.HelperModels;
+using Voltage.Services.Abstract;
+using Voltage.Services.Concrete;
 
 namespace Voltage;
 
@@ -55,7 +57,8 @@ public class Program
         builder.Services.AddScoped<IMessageService, MessageService>();
         builder.Services.AddScoped<ISignUpService, SignUpService>();
         builder.Services.AddScoped<ILogInService, LogInService>();
-        builder.Services.AddScoped<IUserModifierService, UserModifierService>();
+        builder.Services.AddScoped<IUserManagerService, UserManagerService>();
+        builder.Services.AddScoped<ISignInManagerService, SignInManagerService>();
         builder.Services.AddSignalR();
         builder.Services.AddAuthentication();
         builder.Services.AddHostedService<EmailVerifiedClearHostedService>();

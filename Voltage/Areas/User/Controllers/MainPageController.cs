@@ -10,28 +10,28 @@ namespace Voltage.Areas.User.Controllers;
 [Authorize(Roles = "User, Admin")]
 public class MainPageController : Controller
 {
-    private readonly ISignUpService _signUpService;
+    private readonly IUserManagerService _userManagerService;
     private readonly IMessageService _messageService;
     private readonly IMapper _mapper;
 
-    public MainPageController(ISignUpService signUpService, IMessageService messageService, IMapper mapper)
+    public MainPageController(IMessageService messageService, IMapper mapper, IUserManagerService userManagerService)
     {
-        _signUpService = signUpService;
         _messageService = messageService;
         _mapper = mapper;
+        _userManagerService = userManagerService;
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        TempData["ProfilePhoto"] = _signUpService.GetUserByName(User.Identity?.Name!).Result.Photo;
+        TempData["ProfilePhoto"] = (await _userManagerService.FindByNameAsync(User.Identity?.Name!)).Photo;
         return View();
     }
 
     [HttpGet]
-    public IActionResult Message()
+    public async Task<IActionResult> Message()
     {
-        return View(_signUpService.GetAllUsers().Result);
+        return View(await _userManagerService.GetAllUsers());
     }
 
     [HttpGet]
@@ -41,11 +41,12 @@ public class MainPageController : Controller
     public IActionResult Settings() => View();
 
     #region Messages Api
+
     [HttpPost]
-    public IActionResult GetUserId([FromBody] string name = "null")
+    public async Task<IActionResult> GetUserId([FromBody] string name = "null")
     {
         if (name != "null")
-            return Json(_signUpService?.GetUserByName(name)?.Result.Id);
+            return Json((await _userManagerService.FindByNameAsync(name)).Id);
 
         return Json("null");
     }
@@ -67,8 +68,8 @@ public class MainPageController : Controller
     [HttpPost]
     public async Task<IActionResult> TakeMessages([FromBody] string receiver)
     {
-        string senderId = (await _signUpService.GetUserByName(User.Identity?.Name!)).Id,
-            recId = (await _signUpService.GetUserByName(receiver)).Id;
+        string senderId = (await _userManagerService.FindByNameAsync(User.Identity?.Name!)).Id,
+            recId = (await _userManagerService.FindByNameAsync(receiver)).Id;
 
         var d = (await _messageService.GetListAsync(_ => _.ReceiverId == recId && _.SenderId == senderId)).ToList();
         List<MessageDto> messages = new List<MessageDto>();
@@ -77,5 +78,6 @@ public class MainPageController : Controller
 
         return Json(messages);
     }
+
     #endregion
 }
