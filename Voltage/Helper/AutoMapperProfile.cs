@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Voltage.Entities.Models;
+using Voltage.Entities.Models.Dtos;
 
 namespace Voltage.Helper;
 

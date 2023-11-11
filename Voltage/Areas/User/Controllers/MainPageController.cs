@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using Voltage.Business.Services.Abstract;
-using Voltage.Entities.Models;
-using Voltage.Entities.Models.ViewModels;
+using Voltage.Entities.Models.Dtos;
 
 namespace Voltage.Areas.User.Controllers;
 
@@ -27,7 +25,6 @@ public class MainPageController : Controller
     public IActionResult Index()
     {
         TempData["ProfilePhoto"] = _signUpService.GetUserByName(User.Identity?.Name!).Result.Photo;
-
         return View();
     }
 
@@ -43,7 +40,7 @@ public class MainPageController : Controller
     [HttpGet]
     public IActionResult Settings() => View();
 
-    #region Mesages
+    #region Messages Api
     [HttpPost]
     public IActionResult GetUserId([FromBody] string name = "null")
     {
@@ -54,14 +51,14 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AcceptMessage([FromBody] MessageAcceptModel message)
+    public async Task<IActionResult> AcceptMessage([FromBody] MessageDto message)
     {
-        if (message.Sender != null && message.Receiver != null)
+        if (message.Sender != null && message.Receiver != null && message.Content != null)
             return Json(await _messageService.AddAsync(new Entities.Entity.Message
             {
                 SenderId = message.Sender,
                 ReceiverId = message.Receiver,
-                Content = message.Message ?? string.Empty
+                Content = message.Content
             }));
 
         return await Task.FromResult(Json(string.Empty));

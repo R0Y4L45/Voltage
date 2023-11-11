@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using Voltage.Core.Models;
+using Voltage.Entities.Models.ViewModels;
 
 namespace Voltage.Areas.Admin.Controllers;
 

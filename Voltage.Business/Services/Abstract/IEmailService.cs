@@ -1,9 +1,8 @@
-﻿using Voltage.Entities.Models;
+﻿using Voltage.Entities.Models.HelperModels;
 
-namespace Voltage.Business.Services.Abstract
+namespace Voltage.Business.Services.Abstract;
+
+public interface IEmailService
 {
-    public interface IEmailService
-    {
-        void SendEmail(Message message);
-    }
+    void SendEmail(E_Message message);
 }

@@ -75,15 +75,14 @@ async function MessageSaver(message, sender, receiver) {
         Message: message,
         Sender: sender,
         Receiver: receiver
-    },
-        data = JSON.stringify(object);
+    };
 
     await fetch('AcceptMessage', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: data
+        body: JSON.stringify(object)
     })
         .then(response => response.json())
         .then(data => data)

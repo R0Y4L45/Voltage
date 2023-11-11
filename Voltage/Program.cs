@@ -4,11 +4,11 @@ using Voltage.Business.Services.Concrete;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.DataBaseContext;
 using Voltage.Entities.Entity;
-using Voltage.Entities.Models;
 using Voltage.Helper.Validations;
 using Voltage.Services.HostedService;
 using Voltage.Hubs;
 using Voltage.Helper;
+using Voltage.Entities.Models.HelperModels;
 
 namespace Voltage;
 
