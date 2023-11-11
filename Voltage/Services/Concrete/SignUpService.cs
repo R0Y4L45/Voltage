@@ -38,11 +38,11 @@ public class SignUpService : ISignUpService
                     if (!await _roleManager.RoleExistsAsync("User"))
                     {
                         IdentityResult roleResult = await AddRole("User");
-                        if (roleResult.Succeeded)
-                            return await _userManagerService.AddToRoleAsync(user, "User");
-
-                        return roleResult;
+                        if (!roleResult.Succeeded)
+                            return roleResult;
                     }
+
+                    return await _userManagerService.AddToRoleAsync(user, "User");
                 }
 
                 return result;

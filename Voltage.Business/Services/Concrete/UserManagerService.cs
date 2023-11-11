@@ -29,7 +29,7 @@ public class UserManagerService : IUserManagerService
     public async Task<IdentityResult> CreateAsync(User user) =>
         await _userManager.CreateAsync(user);
     public async Task<IdentityResult> CreateAsync(User user, string password) =>
-        await _userManager.CreateAsync(user);
+        await _userManager.CreateAsync(user, password);
 
     public async Task<User> FindByLoginAsync(string loginProvider, string providerKey) =>
         await _userManager.FindByLoginAsync(loginProvider, providerKey);

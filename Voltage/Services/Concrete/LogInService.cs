@@ -26,7 +26,7 @@ public class LogInService : ILogInService
 
         if (user != null)
         {
-            SignInResult result = await _signInManagerService.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, lockoutOnFailure: true);
+            var result = await _signInManagerService.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, lockoutOnFailure: true);
             if (result.Succeeded)
             {
                 await _userManagerService.ResetAccessFailedCountAsync(user);
