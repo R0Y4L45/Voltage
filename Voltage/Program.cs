@@ -20,7 +20,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
         builder.Services.Configure<DataProtectionTokenProviderOptions>(_ => _.TokenLifespan = TimeSpan.FromHours(1));
         builder.Services.ConfigureApplicationCookie(_=> _.ExpireTimeSpan = TimeSpan.FromHours(1));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
@@ -81,22 +81,19 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.MapControllerRoute(
+        app.MapAreaControllerRoute(
             name: "UserArea",
-            pattern: "user/{controller=MainPage}/{action=Index}/{id?}",
-            defaults: new { area = "user" }
-            );
+            areaName: "User",
+            pattern: "user/{controller=MainPage}/{action=Index}/{id?}");
+
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Account}/{action=Login}/{id?}");
 
         app.MapControllerRoute(
             name: "adminArea",
             pattern: "foradmin/{controller=VoltageAdmin}/{action=Index}/{id?}",
-            defaults: new { area = "admin" }
-            );
-
-        app.MapControllerRoute(
-            name: "default",
-            pattern: "{controller=Account}/{action=Login}/{id?}"
-            );
+            defaults: new { area = "admin" });
 
         app.Run();
     }

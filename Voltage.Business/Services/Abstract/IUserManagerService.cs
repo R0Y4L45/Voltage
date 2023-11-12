@@ -12,6 +12,7 @@ public interface IUserManagerService
     Task<User> FindByLoginAsync(string loginProvider, string providerKey);
     Task<User> FindByEmailAsync(string email);
     Task<User> FindByNameAsync(string name);
+    Task<User> FindByIdAsync(string Id);
     Task<IEnumerable<User>> GetAllUsers(Expression<Func<User, bool>> filter = null!);
     Task<bool> CheckPasswordAsync(User user, string password);
     Task<string> GenerateResetTokenAsync(User user);
@@ -23,4 +24,5 @@ public interface IUserManagerService
     Task<IdentityResult> ResetAccessFailedCountAsync(User user);
     Task<DateTimeOffset?> GetLockoutEndDateAsync(User user);
     Task<IdentityResult> DeleteAsync(User user);
+    Task<IdentityResult> UpdateAsync(User user);
 }

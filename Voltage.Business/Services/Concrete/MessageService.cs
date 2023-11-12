@@ -32,9 +32,7 @@ public class MessageService : IMessageService
     }
 
     public async Task<IEnumerable<Message>> GetListAsync(Expression<Func<Message, bool>> filter = null!)
-    {
-        return await Task.FromResult(filter == null ? _context.Message! : _context.Message!.Where(filter));
-    }
+        =>await Task.FromResult(filter == null ? _context.Message! : _context.Message!.Where(filter));
 
     public bool Update(Message entity)
     {

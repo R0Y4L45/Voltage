@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Models.Dtos;
+using Voltage.Entities.Models.ViewModels;
 
 namespace Voltage.Areas.User.Controllers;
 
@@ -35,7 +36,47 @@ public class MainPageController : Controller
     }
 
     [HttpGet]
-    public IActionResult Profile() => View();
+    public async Task<IActionResult> Profile(string Id)
+    {
+        var user = await _userManagerService.FindByIdAsync(Id);
+        if (user == null)
+            return NotFound();
+        var viewmodel = new EditProfileViewModel
+        {
+            UserName = user.UserName,
+            Email = user.Email
+        };
+        return View(viewmodel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Profile(EditProfileViewModel viewModel) 
+    {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManagerService.FindByIdAsync(viewModel.Id);
+                if (user == null)
+                    return NotFound();
+
+                user.UserName = viewModel.UserName;
+                user.Email = viewModel.Email;
+
+                var result = await _userManagerService.UpdateAsync(user);
+                if(!result.Succeeded)
+                {
+                    return BadRequest();
+                }
+                return RedirectToAction("Profile", new { name = viewModel.UserName });
+            }
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
     [HttpGet]
     public IActionResult Settings() => View();

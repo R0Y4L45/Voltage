@@ -63,5 +63,11 @@ public class UserManagerService : IUserManagerService
     public async Task<IdentityResult> DeleteAsync(User user) =>
         await _userManager.DeleteAsync(user);
 
+    public async Task<IdentityResult> UpdateAsync(User user) => 
+        await _userManager.UpdateAsync(user);
+
+    public async Task<User> FindByIdAsync(string Id)=>
+        await _userManager.FindByIdAsync(Id);
+
     #endregion
 }
