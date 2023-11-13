@@ -3,7 +3,9 @@
 
 connection.on("ReceiveMessage", (user, message) => {
     let encodedMsg = user + ": " + message;
-    MessageCreater(encodedMsg, "left-item");
+
+    if (curUserId !== recUserId)
+        MessageCreater(encodedMsg, "left-item");
 });
 
 connection.start().then(() => {
