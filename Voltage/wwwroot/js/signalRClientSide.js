@@ -1,4 +1,5 @@
-﻿let connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").withAutomaticReconnect().build(), curUser, curUserId, recUserId;
+﻿let connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").withAutomaticReconnect().build(),
+    curUser, curUserId, recUserId, list = document.getElementById("messagesList");
 
 connection.on("ReceiveMessage", (user, message) => {
     let encodedMsg = user + ": " + message;
@@ -28,6 +29,8 @@ document.getElementById("sendToUser").addEventListener("click", async event => {
     await MessageSaver(message, curUserId, recUserId);
     MessageCreater(curUser + ": " + message, "right-item");
 
+    //Complete it
+    //message.value = null;
     event.preventDefault();
 });
 
@@ -43,13 +46,13 @@ async function ClickToUser(username) {
         .then(data => data)
         .catch(error => console.error(error));
 
-    (await FetchGetList(username)).forEach(i => {
-        if (i.sender == curUser)
-            MessageCreater(i.content, "left-item")
-        else
-            MessageCreater(i.content, "right-item")
-    });
+    arr = document.getElementById("messagesList");
+    arr.innerText = "";
+    (await FetchGetList(username)).forEach(i => i.sender == curUser
+        ? MessageCreater(i.sender + ': ' + i.content, "right-item")
+        : MessageCreater(i.sender + ': ' + i.content, "left-item"));
 
+    //Temporary created
     document.getElementById("receiverId").value = username;
 }
 
@@ -86,11 +89,9 @@ async function MessageSaver(message, sender, receiver) {
 }
 
 function MessageCreater(message, style) {
-    let li = document.createElement("li"),
-        list = document.getElementById("messagesList");
-
+    let li = document.createElement("li"), arr = document.getElementById("messagesList");
     li.textContent = message;
     li.classList.add(style);
 
-    list.appendChild(li);
+    arr.appendChild(li);
 }
