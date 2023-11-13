@@ -14,4 +14,5 @@ public class MessageHub : Hub
         await Clients.User(userId).SendAsync("ReceiveMessage", Context.User!.Identity!.Name, message);
     }
     public string GetConnectionId() => Context.UserIdentifier!;
+    public string GetUserName() => Context.User?.Identity?.Name!;
 }

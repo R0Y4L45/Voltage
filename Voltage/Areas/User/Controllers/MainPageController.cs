@@ -71,10 +71,9 @@ public class MainPageController : Controller
         string senderId = (await _userManagerService.FindByNameAsync(User.Identity?.Name!)).Id,
             recId = (await _userManagerService.FindByNameAsync(receiver)).Id;
 
-        var d = (await _messageService.GetListAsync(_ => _.ReceiverId == recId && _.SenderId == senderId)).ToList();
-        List<MessageDto> messages = new List<MessageDto>();
-        foreach (var item in d)
-            messages.Add(_mapper.Map<MessageDto>(item));
+        List<MessageDto> messages = _mapper.Map<List<MessageDto>>((await _messageService.GetListAsync(_
+            => _.ReceiverId == recId && _.SenderId == senderId
+                || _.ReceiverId == senderId && _.SenderId == recId)).OrderBy(_ => _.CreatedTime));
 
         return Json(messages);
     }

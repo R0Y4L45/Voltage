@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Voltage.Entities.Models.ViewModels
+namespace Voltage.Entities.Models.ViewModels;
+
+public class ForgotViewModel
 {
-    public class ForgotViewModel
-    {
-        [Required]
-        public string Email { get; set; } = null!;
-    }
+    [Required]
+    public string Email { get; set; } = null!;
 }
