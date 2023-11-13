@@ -1,8 +1,7 @@
-﻿namespace Voltage.Entities.Models.ViewModels
+﻿namespace Voltage.Entities.Models.ViewModels;
+
+public class ExternalLoginViewModel
 {
-    public class ExternalLoginViewModel
-    {
-        public string? Provider { get; set; } 
-        public string? RedirectUrl { get; set; }
-    }
+    public string? Provider { get; set; } 
+    public string? RedirectUrl { get; set; }
 }
