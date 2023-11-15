@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Voltage.Entities.Models.ViewModels
 {
@@ -10,6 +9,7 @@ namespace Voltage.Entities.Models.ViewModels
         [Required]
         [EmailAddress]
         public string Email { get; set; } = null!;
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string? Id { get; set; }
+        public DateTime DateOfBirth { get; set; }
     }
 }

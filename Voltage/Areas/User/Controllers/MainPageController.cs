@@ -44,7 +44,8 @@ public class MainPageController : Controller
         var viewmodel = new EditProfileViewModel
         {
             UserName = user.UserName,
-            Email = user.Email
+            Email = user.Email,
+            DateOfBirth = user.DateOfBirth,
         };
         return View(viewmodel);
     }
@@ -56,12 +57,13 @@ public class MainPageController : Controller
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManagerService.FindByIdAsync(viewModel.Id);
+                var user = await _userManagerService.FindByIdAsync(viewModel.Id!);
                 if (user == null)
                     return NotFound();
 
                 user.UserName = viewModel.UserName;
                 user.Email = viewModel.Email;
+                user.DateOfBirth = viewModel.DateOfBirth;
 
                 var result = await _userManagerService.UpdateAsync(user);
                 if(!result.Succeeded)

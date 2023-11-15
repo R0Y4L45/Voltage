@@ -1,4 +1,5 @@
-﻿@model EditProfileViewModel
+﻿@using System.Globalization;
+@model EditProfileViewModel
 
 <div class="page-body">
     <div class="container-xl">
@@ -39,32 +40,35 @@
                             <h3 class="card-title mt-4">Date of Birth</h3>
                             <p class="card-subtitle">Your date of birth</p>
                             <div>
+                                <input type="hidden" asp-for="DateOfBirth" id="hiddenDateOfBirth" />
                                 <div class="row g-2">
                                     <div class="col-5">
                                         <select id="month" name="user[month]" class="form-select">
-                                            <option value="">Month</option>
-                                            <option value="1">January</option>
-                                            <option value="2">February</option>
-                                            <option value="3">March</option>
-                                            <option value="4">April</option>
-                                            <option value="5">May</option>
-                                            <option value="6">June</option>
-                                            <option value="7">July</option>
-                                            <option value="8">August</option>
-                                            <option value="9">September</option>
-                                            <option value="10">October</option>
-                                            <option value="11">November</option>
-                                            <option value="12">December</option>
+                                            @for (int i = 1; i <= 12; i++)
+                                            {
+                                                var isSelected = Model.DateOfBirth.Month == i;
+                                                <option value="@i" selected="@isSelected">
+                                                    @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                                                </option>
+                                            }
                                         </select>
                                     </div>
                                     <div class="col-3">
                                         <select id="day" name="user[day]" class="form-select">
-                                            <option value="">Day</option>
+                                            @for (int i = 1; i <= 31; i++)
+                                            {
+                                                var isSelected = Model.DateOfBirth.Day == i;
+                                                <option value="@i" selected="@isSelected">@i</option>
+                                            }
                                         </select>
                                     </div>
                                     <div class="col-4">
                                         <select id="year" name="user[year]" class="form-select">
-                                            <option value="">Year</option>
+                                            @foreach (var year in Enumerable.Range(1945, 2005 - 1945 + 1).Reverse())
+                                            {
+                                                var isSelected = Model.DateOfBirth.Year == year;
+                                                <option value="@year" selected="@isSelected">@year</option>
+                                            }
                                         </select>
                                     </div>
                                 </div>
@@ -122,3 +126,48 @@
         </div>
     </div>
 </div>
+
+<script>
+    var monthSelect = document.getElementById("month");
+    var daySelect = document.getElementById("day");
+    var yearSelect = document.getElementById("year");
+    var hiddenDateOfBirthInput = document.getElementById("hiddenDateOfBirth");
+
+    function updateDays() {
+        var selectedMonth = monthSelect.value;
+        var selectedYear = yearSelect.value;
+
+        daySelect.innerHTML = "";
+
+        if (selectedMonth && selectedYear) {
+            var daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+
+            for (var i = 1; i <= daysInMonth; i++) {
+                var option = document.createElement("option");
+                option.value = i;
+                option.text = i;
+                daySelect.appendChild(option);
+            }
+        }
+        updateDateOfBirth();
+    }
+
+    function updateDateOfBirth() {
+        var selectedMonth = monthSelect.value;
+        var selectedYear = yearSelect.value;
+        var selectedDay = daySelect.value;
+
+        if (selectedMonth && selectedDay && selectedYear) {
+            var selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
+            var formattedDate = selectedDate.toISOString().split('T')[0];
+            hiddenDateOfBirthInput.value = formattedDate;
+        } else {
+            hiddenDateOfBirthInput.value = null;
+        }
+    }
+
+    monthSelect.addEventListener("change", updateDays);
+    yearSelect.addEventListener("change", updateDays);
+    daySelect.addEventListener("change", updateDateOfBirth);
+    updateDays();
+</script>
