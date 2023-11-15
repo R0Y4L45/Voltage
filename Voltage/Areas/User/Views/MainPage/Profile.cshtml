@@ -16,12 +16,13 @@
                                     <span class="avatar avatar-xl" style="background-image: url('@TempData["ProfilePhoto"]')"></span>
                                 </div>
                                 <div class="col-auto">
-                                    <a href="#" class="btn">
+                                    <a href="#" class="btn" id="changeAvatarBtn">
                                         Change avatar
                                     </a>
+                                    <input type="file" asp-for="Photo" id="avatarInput" />
                                 </div>
                                 <div class="col-auto">
-                                    <a href="#" class="btn btn-ghost-danger">
+                                    <a href="#" class="btn btn-ghost-danger" id="deleteAvatarBtn">
                                         Delete avatar
                                     </a>
                                 </div>
@@ -127,7 +128,10 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
+
+
     var monthSelect = document.getElementById("month");
     var daySelect = document.getElementById("day");
     var yearSelect = document.getElementById("year");
@@ -137,7 +141,7 @@
         var selectedMonth = monthSelect.value;
         var selectedYear = yearSelect.value;
 
-        daySelect.innerHTML = "";
+        daySelect.innerHTML;
 
         if (selectedMonth && selectedYear) {
             var daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();

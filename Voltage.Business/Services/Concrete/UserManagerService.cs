@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Linq.Expressions;
 using Voltage.Business.Services.Abstract;
+using Voltage.Entities.DataBaseContext;
 using Voltage.Entities.Entity;
 
 namespace Voltage.Business.Services.Concrete;
@@ -8,9 +9,13 @@ namespace Voltage.Business.Services.Concrete;
 public class UserManagerService : IUserManagerService
 {
     private readonly UserManager<User> _userManager;
+    private readonly VoltageDbContext _dbContext;
 
-    public UserManagerService(UserManager<User> userManager) =>
+    public UserManagerService(UserManager<User> userManager,VoltageDbContext dbContext)
+    {
         _userManager = userManager;
+        _dbContext = dbContext;
+    }
 
     #region Methods
 
@@ -69,5 +74,18 @@ public class UserManagerService : IUserManagerService
     public async Task<User> FindByIdAsync(string Id)=>
         await _userManager.FindByIdAsync(Id);
 
+    public async Task BeginTransactionAsync()=>
+        await _dbContext.Database.BeginTransactionAsync();
+    
+    public async Task CommitTransactionAsync()=>
+        await _dbContext.Database.CommitTransactionAsync();
+
+    public async Task RollbackTransactionAsync()=>
+        await _dbContext.Database.RollbackTransactionAsync();
+
+    public async Task<bool> IsEmailConfirmedAsync(User user)
+    {
+        return await _userManager.IsEmailConfirmedAsync(user);
+    }
     #endregion
 }

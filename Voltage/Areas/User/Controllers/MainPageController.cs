@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Voltage.Business.CustomHelpers;
 using Voltage.Business.Services.Abstract;
+using Voltage.Entities.Entity;
 using Voltage.Entities.Models.Dtos;
+using Voltage.Entities.Models.HelperModels;
 using Voltage.Entities.Models.ViewModels;
 
 namespace Voltage.Areas.User.Controllers;
@@ -13,13 +16,15 @@ public class MainPageController : Controller
 {
     private readonly IUserManagerService _userManagerService;
     private readonly IMessageService _messageService;
+    private readonly IEmailService _emailService;
     private readonly IMapper _mapper;
 
-    public MainPageController(IMessageService messageService, IMapper mapper, IUserManagerService userManagerService)
+    public MainPageController(IMessageService messageService, IMapper mapper, IUserManagerService userManagerService, IEmailService emailConfiguration)
     {
         _messageService = messageService;
         _mapper = mapper;
         _userManagerService = userManagerService;
+        _emailService = emailConfiguration;
     }
 
     [HttpGet]
@@ -51,26 +56,53 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Profile(EditProfileViewModel viewModel) 
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Profile(EditProfileViewModel viewModel)
     {
         try
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManagerService.FindByIdAsync(viewModel.Id!);
-                if (user == null)
-                    return NotFound();
-
-                user.UserName = viewModel.UserName;
-                user.Email = viewModel.Email;
-                user.DateOfBirth = viewModel.DateOfBirth;
-
-                var result = await _userManagerService.UpdateAsync(user);
-                if(!result.Succeeded)
+                try
                 {
-                    return BadRequest();
+                    var user = await _userManagerService.FindByIdAsync(viewModel.Id!);
+                    if (user == null)
+                        return NotFound();
+
+                    var oldEmail = user.Email;
+
+                    user.UserName = viewModel.UserName;
+                    user.DateOfBirth = viewModel.DateOfBirth;
+                    user.Photo = (viewModel.Photo != null) ? await UploadFileHelper.UploadFile(viewModel.Photo) : "https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg";
+
+                    if (user.Email != viewModel.Email)
+                    {
+                        user.EmailConfirmed = false;
+                        string? token = await _userManagerService.GenerateEmailTokenAsync(await _userManagerService.FindByEmailAsync(user.Email)),
+                        callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = viewModel.Email }, Request.Scheme);
+
+                        E_Message message = new E_Message(new string[] { viewModel.Email }, "Confirmation Email Link", callbackUrl!);
+                        _emailService.SendEmail(message);
+                        user.Email = viewModel.Email;
+                        await _userManagerService.UpdateAsync(user);
+                        return Redirect("Index");
+                        //string? token = await _userManagerService.GenerateEmailTokenAsync(user);
+                        //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "User", token, email = viewModel.Email }, Request.Scheme);
+                        //E_Message message = new E_Message(new string[] { viewModel.Email }, "Confirmation Email Link", callbackUrl!);
+                        //_emailService.SendEmail(message);
+                        //if (await _userManagerService.IsEmailConfirmedAsync(user))
+                        //    user.Email = viewModel.Email;
+                        //
+                        //else
+                        //    user.Email = oldEmail;
+                    }
+                    await _userManagerService.UpdateAsync(user);
+                    return RedirectToAction("Profile", new { name = viewModel.UserName });
                 }
-                return RedirectToAction("Profile", new { name = viewModel.UserName });
+                catch (Exception)
+                {
+                    throw;
+                }
             }
             return NotFound();
         }

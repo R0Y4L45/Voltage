@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Voltage.Entities.Models.ViewModels
 {
@@ -11,5 +12,6 @@ namespace Voltage.Entities.Models.ViewModels
         public string Email { get; set; } = null!;
         public string? Id { get; set; }
         public DateTime DateOfBirth { get; set; }
+        public IFormFile? Photo { get; set; }
     }
 }

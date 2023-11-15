@@ -25,4 +25,8 @@ public interface IUserManagerService
     Task<DateTimeOffset?> GetLockoutEndDateAsync(User user);
     Task<IdentityResult> DeleteAsync(User user);
     Task<IdentityResult> UpdateAsync(User user);
+    Task<bool> IsEmailConfirmedAsync(User user);
+    Task BeginTransactionAsync();
+    Task CommitTransactionAsync();
+    Task RollbackTransactionAsync();
 }

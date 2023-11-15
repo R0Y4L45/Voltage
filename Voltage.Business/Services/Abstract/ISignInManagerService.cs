@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Voltage.Entities.Entity;
 
 namespace Voltage.Business.Services.Abstract;
 
