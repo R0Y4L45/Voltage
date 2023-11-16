@@ -1,89 +1,77 @@
 ﻿@using Voltage.Entities.Entity;
 @model IEnumerable<User>
-@{
-    Layout = null;
-}
-<html>
-<head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
 
-        #messagsList {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .message {
-            max-width: 70%;
-            margin: 10px;
-            padding: 10px;
-            border-radius: 8px;
-            overflow: hidden;
-            max-height: 100px; /* Set a maximum height for the message container */
-        }
-
-        .sender {
-            background-color: #DCF8C6;
-            align-self: flex-end;
-            text-align: right;
-        }
-
-        .recipient {
-            background-color: #E5E5EA;
-            text-align: left;
-        }
-
-        .long-message {
-            font-size: 12px; /* Reduce font size for long messages */
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="row">
-            <ul>
-                @foreach (var item in Model)
-                {
-                    <li><a onclick="ClickToUser('@item.UserName')">@item.UserName</a></li>
-                }
-            </ul>
-        </div>
-        <div class="row">
-            <div class="col-3">Connection Id</div>
-            <div class="col-6"><span id="connectionId" /></div>
-        </div>
-        <div class="row">&nbsp;</div>
-        <div class="row">
-            <div class="col-2">Message</div>
-            <div class="col-4"><input type="text" id="messageInput" /></div>
-        </div>
-        <div class="row">
-            <div class="col-2">Receiver Id</div>
-            <div class="col-4"><input type="text" id="receiverId" /></div>
-        </div>
-
-        <div class="row">&nbsp;</div>
-        <div class="row">
-            <div class="col-6">
-                <input type="button" id="sendToUser" value="Send Message" />&nbsp;&nbsp;
-                <input type="button" id="sendButton" value="Send Message to All" />
+<div class="page-header d-print-none">
+    <div class="container-xl">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <h2 class="page-title">
+                    Chat
+                </h2>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <hr />
+</div>
+<div class="page-body">
+    <div class="container-xl">
+        <div class="card">
+            <div class="row g-0">
+                <div class="col-12 col-lg-5 col-xl-3 border-end">
+                    <div class="card-header d-none d-md-block">
+                        <div class="input-icon">
+                            <span class="input-icon-addon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+                            </span>
+                            <input type="text" value="" class="form-control" placeholder="Search…" aria-label="Search" />
+                        </div>
+                    </div>
+                    <div class="card-body p-0 scrollable" style="max-height: 35rem">
+                        <div class="nav flex-column nav-pills" role="tablist">
+                            @foreach (var item in Model)
+                            {
+                                <a href="#chat-@item.UserName" onclick="ClickToUser('@item.UserName')" class="nav-link text-start mw-100 p-3 active" id="chat-@item.UserName-tab" data-bs-toggle="pill" role="tab" aria-selected="true">
+                                    <div class="row align-items-center flex-fill">
+                                        <div class="col-auto">
+                                            <span class="avatar" style="background-image: url()"></span>
+                                        </div>
+                                        <div class="col text-body">
+                                            <div>@item.UserName</div>
+                                            <div class="text-secondary text-truncate w-100">son masaj.</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-7 col-xl-9 d-flex flex-column">
+                    <div class="card-body scrollable" style="height: 35rem">
+                        <div class="chat">
+                            <div class="chat-bubbles">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="input-group input-group-flat">
+                            <input type="text" class="form-control" autocomplete="off" id="messageInput" placeholder="Type message" />
+                            <span class="input-group-text">
+                                <a href="#" class="link-secondary" data-bs-toggle="tooltip" aria-label="Clear search" title="Clear search">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 10l.01 0" /><path d="M15 10l.01 0" /><path d="M9.5 15a3.5 3.5 0 0 0 5 0" /></svg>
+                                </a>
+                                <a href="#" class="link-secondary ms-2" data-bs-toggle="tooltip" aria-label="Add notification" title="Add notification">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5" /></svg>
+                                </a>
+                                <a href="#" class="link-secondary ms-2" data-bs-toggle="tooltip" aria-label="Add notification" title="Add notification">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5" /></svg>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
-    </div>
+</div>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.11/signalr.min.js"></script>
-    <script src="~/js/signalRClientSide.js"></script>
-</body>
-</html>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.11/signalr.min.js"></script>
+<script src="~/js/signalRClientSide.js"></script>
