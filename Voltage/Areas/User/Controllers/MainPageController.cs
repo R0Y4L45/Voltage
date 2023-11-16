@@ -51,6 +51,7 @@ public class MainPageController : Controller
             UserName = user.UserName,
             Email = user.Email,
             DateOfBirth = user.DateOfBirth,
+            PhotoUrl = user.Photo,
         };
         return View(viewmodel);
     }

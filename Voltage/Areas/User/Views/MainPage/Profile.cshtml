@@ -5,7 +5,7 @@
     <div class="container-xl">
         <div class="card">
             <div class="row g-0">
-                <form asp-area="User" asp-controller="MainPage" asp-action="Profile" method="post">
+                <form asp-area="User" asp-controller="MainPage" asp-action="Profile" method="post" enctype="multipart/form-data">
                     <input type="hidden" asp-for="Id"/>
                     <div class="col-12 col-md-9 d-flex flex-column">
                         <div class="card-body">
@@ -19,13 +19,8 @@
                                     <a href="#" class="btn" id="changeAvatarBtn">
                                         Change avatar
                                     </a>
-                                    <input type="file" asp-for="Photo" id="avatarInput" />
                                 </div>
-                                <div class="col-auto">
-                                    <a href="#" class="btn btn-ghost-danger" id="deleteAvatarBtn">
-                                        Delete avatar
-                                    </a>
-                                </div>
+                                <input type="file" asp-for="Photo" id="avatarInput" style="display: none;" />
                             </div>
                             <h3 class="card-title mt-4">Profile</h3>
                             <div class="row g-3">
@@ -169,6 +164,12 @@
             hiddenDateOfBirthInput.value = null;
         }
     }
+
+    $(document).ready(function () {
+        $("#changeAvatarBtn").click(function () {
+            $("#avatarInput").click();
+        });
+    });
 
     monthSelect.addEventListener("change", updateDays);
     yearSelect.addEventListener("change", updateDays);
