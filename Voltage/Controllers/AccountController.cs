@@ -210,7 +210,7 @@ public class AccountController : Controller
             if (await _userManagerService.FindByEmailAsync(model.Email) is User user)
             {
                 string? token = await _userManagerService.GenerateResetTokenAsync(user),
-                    newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
+                newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
                 E_Message message = new E_Message(new string[] { user.Email }, "Forgot password link", newlink!);
 
                 _emailService.SendEmail(message);

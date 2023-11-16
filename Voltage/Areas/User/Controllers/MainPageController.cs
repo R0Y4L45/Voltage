@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Voltage.Business.CustomHelpers;
 using Voltage.Business.Services.Abstract;
-using Voltage.Entities.Entity;
 using Voltage.Entities.Models.Dtos;
 using Voltage.Entities.Models.HelperModels;
 using Voltage.Entities.Models.ViewModels;
@@ -28,11 +27,8 @@ public class MainPageController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
-    {
-        TempData["ProfilePhoto"] = (await _userManagerService.FindByNameAsync(User.Identity?.Name!)).Photo;
-        return View();
-    }
+    public IActionResult Index() => View();
+    
 
     [HttpGet]
     public async Task<IActionResult> Message()

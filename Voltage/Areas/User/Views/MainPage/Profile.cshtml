@@ -13,7 +13,7 @@
                             <h3 class="card-title">Profile Details</h3>
                             <div class="row align-items-center">
                                 <div class="col-auto">
-                                    <span class="avatar avatar-xl" style="background-image: url('@TempData["ProfilePhoto"]')"></span>
+                                    <span class="avatar avatar-xl" style="background-image: url('')"></span>
                                 </div>
                                 <div class="col-auto">
                                     <a href="#" class="btn" id="changeAvatarBtn">
@@ -77,16 +77,16 @@
                                         <input type="text" class="form-control w-auto" asp-for="Email">
                                     </div>
                                     <div class="col-auto">
-                                        <a href="#" class="btn">
+                                        <button type="submit" href="#" class="btn">
                                             Change
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                             <h3 class="card-title mt-4">Password</h3>
                             <p class="card-subtitle">You can set a permanent password if you don't want to use temporary login codes.</p>
                             <div>
-                                <a href="#" class="btn">
+                                <a href="/Account/ForgotPassword" class="btn">
                                     Set new password
                                 </a>
                             </div>
