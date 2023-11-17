@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Voltage.Business.CustomHelpers;
 using Voltage.Business.Services.Abstract;
+using Voltage.Entities.Entity;
 using Voltage.Entities.Models.Dtos;
 using Voltage.Entities.Models.HelperModels;
 using Voltage.Entities.Models.ViewModels;
@@ -124,17 +125,17 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AcceptMessage([FromBody] MessageDto message)
+    public async Task<IActionResult> MessageSaver([FromBody] MessageDto message)
     {
         if (message.Sender != null && message.Receiver != null && message.Content != null)
-            return Json(await _messageService.AddAsync(new Entities.Entity.Message
+            return Json(await _messageService.AddAsync(new Message
             {
                 SenderId = message.Sender,
                 ReceiverId = message.Receiver,
                 Content = message.Content
             }));
 
-        return await Task.FromResult(Json(string.Empty));
+        return await Task.FromResult(Json(0));
     }
 
     [HttpPost]
@@ -149,13 +150,6 @@ public class MainPageController : Controller
 
         return Json(messages);
     }
-
-    //[HttpPost]
-    //public async Task<IActionResult> GetUserData(string receiverId)
-    //{
-    //    var user = await _userManagerService.FindByIdAsync(receiverId);
-    //    Message message = await _messageService.Get(_ => _.Content = mess)
-    //}
 
     #endregion
 }
