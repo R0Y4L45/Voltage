@@ -150,5 +150,12 @@ public class MainPageController : Controller
         return Json(messages);
     }
 
+    //[HttpPost]
+    //public async Task<IActionResult> GetUserData(string receiverId)
+    //{
+    //    var user = await _userManagerService.FindByIdAsync(receiverId);
+    //    Message message = await _messageService.Get(_ => _.Content = mess)
+    //}
+
     #endregion
 }

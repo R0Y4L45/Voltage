@@ -9,10 +9,7 @@ public class MessageService : IMessageService
 {
     private readonly VoltageDbContext _context;
 
-    public MessageService(VoltageDbContext context)
-    {
-        _context = context;
-    }
+    public MessageService(VoltageDbContext context) => _context = context;
 
     public async Task<int> AddAsync(Message entity)
     {
@@ -20,19 +17,16 @@ public class MessageService : IMessageService
         return await _context!.SaveChangesAsync();
     }
 
-
-    public void Delete(Message entity)
+    public void Delete(Message entity) 
     {
-        throw new NotImplementedException();
+        _context.Message?.Remove(entity);
+        _context.SaveChanges();
     }
+    public Message Get(Expression<Func<Message, bool>> filter = null!) => 
+        _context.Message?.FirstOrDefault(filter)!;
 
-    public Message Get(Expression<Func<Message, bool>> filter = null!)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<IEnumerable<Message>> GetListAsync(Expression<Func<Message, bool>> filter = null!)
-        =>await Task.FromResult(filter == null ? _context.Message! : _context.Message!.Where(filter));
+    public async Task<IEnumerable<Message>> GetListAsync(Expression<Func<Message, bool>> filter = null!) =>
+        await Task.FromResult(filter == null ? _context.Message! : _context.Message!.Where(filter));
 
     public bool Update(Message entity)
     {
