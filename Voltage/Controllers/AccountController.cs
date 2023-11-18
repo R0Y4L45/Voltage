@@ -151,7 +151,7 @@ public class AccountController : Controller
                 if (isLocked)
                 {
                     ViewBag.RemainingLockoutTime = remainingLockoutTime;
-                    return View("Login", new { area = "" });
+                    return View();
                 }
                 else
                 {
