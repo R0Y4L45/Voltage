@@ -21,7 +21,7 @@ public class GenerateUserName
         var baseName = originalName.Split()[0];
         var username = baseName;
 
-
+        username = char.IsDigit(username[0]) ? allowedChars[random.Next(0, allowedChars.Length)] + username.Substring(1) : username;
         username += specialChars[random.Next(0, specialChars.Length)];
         while (username.Length < minLength)
         {
