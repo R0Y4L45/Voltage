@@ -1,4 +1,4 @@
-﻿let date = recUserId = null, list = document.getElementById("messagesList")
+﻿let date = recUserId = null, list = document.getElementById("messagesList");
 
 //#region SignalR Connection and its events
 
@@ -31,7 +31,7 @@ async function ClickToUser(username) {
 //#endregion
 
 //#region Api's
-async function GetUserId(username) { 
+async function GetUserId(username) {
     return await FetchApiPost('GetUserId', username);
 }
 
@@ -47,18 +47,6 @@ async function MessageSaver(message, sender, receiver) {
     };
 
     return await FetchApiPost('MessageSaver', object);
-}
-async function FetchApiPost(methodName, object) {
-    return await fetch(methodName, {
-        method: 'Post',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify(object)
-    })
-        .then(response => response.json())
-        .then(data => data)
-        .catch(error => console.error(error));
 }
 
 //#endregion

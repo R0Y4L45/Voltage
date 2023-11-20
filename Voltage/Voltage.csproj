@@ -7,6 +7,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="wwwroot\js\Notification.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="wwwroot\js\Notification.js" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Voltage.Business\Voltage.Business.csproj" />
 		<ProjectReference Include="..\Voltage.Entities\Voltage.Entities.csproj" />
 	</ItemGroup>
@@ -27,6 +35,10 @@
 
 	<ItemGroup>
 	  <Folder Include="wwwroot\UploadImage\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="wwwroot\js\Notification.js" />
 	</ItemGroup>
 
 

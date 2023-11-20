@@ -138,11 +138,20 @@ public class MainPageController : Controller
         string senderId = (await _userManagerService.FindByNameAsync(User.Identity?.Name!)).Id,
             recId = (await _userManagerService.FindByNameAsync(receiver)).Id;
 
-        List<MessageDto> messages = _mapper.Map<List<MessageDto>>((await _messageService.GetListAsync(_
+        return Json(_mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_
             => _.ReceiverId == recId && _.SenderId == senderId
-                || _.ReceiverId == senderId && _.SenderId == recId)).OrderBy(_ => _.CreatedTime));
+                || _.ReceiverId == senderId && _.SenderId == recId)).OrderBy(_ => _.CreatedTime)));
+    }
 
-        return Json(messages);
+    [HttpPost]
+    public async Task<IActionResult> FindUsers([FromBody] string letter)
+    {
+        string[] arr = letter.Split(' ');
+
+        if (arr[0] != string.Empty)
+            return Json((await _userManagerService.GetAllUsers(_ => _.UserName.Contains(arr[0]))).OrderBy(_ => _.UserName).Take(int.Parse(arr[1])));
+
+        return Json(false);
     }
 
     #endregion
