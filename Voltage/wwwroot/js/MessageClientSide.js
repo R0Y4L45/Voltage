@@ -1,16 +1,9 @@
-﻿let connection = curUserName = curUserId = recUserId = null, list = document.getElementById("messagesList"), author, date, avatarUrl;
+﻿let date = recUserId = null, list = document.getElementById("messagesList")
 
 //#region SignalR Connection and its events
 
-connection = new signalR.HubConnectionBuilder().withUrl("/messageHub").withAutomaticReconnect().build()
-
-connection.start().then(() => {
-    connection.invoke("GetUserName").then(user => curUserName = user);
-    connection.invoke("GetConnectionId").then(id => curUserId = id);
-}).catch(err => console.error(err.toString()));
-
 connection.on("ReceiveMessage", (user, message, createdTime) => {
-    let date = new Date(createdTime)
+    date = new Date(createdTime)
     if (curUserName !== user)
         MessageCreater(message, '', user, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'));
 });
@@ -28,7 +21,7 @@ async function ClickToUser(username) {
 
     document.querySelector(".chat-bubbles").innerHTML = '';
     (await GetMessageList(username)).forEach(message => {
-        let date = new Date(message.createdTime);
+        date = new Date(message.createdTime);
 
         MessageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
             message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'))
@@ -38,12 +31,14 @@ async function ClickToUser(username) {
 //#endregion
 
 //#region Api's
-async function GetUserId(username) {
+async function GetUserId(username) { 
     return await FetchApiPost('GetUserId', username);
 }
+
 async function GetMessageList(receiver) {
     return await FetchApiPost('TakeMessages', receiver);
 }
+
 async function MessageSaver(message, sender, receiver) {
     let object = {
         Content: message,
@@ -70,7 +65,8 @@ async function FetchApiPost(methodName, object) {
 
 //#region HelperMethods
 async function SendMessage(event) {
-    let message = document.getElementById("messageInput").value, date = new Date();
+    let message = document.getElementById("messageInput").value;
+    date = new Date();
 
     if (recUserId !== null)
         if ((await MessageSaver(message, curUserId, recUserId)) !== 0) {

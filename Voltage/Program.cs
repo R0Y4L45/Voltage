@@ -20,7 +20,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
         builder.Services.Configure<DataProtectionTokenProviderOptions>(_ => _.TokenLifespan = TimeSpan.FromHours(1));
         builder.Services.ConfigureApplicationCookie(_=> _.ExpireTimeSpan = TimeSpan.FromHours(1));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
@@ -59,10 +59,10 @@ public class Program
         builder.Services.AddScoped<ILogInService, LogInService>();
         builder.Services.AddScoped<IUserManagerService, UserManagerService>();
         builder.Services.AddScoped<ISignInManagerService, SignInManagerService>();
-        builder.Services.AddSignalR();
         builder.Services.AddAuthentication();
         builder.Services.AddHostedService<EmailVerifiedClearHostedService>();
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+        builder.Services.AddSignalR();
         
         var app = builder.Build();
 
@@ -75,7 +75,7 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
-        app.MapHub<MessageHub>("/messageHub");
+        app.MapHub<SignalRHub>("/signalRHub");
         app.UseRouting();
 
         app.UseAuthentication();

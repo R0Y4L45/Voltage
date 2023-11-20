@@ -19,7 +19,8 @@ public class MainPageController : Controller
     private readonly IEmailService _emailService;
     private readonly IMapper _mapper;
 
-    public MainPageController(IMessageService messageService, IMapper mapper, IUserManagerService userManagerService, IEmailService emailConfiguration)
+    public MainPageController(IMessageService messageService, IMapper mapper, 
+        IUserManagerService userManagerService, IEmailService emailConfiguration)
     {
         _messageService = messageService;
         _mapper = mapper;
@@ -27,17 +28,11 @@ public class MainPageController : Controller
         _emailService = emailConfiguration;
     }
 
-    [HttpGet]
     public IActionResult Index() => View();
+    public IActionResult FriendshipRequests() => View();
     
+    public async Task<IActionResult> Message() => View(await _userManagerService.GetAllUsers());
 
-    [HttpGet]
-    public async Task<IActionResult> Message()
-    {
-        return View(await _userManagerService.GetAllUsers());
-    }
-
-    [HttpGet]
     public async Task<IActionResult> Profile(string Id)
     {
         var user = await _userManagerService.FindByIdAsync(Id);
@@ -110,7 +105,6 @@ public class MainPageController : Controller
         }
     }
 
-    [HttpGet]
     public IActionResult Settings() => View();
 
     #region Messages Api

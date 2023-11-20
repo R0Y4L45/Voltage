@@ -16,7 +16,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.11/signalr.min.js"></script>
+    <script src="~/js/SignalR.js"></script>
     <script src="~/dist/js/demo-theme.min.js"></script>
+
     <div class="page page-center" id="app">
         <div class="container container-slim py-4">
             <div class="text-center">
@@ -59,6 +62,7 @@
     <!--  -->
     <script src="~/dist/js/tabler.min.js?1692870487" defer asp-append-version="true"></script>
     <script src="~/dist/js/demo.min.js?1692870487" defer asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

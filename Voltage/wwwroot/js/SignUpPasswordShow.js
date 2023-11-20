@@ -6,11 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const currentTheme = localStorage.getItem("tablerTheme");
 
-    if (currentTheme === "dark") {
-        setIconColor("white");
-    } else {
-        setIconColor("black");
-    }
+    if (currentTheme === "dark") setIconColor("white");
+    else setIconColor("black");
 
     showPasswordToggle.addEventListener("click", function (event) {
         event.preventDefault();

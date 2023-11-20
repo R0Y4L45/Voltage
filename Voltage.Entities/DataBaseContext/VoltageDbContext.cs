@@ -9,6 +9,8 @@ namespace Voltage.Entities.DataBaseContext;
 public class VoltageDbContext : IdentityDbContext<User, IdentityRole, string>
 {
     public DbSet<Message>? Message { get; set; }
+    public DbSet<FriendList>? FriendList { get; set; }
+    public DbSet<Notification>? Notification { get; set; }
 
     public VoltageDbContext() { }
     public VoltageDbContext(DbContextOptions<VoltageDbContext> optionsBuilder) : base(optionsBuilder) { }
@@ -31,13 +33,25 @@ public class VoltageDbContext : IdentityDbContext<User, IdentityRole, string>
             .HasOne(m => m.Sender)
             .WithMany(u => u.SentMessages)
             .HasForeignKey(m => m.SenderId)
-            .OnDelete(DeleteBehavior.Restrict); // You can specify the delete behavior as needed
+            .OnDelete(DeleteBehavior.ClientCascade);
 
         builder.Entity<Message>()
             .HasOne(m => m.Receiver)
             .WithMany(u => u.ReceivedMessages)
             .HasForeignKey(m => m.ReceiverId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<FriendList>()
+            .HasOne(f => f.Sender)
+            .WithMany(u => u.SenderRequest)
+            .HasForeignKey(f => f.SenderId)
+            .OnDelete(DeleteBehavior.ClientCascade);
+
+        builder.Entity<FriendList>()
+            .HasOne(f => f.Receiver)
+            .WithMany(u => u.ReceiverRequest)
+            .HasForeignKey(f => f.ReceiverId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(builder);
     }

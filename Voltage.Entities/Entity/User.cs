@@ -11,4 +11,9 @@ public class User : IdentityUser, IEntity
     //Nav prop
     public ICollection<Message>? SentMessages { get; set; }
     public ICollection<Message>? ReceivedMessages { get; set; }
+
+    public ICollection<FriendList>? SenderRequest { get; set; }
+    public ICollection<FriendList>? ReceiverRequest { get; set; }
+
+    public ICollection<Notification>? Receipent { get; set; }
 }
