@@ -1,14 +1,10 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    const passwordInput = document.getElementById("password-input");
-    const showPasswordToggle = document.getElementById("show-password-toggle");
+    const passwordInput = document.getElementById("password-input"),
+        showPasswordToggle = document.getElementById("show-password-toggle"),
+        currentTheme = localStorage.getItem("tablerTheme");
 
-    const currentTheme = localStorage.getItem("tablerTheme");
-
-    if (currentTheme === "dark") {
-        setIconColor("white");
-    } else {
-        setIconColor("black");
-    }
+    if (currentTheme === "dark") setIconColor("white");
+    else setIconColor("black");
 
     showPasswordToggle.addEventListener("click", function (event) {
         event.preventDefault();
@@ -16,10 +12,9 @@
     });
 
     function setIconColor(color) {
-        const eyeIcons = document.querySelectorAll(".icon-tabler-eye");
-        eyeIcons.forEach(icon => {
-            icon.setAttribute("fill", color);
-        });
+        document.querySelectorAll(".icon-tabler-eye").forEach(icon =>
+            icon.setAttribute("fill", color)
+        );
     }
 
     function togglePasswordVisibility(input, toggleIcon) {

@@ -3,7 +3,6 @@ let list;
 document.getElementById("search").oninput = async () => {
     let search = document.getElementById("search").value;
     list = await FetchApiPost('user/MainPage/FindUsers', search + ' ' + 10);
-    console.log(list);
     if (list != 'false')
         ShowUsers(list);
 }
