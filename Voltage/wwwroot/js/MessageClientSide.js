@@ -1,11 +1,15 @@
-﻿let date = recUserId = null, list = document.getElementById("messagesList");
+﻿let date = recUserId = recUserName = null,
+    overChatBubble = document.getElementById("overChatBubbles"),
+    list = document.getElementById("messagesList"), count;
 
 //#region SignalR Connection and its events
 
 connection.on("ReceiveMessage", (user, message, createdTime) => {
     date = new Date(createdTime)
-    if (curUserName !== user)
+    if (curUserName !== user) {
         MessageCreater(message, '', user, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'));
+        overChatBubble.scrollTop = overChatBubble.scrollHeight;
+    }
 });
 
 //#endregion
@@ -17,16 +21,32 @@ document.getElementById("messageInput").addEventListener("keypress", async event
         await SendMessage(event)
 });
 async function ClickToUser(username) {
+    recUserName = username
     recUserId = await GetUserId(username);
-
+    count = 9;
     document.querySelector(".chat-bubbles").innerHTML = '';
-    (await GetMessageList(username)).forEach(message => {
+    (await GetMessageList(username + ' ' + count)).forEach(message => {
         date = new Date(message.createdTime);
 
         MessageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
             message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'))
+        overChatBubble.scrollTop = overChatBubble.scrollHeight;
     });
 }
+
+overChatBubble.addEventListener("scroll", async _ => {
+    if (overChatBubble.scrollTop === 0) {
+        count += 9;
+        (await GetMessageList(recUserName + ' ' + count)).forEach(message => {
+            date = new Date(message.createdTime);
+
+            MessageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
+                message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'))
+
+            //overChatBubble.scrollTop = 
+        });
+    }
+});
 
 //#endregion
 
@@ -59,14 +79,16 @@ async function SendMessage(event) {
     if (recUserId !== null)
         if ((await MessageSaver(message, curUserId, recUserId)) !== 0) {
             connection.invoke("SendToUser", recUserId, message).catch(err => console.error(err.toString()));
+
             MessageCreater(message, 'justify-content-end', curUserName, date.getHours() + ':' + date.getMinutes().toString().padStart(2, '0'));
+            overChatBubble.scrollTop = overChatBubble.scrollHeight;
+
             document.getElementById("messageInput").value = '';
             event.preventDefault();
         }
 }
 function MessageCreater(content, style, sender, date) {
     let chatBubbles = document.querySelector(".chat-bubbles"),
-        overChatBubble = document.getElementById("overChatBubbles"),
         chatItem = document.createElement("div");
 
     chatItem.classList.add("chat-item");
@@ -89,7 +111,6 @@ function MessageCreater(content, style, sender, date) {
     `;
 
     chatBubbles.appendChild(chatItem);
-    overChatBubble.scrollTop = overChatBubble.scrollHeight;
 }
 
 //#endregion

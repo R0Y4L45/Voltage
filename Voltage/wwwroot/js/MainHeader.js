@@ -31,3 +31,22 @@ function ToggleTheme(theme) {
     var url = '@Url.Action("ToggleTheme", "Home")' + '?theme=' + theme;
     window.location.href = url;
 }
+
+//#region Events
+document.getElementById("search").oninput = async () => {
+    let list = await FetchApiPost('/user/MainPage/FindUsers', document.getElementById("search").value + ' ' + 10);
+    if (list != 'false')
+        ShowUsers(list);
+}
+
+//#endregion
+
+//#region Methods
+function ShowUsers(list) {
+    let l = document.getElementById("listUser");
+    l.innerHTML = '';
+    for (var i = 0; i < list.length; i++)
+        l.innerHTML += `<li>${list[i].userName}</li>`;
+}
+
+//#endregion

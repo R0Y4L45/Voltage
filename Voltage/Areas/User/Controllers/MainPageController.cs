@@ -135,12 +135,14 @@ public class MainPageController : Controller
     [HttpPost]
     public async Task<IActionResult> TakeMessages([FromBody] string receiver)
     {
+        string[] arr = receiver.Split(' ');
         string senderId = (await _userManagerService.FindByNameAsync(User.Identity?.Name!)).Id,
-            recId = (await _userManagerService.FindByNameAsync(receiver)).Id;
+            recId = (await _userManagerService.FindByNameAsync(arr[0])).Id;
 
-        return Json(_mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_
+        var d = _mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_
             => _.ReceiverId == recId && _.SenderId == senderId
-                || _.ReceiverId == senderId && _.SenderId == recId)).OrderBy(_ => _.CreatedTime)));
+                || _.ReceiverId == senderId && _.SenderId == recId)).OrderBy(_ => _.CreatedTime)).Take(int.Parse(arr[1]));
+        return Json(d);
     }
 
     [HttpPost]
