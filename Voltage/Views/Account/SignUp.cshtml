@@ -65,6 +65,15 @@
                         <div class="form-label">Input Profile Photo</div>
                         <input type="file" asp-for="Photo" class="form-control" />
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Select Your Country</label>
+                        <select type="text" class="form-select" id="select-countries" value="">
+                            <option value="pl" data-custom-properties="&lt;span class=&quot;flag flag-xs flag-country-pl&quot;&gt;&lt;/span&gt;">Poland</option>
+                            <option value="de" data-custom-properties="&lt;span class=&quot;flag flag-xs flag-country-de&quot;&gt;&lt;/span&gt;">Germany</option>
+                            <option value="cz" data-custom-properties="&lt;span class=&quot;flag flag-xs flag-country-cz&quot;&gt;&lt;/span&gt;">Czech Republic</option>
+                            <option value="br" data-custom-properties="&lt;span class=&quot;flag flag-xs flag-country-br&quot;&gt;&lt;/span&gt;">Brazil</option>
+                        </select>
+                    </div>
                     <input type="hidden" asp-for="DateOfBirth" name="DateOfBirth" id="DateOfBirth" />
                     <div class="mb-3">
                         <label class="form-label">Date of birth</label>
@@ -156,7 +165,33 @@
 
     <script src="~/js/SignUpPasswordShow.js"></script>
     <script src="/js/site.js" defer asp-append-version="true"></script>
+    <script src="/dist/libs/tom-select/dist/js/tom-select.base.min.js"></script>
+    <script src="/dist/libs/nouislider//dist/nouislider.min.js"></script>
+    <!--<script src="./dist/libs/litepicker/dist/litepicker.js?1692870487" defer></script>-->
+
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var el;
+            window.TomSelect && (new TomSelect(el = document.getElementById('select-countries'), {
+                copyClassesToDropdown: false,
+                dropdownParent: 'body',
+                controlInput: '<input>',
+                render: {
+                    item: function (data, escape) {
+                        if (data.customProperties) {
+                            return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                        }
+                        return '<div>' + escape(data.text) + '</div>';
+                    },
+                    option: function (data, escape) {
+                        if (data.customProperties) {
+                            return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                        }
+                        return '<div>' + escape(data.text) + '</div>';
+                    },
+                },
+            }));
+        });
         var monthSelect = document.getElementById("month");
         var daySelect = document.getElementById("day");
         var yearSelect = document.getElementById("year");
@@ -220,8 +255,6 @@
         updateDays();
         updateYears();
     </script>
-
-
 
 
 </body>

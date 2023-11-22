@@ -6,6 +6,7 @@ namespace Voltage.Entities.Entity;
 public class User : IdentityUser, IEntity
 {
     public string? Photo { get; set; }
+    public string? Country { get; set; }
     public DateTime DateOfBirth { get; set; }
     
     //Nav prop

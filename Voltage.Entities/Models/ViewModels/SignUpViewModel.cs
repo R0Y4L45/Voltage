@@ -24,5 +24,7 @@ public class SignUpViewModel
     [Required(ErrorMessage = "Please agree to the terms and policy")]
     [Display(Name = "Agree to the terms and policy")]
     public bool Agree {  get; set; }
+
+    public string? Country { get; set; }
     public IFormFile? Photo { get; set; }
 }

@@ -12,8 +12,8 @@ using Voltage.Entities.DataBaseContext;
 namespace Voltage.Entities.Migrations
 {
     [DbContext(typeof(VoltageDbContext))]
-    [Migration("20231120065113_VoltageMigration")]
-    partial class VoltageMigration
+    [Migration("20231122202949_mig")]
+    partial class mig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -259,6 +259,9 @@ namespace Voltage.Entities.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateOfBirth")

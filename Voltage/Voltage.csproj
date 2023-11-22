@@ -34,11 +34,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="wwwroot\UploadImage\" />
+	  <None Include="wwwroot\js\Notification.js" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="wwwroot\js\Notification.js" />
+	  <Folder Include="wwwroot\UploadImage\" />
 	</ItemGroup>
 
 
