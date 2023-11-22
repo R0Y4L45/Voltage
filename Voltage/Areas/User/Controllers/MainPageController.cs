@@ -30,9 +30,17 @@ public class MainPageController : Controller
 
     public async Task<IActionResult> Index()
     {
-        HttpContext.Session.SetString("ProfilePhoto",await _userManagerService.GetProfilePhotoAsync(User.Identity.Name!)!);
+        string? profilePhoto = await _userManagerService.GetProfilePhotoAsync(User.Identity!.Name!);
+
+        if (profilePhoto != null)
+            HttpContext.Session.SetString("ProfilePhoto", profilePhoto);
         return View();
     }
+
+    [Route("/user/MainPage/Connection/FollowRequests")]
+    public IActionResult FollowRequests() => View();
+
+    [Route("/user/MainPage/Connection/FollowUser")]
     public IActionResult FollowUser() => View();
     public async Task<IActionResult> Message() => View(await _userManagerService.GetAllUsers());
     public async Task<IActionResult> Profile(string Id)
