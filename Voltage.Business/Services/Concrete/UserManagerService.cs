@@ -83,9 +83,14 @@ public class UserManagerService : IUserManagerService
     public async Task RollbackTransactionAsync()=>
         await _dbContext.Database.RollbackTransactionAsync();
 
-    public async Task<bool> IsEmailConfirmedAsync(User user)
+    public async Task<bool> IsEmailConfirmedAsync(User user)=>
+        await _userManager.IsEmailConfirmedAsync(user);
+
+    public async Task<string?> GetProfilePhotoAsync(string userName)
     {
-        return await _userManager.IsEmailConfirmedAsync(user);
+        var user = await _userManager.FindByNameAsync(userName);
+        return user?.Photo;
     }
+
     #endregion
 }

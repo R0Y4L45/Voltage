@@ -63,7 +63,8 @@ public class Program
         builder.Services.AddHostedService<EmailVerifiedClearHostedService>();
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
         builder.Services.AddSignalR();
-        
+        builder.Services.AddSession();
+
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())
@@ -80,6 +81,7 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseSession();
 
         app.MapControllerRoute(
             name: "UserArea",

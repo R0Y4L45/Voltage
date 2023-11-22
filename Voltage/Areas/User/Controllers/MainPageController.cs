@@ -28,7 +28,11 @@ public class MainPageController : Controller
         _emailService = emailConfiguration;
     }
 
-    public IActionResult Index() => View();
+    public async Task<IActionResult> Index()
+    {
+        HttpContext.Session.SetString("ProfilePhoto",await _userManagerService.GetProfilePhotoAsync(User.Identity.Name!)!);
+        return View();
+    }
     public IActionResult FollowUser() => View();
     public async Task<IActionResult> Message() => View(await _userManagerService.GetAllUsers());
     public async Task<IActionResult> Profile(string Id)
