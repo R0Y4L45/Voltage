@@ -29,10 +29,8 @@ public class MainPageController : Controller
     }
 
     public IActionResult Index() => View();
-    public IActionResult FriendshipRequests() => View();
-    
+    public IActionResult FollowUser() => View();
     public async Task<IActionResult> Message() => View(await _userManagerService.GetAllUsers());
-
     public async Task<IActionResult> Profile(string Id)
     {
         var user = await _userManagerService.FindByIdAsync(Id);
