@@ -37,9 +37,5 @@
 	  <None Include="wwwroot\js\Notification.js" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="wwwroot\UploadImage\" />
-	</ItemGroup>
-
 
 </Project>

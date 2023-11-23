@@ -37,11 +37,9 @@ public class MainPageController : Controller
         return View();
     }
 
-    [Route("/user/MainPage/Connection/FollowRequests")]
     public IActionResult FollowRequests() => View();
+    public IActionResult SearchUsers() => View();
 
-    [Route("/user/MainPage/Connection/FollowUser")]
-    public IActionResult FollowUser() => View();
     public async Task<IActionResult> Message() => View(await _userManagerService.GetAllUsers());
     public async Task<IActionResult> Profile(string Id)
     {
@@ -55,6 +53,7 @@ public class MainPageController : Controller
             DateOfBirth = user.DateOfBirth,
             PhotoUrl = user.Photo,
         };
+        
         return View(viewmodel);
     }
 
@@ -158,10 +157,8 @@ public class MainPageController : Controller
     [HttpPost]
     public async Task<IActionResult> FindUsers([FromBody] string letter)
     {
-        string[] arr = letter.Split(' ');
-
-        if (arr[0] != string.Empty)
-            return Json((await _userManagerService.GetAllUsers(_ => _.UserName.Contains(arr[0]))).OrderBy(_ => _.UserName).Take(int.Parse(arr[1])));
+        if (letter != string.Empty)
+            return Json((await _userManagerService.GetAllUsers(_ => _.UserName.Contains(letter))).OrderBy(_ => _.UserName));
 
         return Json(false);
     }

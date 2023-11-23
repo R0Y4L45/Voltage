@@ -2,7 +2,7 @@
 
 namespace Voltage.Entities.Entity;
 
-public enum Status { Pending = 1, Accepted, Rejected}
+public enum Status { Pending = 1, Accepted, Rejected }
 public class FriendList : IEntity
 {
     public int Id { get; set; }
