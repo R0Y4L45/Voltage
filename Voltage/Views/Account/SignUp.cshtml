@@ -67,12 +67,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Select Your Country</label>
-                        <select type="text" class="form-select" id="select-countries" value="">
-                            <option value="pl" data-custom-properties="&lt;span class=&quot;flag flag-xs flag-country-pl&quot;&gt;&lt;/span&gt;">Poland</option>
-                            <option value="de" data-custom-properties="&lt;span class=&quot;flag flag-xs flag-country-de&quot;&gt;&lt;/span&gt;">Germany</option>
-                            <option value="cz" data-custom-properties="&lt;span class=&quot;flag flag-xs flag-country-cz&quot;&gt;&lt;/span&gt;">Czech Republic</option>
-                            <option value="br" data-custom-properties="&lt;span class=&quot;flag flag-xs flag-country-br&quot;&gt;&lt;/span&gt;">Brazil</option>
-                        </select>
+                        <select type="text" asp-for="Country" class="form-select" id="select-countries" value=""></select>
                     </div>
                     <input type="hidden" asp-for="DateOfBirth" name="DateOfBirth" id="DateOfBirth" />
                     <div class="mb-3">
@@ -170,9 +165,58 @@
     <!--<script src="./dist/libs/litepicker/dist/litepicker.js?1692870487" defer></script>-->
 
     <script>
+        
+
         document.addEventListener("DOMContentLoaded", function () {
-            var el;
-            window.TomSelect && (new TomSelect(el = document.getElementById('select-countries'), {
+            var selectCountries = document.getElementById('select-countries');
+
+            var countries = [
+                { code: 'other', flagClass: '', name: 'Other' },
+
+                //A
+                { code: 'ad', flagClass: 'flag-country-ad', name: 'Andorra' },
+                { code: 'ae', flagClass: 'flag-country-ae', name: 'United Arab Emirates' },
+                { code: 'af', flagClass: 'flag-country-af', name: 'Afghanistan' },
+                { code: 'ag', flagClass: 'flag-country-ag', name: 'Antigua and barbuda' },
+                { code: 'ai', flagClass: 'flag-country-ai', name: 'Anguilla' },
+                { code: 'al', flagClass: 'flag-country-al', name: 'Albania' },
+                { code: 'ao', flagClass: 'flag-country-ao', name: 'Angola' },
+                { code: 'aq', flagClass: 'flag-country-aq', name: 'Antarctica' },
+                { code: 'as', flagClass: 'flag-country-as', name: 'Samoa' },
+                { code: 'at', flagClass: 'flag-country-at', name: 'Austria' },
+                { code: 'au', flagClass: 'flag-country-au', name: 'Australia' },
+                { code: 'aw', flagClass: 'flag-country-aw', name: 'Aruba' },
+                { code: 'ax', flagClass: 'flag-country-ax', name: 'Åland Islands' },
+                { code: 'az', flagClass: 'flag-country-az', name: 'Azerbaijan' },
+
+                //B
+                { code: 'ba', flagClass: 'flag-country-ba', name: 'Bosnia and Herzegovina' },
+                { code: 'bb', flagClass: 'flag-country-bb', name: 'Barbados' },
+                { code: 'bd', flagClass: 'flag-country-bd', name: 'Bangladesh' },
+                { code: 'be', flagClass: 'flag-country-be', name: 'Belgium' },
+                { code: 'bf', flagClass: 'flag-country-bf', name: 'Burkina Faso' },
+                { code: 'bg', flagClass: 'flag-country-bg', name: 'Bulgaria' },
+                { code: 'bh', flagClass: 'flag-country-bh', name: 'Bahrain' },
+                { code: 'bj', flagClass: 'flag-country-bj', name: 'Benin' },
+                { code: 'bm', flagClass: 'flag-country-bm', name: 'Bermuda' },
+                { code: 'bn', flagClass: 'flag-country-bn', name: 'Brunei' },
+                { code: 'br', flagClass: 'flag-country-br', name: 'Brazil' },
+                { code: 'bs', flagClass: 'flag-country-bs', name: 'Bahamas' },
+                { code: 'bt', flagClass: 'flag-country-bt', name: 'Bhutan' },
+                { code: 'bv', flagClass: 'flag-country-bv', name: 'Bouvet Island' },
+                { code: 'bw', flagClass: 'flag-country-bw', name: 'Botswana' },
+                { code: 'by', flagClass: 'flag-country-by', name: 'Belarus' },
+            ];
+
+            countries.forEach(function (country) {
+                var option = document.createElement('option');
+                option.value = country.name;
+                option.setAttribute('data-custom-properties', '<span class="flag flag-xs ' + country.flagClass + '"></span>');
+                option.text = country.name;
+                selectCountries.appendChild(option);
+            });
+
+            window.TomSelect && new TomSelect(selectCountries, {
                 copyClassesToDropdown: false,
                 dropdownParent: 'body',
                 controlInput: '<input>',
@@ -190,8 +234,10 @@
                         return '<div>' + escape(data.text) + '</div>';
                     },
                 },
-            }));
+            });
         });
+
+
         var monthSelect = document.getElementById("month");
         var daySelect = document.getElementById("day");
         var yearSelect = document.getElementById("year");
