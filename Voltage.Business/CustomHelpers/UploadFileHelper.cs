@@ -12,6 +12,6 @@ public class UploadFileHelper
 
         FileStream fs = new(path, FileMode.CreateNew, FileAccess.ReadWrite);
         await file.CopyToAsync(fs);
-        return imagePath;
+        return "/" + imagePath;
     }
 }
