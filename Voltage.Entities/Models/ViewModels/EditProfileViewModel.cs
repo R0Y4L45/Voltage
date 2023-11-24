@@ -14,5 +14,6 @@ namespace Voltage.Entities.Models.ViewModels
         public DateTime DateOfBirth { get; set; }
         public IFormFile? Photo { get; set; }
         public string? PhotoUrl { get; set; }
+        public string? Country { get; set; }
     }
 }

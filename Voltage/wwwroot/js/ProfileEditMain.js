@@ -1,19 +1,19 @@
-var monthSelect = document.getElementById("month");
-var daySelect = document.getElementById("day");
-var yearSelect = document.getElementById("year");
-var hiddenDateOfBirthInput = document.getElementById("hiddenDateOfBirth");
+const monthSelect = document.getElementById("month");
+const daySelect = document.getElementById("day");
+const yearSelect = document.getElementById("year");
+const hiddenDateOfBirthInput = document.getElementById("hiddenDateOfBirth");
 
 function updateDays() {
-    var selectedMonth = monthSelect.value;
-    var selectedYear = yearSelect.value;
+    const selectedMonth = monthSelect.value;
+    const selectedYear = yearSelect.value;
 
     daySelect.innerHTML;
 
     if (selectedMonth && selectedYear) {
-        var daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+        const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
 
-        for (var i = 1; i <= daysInMonth; i++) {
-            var option = document.createElement("option");
+        for (let i = 1; i <= daysInMonth; i++) {
+            const option = document.createElement("option");
             option.value = i;
             option.text = i;
             daySelect.appendChild(option);
@@ -23,17 +23,15 @@ function updateDays() {
 }
 
 function updateDateOfBirth() {
-    var selectedMonth = monthSelect.value;
-    var selectedYear = yearSelect.value;
-    var selectedDay = daySelect.value;
+    const selectedMonth = monthSelect.value;
+    const selectedYear = yearSelect.value;
+    const selectedDay = daySelect.value;
 
     if (selectedMonth && selectedDay && selectedYear) {
-        var selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
-        var formattedDate = selectedDate.toISOString().split('T')[0];
+        const selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
+        const formattedDate = selectedDate.toISOString().split('T')[0];
         hiddenDateOfBirthInput.value = formattedDate;
-    } else {
-        hiddenDateOfBirthInput.value = null;
-    }
+    } else hiddenDateOfBirthInput.value = null;
 }
 
 $(document).ready(function () {

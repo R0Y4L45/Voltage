@@ -1,5 +1,5 @@
 ﻿window.onload = function () {
-    var appContainer = document.getElementById('app');
+    let appContainer = document.getElementById('app');
 
     appContainer.style.display = 'none';
 };

@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="col-md">
                                     <div class="form-label">Location</div>
-                                    <input type="text" class="form-control" value="Baki">
+                                    <select type="text" asp-for="Country" class="form-select" id="select-countries" value=""></select>
                                 </div>
                             </div>
                             <h3 class="card-title mt-4">Date of Birth</h3>
@@ -124,4 +124,6 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="/dist/libs/tom-select/dist/js/tom-select.base.min.js"></script>
+<script src="/js/CountrySelect.js"></script>
 <script src="/js/ProfileEditMain.js"></script>
