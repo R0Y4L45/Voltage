@@ -155,12 +155,23 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> FindUsers([FromBody] string letter)
+    public async Task<IActionResult> FindUsers([FromBody] SearchDto searchObj)
     {
-        if (letter != string.Empty)
-            return Json((await _userManagerService.GetAllUsers(_ => _.UserName.Contains(letter))).OrderBy(_ => _.UserName));
+        if (!string.IsNullOrEmpty(searchObj.Content))
+        {
+            var list = await _userManagerService.GetAllUsers(_ => _.UserName.Contains(searchObj.Content));
+            int count = list.Count();
+            bool next = default;
 
-        return Json(false);
+            next = (searchObj.Skip + searchObj.Take) >= count ? false : true;
+
+            return Json(new UsersResultDto { 
+                Users = list.Skip(searchObj.Skip).Take(searchObj.Take),
+                Count = count,
+                Next = next });
+        }
+
+        return Json(string.Empty);
     }
 
     #endregion

@@ -1,18 +1,36 @@
-const cardDiv = document.getElementById("cardDiv");
+const cardDiv = document.getElementById("cardDiv"),
+    showMore = document.getElementById('showMore');
+let result, count, searchObj;
+
+searchObj = {
+    content: '',
+    take: 4,
+    skip: 0
+};
 
 document.getElementById('searchUsers').oninput = async _ => {
-    let list = await FetchApiPost('FindUsers', document.getElementById('searchUsers').value);
-    console.log(list);
-    ShowUsers(list);
+    searchObj.content = document.getElementById('searchUsers').value;
+
+    result = await FetchApiPost('FindUsers', searchObj);
+    count = result.count;
+    console.log(searchObj.skip);
+
+    document.getElementById('countOfUsers').innerHTML = count == undefined ? '' :
+        count > 1 ? count + ' Users' : count + ' User';
+
+    cardDiv.innerHTML = '';
+    if (count > 0) {
+        ShowUsers(result.users);
+
+        if (result.next) await AddShowMoreButton();
+        else showMore.innerHTML = '';
+    }
 }
 
 function ShowUsers(list) {
-    cardDiv.innerHTML = '';
-
     list.forEach(i => {
         let d = document.createElement('div');
         d.classList = "col-md-6 col-lg-3";
-        console.log(i);
         d.innerHTML =
             `<div class="card">
                 <div class="card-body p-4 text-center">
@@ -34,4 +52,32 @@ function ShowUsers(list) {
 
         cardDiv.appendChild(d);
     })
+}
+
+async function AddShowMoreButton() {
+    let btn = document.createElement('button');
+
+    btn.innerHTML = "Show More";
+    btn.classList = 'btn btn-outline-warning btn-lg';
+    btn.addEventListener('click', ClickShowMore);
+
+    showMore.innerHTML = '';
+    showMore.appendChild(btn);
+};
+
+async function ClickShowMore() {
+    searchObj.content = document.getElementById('searchUsers').value;
+    searchObj.skip += 4;
+    sessionStorage.setItem('skip', searchObj.skip)
+    console.log(searchObj.skip);
+
+    result = await FetchApiPost('FindUsers', searchObj);
+
+    if (count > 0) {
+        ShowUsers(result.users);
+        if (!result.next) { 
+            showMore.innerHTML = '';
+            searchObj.skip = 0;
+        }
+    }
 }
