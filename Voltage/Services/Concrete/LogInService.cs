@@ -26,28 +26,22 @@ public class LogInService : ILogInService
 
         if (user != null)
         {
-            var result = await _signInManagerService.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, lockoutOnFailure: true);
+            SignInResult result = await _signInManagerService.PasswordSignInAsync(user.UserName,
+                model.Password,
+                model.RememberMe,
+                true);
+
             if (result.Succeeded)
-            {
                 await _userManagerService.ResetAccessFailedCountAsync(user);
-                return (false, null);
-            }
             else
             {
                 if (result.IsLockedOut)
-                {
-                    DateTimeOffset? remainingLockoutTime = await _userManagerService.GetLockoutEndDateAsync(user);
-                    if (remainingLockoutTime.HasValue)
-                    {
-                        TimeSpan timeRemaining = remainingLockoutTime.Value - DateTimeOffset.UtcNow;
-                        return (true, timeRemaining);
-                    }
-                    else
-                        return (true, null);
-                }
+                    return (true, (await _userManagerService.GetLockoutEndDateAsync(user)).Value - DateTimeOffset.UtcNow);
                 else
                     throw new Exception("Password is wrong. Check and try again.");
             }
+            
+            return (false, null);
         }
 
         throw new Exception("Such user not exist");

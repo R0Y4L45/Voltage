@@ -42,8 +42,6 @@ overChatBubble.addEventListener("scroll", async _ => {
 
             MessageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
                 message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'))
-
-            //overChatBubble.scrollTop = 
         });
     }
 });

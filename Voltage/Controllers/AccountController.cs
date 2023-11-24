@@ -32,8 +32,65 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Login() => View();
 
+    [HttpPost]
+    public async Task<IActionResult> Login(LogInViewModel model)
+    {
+        if (ModelState.IsValid)
+            try
+            {
+                var (isLocked, remainingLockoutTime) = await _logInService.LogInAsync(model);
+                
+                if (isLocked)
+                    ViewBag.RemainingLockoutTime = remainingLockoutTime;
+                else
+                    return RedirectToAction("Index", "MainPage", new { area = "User" });
+                
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Error", ex.Message);
+            }
+        
+        return View();
+    }
+
     [HttpGet]
     public IActionResult SignUp() => View();
+
+    [HttpPost]
+    public async Task<IActionResult> SignUp(SignUpViewModel model)
+    {
+        try
+        {
+            if (model.Agree)
+            {
+                IdentityResult result = await _signUpService.SignUpAsync(model);
+                if (result.Succeeded)
+                {
+                    string? token = await _userManagerService.GenerateEmailTokenAsync(await _userManagerService.FindByEmailAsync(model.Email)),
+                    callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = model.Email }, Request.Scheme);
+
+                    E_Message message = new E_Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
+                    _emailService.SendEmail(message);
+
+                    SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName, Email = model.Email };
+                    return View("MailCheck", nvvm);
+                }
+                result.Errors.ToList().ForEach(_ => ModelState.AddModelError(_.Code, _.Description));
+            }
+            else
+            {
+                ModelState.AddModelError("Agree", "You must agree to the terms and policy to register.");
+            }
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("Error", ex.Message);
+        }
+
+        return View();
+    }
 
     [HttpGet]
     public IActionResult ForgotPassword() => View();
@@ -137,68 +194,6 @@ public class AccountController : Controller
             }
         }
         return RedirectToAction("Login", new { area = "" });
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(LogInViewModel model)
-    {
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                var (isLocked, remainingLockoutTime) = await _logInService.LogInAsync(model);
-                if (isLocked)
-                {
-                    ViewBag.RemainingLockoutTime = remainingLockoutTime;
-                    return View();
-                }
-                else
-                {
-                    return RedirectToAction("index", "MainPage", new { area = "User" });
-                }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("Error", ex.Message);
-            }
-        }
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SignUp(SignUpViewModel model)
-    {
-        try
-        {
-            if (model.Agree)
-            {
-                IdentityResult result = await _signUpService.SignUpAsync(model);
-                if (result.Succeeded)
-                {
-                    string? token = await _userManagerService.GenerateEmailTokenAsync(await _userManagerService.FindByEmailAsync(model.Email)),
-                    callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = model.Email }, Request.Scheme);
-
-                    E_Message message = new E_Message(new string[] { model.Email }, "Confirmation Email Link", callbackUrl!);
-                    _emailService.SendEmail(message);
-
-                    SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName, Email = model.Email };
-                    return View("MailCheck", nvvm);
-                }
-                result.Errors.ToList().ForEach(_ => ModelState.AddModelError(_.Code, _.Description));
-            }
-            else
-            {
-                ModelState.AddModelError("Agree", "You must agree to the terms and policy to register.");
-            }
-        }
-        catch (Exception ex)
-        {
-            ModelState.AddModelError("Error", ex.Message);
-        }
-
-        return View();
     }
 
     [HttpPost]
