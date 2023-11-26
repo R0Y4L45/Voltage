@@ -1,6 +1,25 @@
 ﻿@using Voltage.Entities.Entity;
 @model IEnumerable<User>
 
+
+<style>
+    #fileDropArea {
+        border: 2px dashed #ccc;
+        padding: 20px;
+        text-align: center;
+    }
+
+    #fileInput {
+        display: none;
+    }
+
+    #fileDescription {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+
+</style>
 <link href="/dist/libs/dropzone/dist/dropzone.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.css" crossorigin="anonymous" />
 <div class="page-body">
@@ -58,17 +77,14 @@
                         </div>
                     </div>
                     <div id="overChatBubbles" class="card-body scrollable" style="height: 35rem">
+                    <div id="fileDropArea" style="display: none; width:100%; z-index:1;">
+                        <p>Перетащите сюда файлы</p>
+                        <input type="file" id="fileInput" multiple style="display: none;" />
+                        <textarea id="fileDescription" placeholder="Описание файла..."></textarea>
+                        <button onclick="handleSend()">Отправить</button>
+                    </div>
                         <div class="chat">
                             <div class="chat-bubbles">
-                                @* <form class="dropzone" id="dropzone-custom" action="./" autocomplete="off" novalidate style="display: none;">
-                                    <div class="fallback">
-                                        <input name="file" type="file" id="fileInput" />
-                                    </div>
-                                    <div class="dz-message">
-                                        <h3 class="dropzone-msg-title">Drag Your File</h3>
-                                        <span class="dropzone-msg-desc">Your message</span>
-                                    </div>
-                                </form> *@
                             </div>
                         </div>
                     </div>
