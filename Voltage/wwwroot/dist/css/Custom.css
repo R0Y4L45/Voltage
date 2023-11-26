@@ -1,0 +1,5 @@
+﻿@media (max-width: 991px) {
+    .hide-on-small-screen {
+        display: none !important;
+    }
+}
