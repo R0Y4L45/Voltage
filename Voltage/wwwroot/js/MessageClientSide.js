@@ -2,6 +2,58 @@
     overChatBubble = document.getElementById("overChatBubbles"),
     list = document.getElementById("messagesList"), count;
 
+overChatBubble.addEventListener("dragover", (event) => {
+    event.preventDefault();
+});
+
+overChatBubble.addEventListener("drop", (event) => {
+    event.preventDefault();
+    handleFileDrop(event.dataTransfer.files);
+});
+
+function handleFileDrop(files) {
+    for (const file of files) {
+        if (file.type.startsWith('image/')) 
+            handleImageDrop(file);
+         else if (file.type === 'application/zip') 
+            handleZipDrop(file);
+          else
+            console.log('Unsupported file type: ', file.type);
+        
+    }
+}
+
+function handleImageDrop(imageFile) {
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+        const imageUrl = event.target.result;
+        sendMessageWithImage(imageUrl);
+    };
+
+    reader.readAsDataURL(imageFile);
+}
+
+function handleZipDrop(zipFile) {
+    console.log('Zip file dropped: ', zipFile.name);
+}
+
+
+function sendMessageWithImage(imageUrl) {
+    const message = 'Sent an image';
+    const sender = curUserName;
+    date = new Date();
+
+    MessageSaver(message, sender, recUserId);   
+
+    connection.invoke("SendToUser", recUserId, message).catch(err => console.error(err.toString()));
+
+    MessageCreater(`<img src="${imageUrl}" />`, 'justify-content-end', curUserName, date.getHours() + ':' + date.getMinutes().toString().padStart(2, '0'));
+    overChatBubble.scrollTop = overChatBubble.scrollHeight;
+}
+
+
+
 //#region SignalR Connection and its events
 
 connection.on("ReceiveMessage", (user, message, createdTime) => {

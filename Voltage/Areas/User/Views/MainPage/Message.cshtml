@@ -1,6 +1,8 @@
 ﻿@using Voltage.Entities.Entity;
 @model IEnumerable<User>
 
+<link href="/dist/libs/dropzone/dist/dropzone.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.css" crossorigin="anonymous" />
 <div class="page-body">
     <div class="container-xl">
         <div class="card">
@@ -33,7 +35,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-lg-7 col-xl-9 d-flex flex-column">
+                <div class="col-12 col-lg-7 col-xl-9 d-flex flex-column hide-on-small-screen">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <div class="col-auto">
@@ -58,6 +60,15 @@
                     <div id="overChatBubbles" class="card-body scrollable" style="height: 35rem">
                         <div class="chat">
                             <div class="chat-bubbles">
+                                @* <form class="dropzone" id="dropzone-custom" action="./" autocomplete="off" novalidate style="display: none;">
+                                    <div class="fallback">
+                                        <input name="file" type="file" id="fileInput" />
+                                    </div>
+                                    <div class="dz-message">
+                                        <h3 class="dropzone-msg-title">Drag Your File</h3>
+                                        <span class="dropzone-msg-desc">Your message</span>
+                                    </div>
+                                </form> *@
                             </div>
                         </div>
                     </div>
@@ -84,8 +95,6 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.js" integrity="sha512-aGWPnmdBhJ0leVHhQaRASgb0InV/Z2BWsscdj1Vwt29Oic91wECPixuXsWESpFfCcYPLfOlBZzN2nqQdMxlGTQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js" integrity="sha512-VQQXLthlZQO00P+uEu4mJ4G4OAgqTtKG1hri56kQY1DtdLeIqhKUp9W/lllDDu3uN3SnUNawpW7lBda8+dSi7w==" crossorigin="anonymous"></script>
 <script src="~/js/MessageClientSide.js"></script>
-
-@* <script>
-    $("#messageInput").emojioneArea()
-</script> *@
+<!--<script src="/dist/libs/dropzone/dist/dropzone-min.js" defer></script>-->
