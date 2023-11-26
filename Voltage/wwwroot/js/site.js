@@ -1,8 +1,3 @@
-﻿window.onload = function () {
-    let appContainer = document.getElementById('app');
-
-    appContainer.style.display = 'none';
-};
-
-window.onbeforeunload = function () {
-};
+﻿window.onload = _ => document.getElementById('app').style.display = 'none';
+ 
+window.onbeforeunload = _ => { };

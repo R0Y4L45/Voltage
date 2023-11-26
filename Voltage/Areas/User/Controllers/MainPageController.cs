@@ -174,5 +174,12 @@ public class MainPageController : Controller
         return Json(string.Empty);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> FollowRequest()
+    {
+
+        return Json(string.Empty);
+    }
+
     #endregion
 }

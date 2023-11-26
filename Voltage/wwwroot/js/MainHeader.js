@@ -1,13 +1,13 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
-    const currentUrl = window.location.pathname;
-    const menuItems = document.querySelectorAll('.navbar-nav .nav-item');
+﻿document.addEventListener('DOMContentLoaded', _ => {
+    const currentUrl = window.location.pathname,
+        menuItems = document.querySelectorAll('.navbar-nav .nav-item');
 
-    menuItems.forEach(function (menuItem) {
-        const menuItemUrl = menuItem.getAttribute('data-url');
-        const subMenuItems = menuItem.querySelectorAll('.dropdown-item');
+    menuItems.forEach(menuItem => {
+        const menuItemUrl = menuItem.getAttribute('data-url'),
+            subMenuItems = menuItem.querySelectorAll('.dropdown-item');
 
         if (subMenuItems.length > 0) {
-            subMenuItems.forEach(function (subMenuItem) {
+            subMenuItems.forEach(subMenuItem => {
                 let subMenuItemUrl = subMenuItem.getAttribute('data-url');
 
                 if (currentUrl.includes(subMenuItemUrl)) {
@@ -21,8 +21,6 @@
         }
     });
 });
-
-
 
 function ToggleTheme(theme) {
     const url = '/Home/ToggleTheme?theme=' + theme;

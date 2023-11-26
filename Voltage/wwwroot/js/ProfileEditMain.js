@@ -1,19 +1,20 @@
-const monthSelect = document.getElementById("month");
-const daySelect = document.getElementById("day");
-const yearSelect = document.getElementById("year");
-const hiddenDateOfBirthInput = document.getElementById("hiddenDateOfBirth");
+const monthSelect = document.getElementById("month"),
+    daySelect = document.getElementById("day"),
+    yearSelect = document.getElementById("year"),
+    hiddenDateOfBirthInput = document.getElementById("hiddenDateOfBirth");
 
 function updateDays() {
-    const selectedMonth = monthSelect.value;
-    const selectedYear = yearSelect.value;
+    const selectedMonth = monthSelect.value,
+        selectedYear = yearSelect.value;
 
     daySelect.innerHTML;
 
     if (selectedMonth && selectedYear) {
-        const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+        let daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate(),
+            option;
 
         for (let i = 1; i <= daysInMonth; i++) {
-            const option = document.createElement("option");
+            option = document.createElement("option");
             option.value = i;
             option.text = i;
             daySelect.appendChild(option);
@@ -23,22 +24,20 @@ function updateDays() {
 }
 
 function updateDateOfBirth() {
-    const selectedMonth = monthSelect.value;
-    const selectedYear = yearSelect.value;
-    const selectedDay = daySelect.value;
+    const selectedMonth = monthSelect.value,
+        selectedYear = yearSelect.value,
+        selectedDay = daySelect.value;
 
     if (selectedMonth && selectedDay && selectedYear) {
-        const selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
-        const formattedDate = selectedDate.toISOString().split('T')[0];
+        const selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay),
+            formattedDate = selectedDate.toISOString().split('T')[0];
+
         hiddenDateOfBirthInput.value = formattedDate;
-    } else hiddenDateOfBirthInput.value = null;
+    }
+    else hiddenDateOfBirthInput.value = null;
 }
 
-$(document).ready(function () {
-    $("#changeAvatarBtn").click(function () {
-        $("#avatarInput").click();
-    });
-});
+$(document).ready(_ => $("#changeAvatarBtn").click(_ => $("#avatarInput").click()));
 
 monthSelect.addEventListener("change", updateDays);
 yearSelect.addEventListener("change", updateDays);
