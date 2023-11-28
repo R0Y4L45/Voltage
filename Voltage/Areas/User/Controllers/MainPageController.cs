@@ -169,24 +169,13 @@ public class MainPageController : Controller
         {
             if (_list == null)
             {
-                _list = (await _userManagerService.GetAllUsers(_ => _.UserName.Contains(searchObj.Content) &&
-                                                                       !_.Id.Equals(User.Claims.First().Value))).ToList();
+                _list = (await _userManagerService.GetAllUsers(_ => _.UserName.Contains(searchObj.Content) && 
+                    !_.Id.Equals(User.Claims.First().Value))).ToList();
 
-                //var friendList = (await _friendListService.GetListAsync()).ToList();
-                //
-                //var result = from user in users
-                //             join sender in friendList
-                //             on user.Id equals sender.SenderId
-                //             select new UserSearchDto
-                //             {
-                //                 UserName = user.UserName,
-                //                 Sender = sender.SenderId,
-                //                 Receiver = sender.ReceiverId,
-                //                 Stat = Status.Pending
-                //             };
 
                 _count = _list.Count();
             }
+            
             bool next = searchObj.Skip + searchObj.Take < _count;
 
             return Json(new UsersResultDto
@@ -197,7 +186,7 @@ public class MainPageController : Controller
             });
         }
 
-        return NoContent();
+        return Json(string.Empty);
     }
 
     [HttpPost]

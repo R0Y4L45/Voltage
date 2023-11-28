@@ -21,8 +21,3 @@
         }
     });
 });
-
-function ToggleTheme(theme) {
-    const url = '/Home/ToggleTheme?theme=' + theme;
-    window.location.href = url;
-}

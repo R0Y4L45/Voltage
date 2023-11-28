@@ -26,3 +26,17 @@
 	}
 
 }));
+
+
+//const btn = document.getElementById('themeBtn');
+
+//btn.addEventListener('click', _ => {
+//    const h = document.querySelector('header');
+//    if (h.getAttribute('data-bs-theme') != null) {
+//        h.removeAttribute('data-bs-theme')
+//    }
+//    else {
+//        h.setAttribute('data-bs-theme', 'light');
+//    }
+
+//});

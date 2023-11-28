@@ -186,7 +186,7 @@ pre.highlight::-webkit-scrollbar-corner,
         width: 15rem;
         height: 15rem;
         font-size: 15rem;
-        stroke-width: 1.5;
+        stroke-width: 1.5em;
         margin: 0 auto;
         display: block;
     }
