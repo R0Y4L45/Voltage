@@ -1,3 +1,3 @@
 async function followRequest(name) {
-    await FetchApiPost('', name);
+    await FetchApiPost('FollowRequest', name);
 }

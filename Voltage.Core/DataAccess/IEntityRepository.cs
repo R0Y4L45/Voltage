@@ -8,7 +8,7 @@ public interface IEntityRepository<TEntity, TContext>
     where TEntity : class, IEntity, new()
     where TContext : DbContext
 {
-    TEntity Get(Expression<Func<TEntity, bool>> filter = null!);
+    Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter = null!);
     Task<IEnumerable<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> filter = null!);
     Task<int> AddAsync(TEntity entity);
     void Delete(TEntity entity);

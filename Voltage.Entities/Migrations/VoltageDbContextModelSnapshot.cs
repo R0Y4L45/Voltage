@@ -170,7 +170,7 @@ namespace Voltage.Entities.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("ReqeustStatus")
+                    b.Property<int>("RequestStatus")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("RequestedDate")

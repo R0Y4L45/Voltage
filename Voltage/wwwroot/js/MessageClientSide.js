@@ -127,6 +127,7 @@ async function ClickToUser(username) {
     recUserId = await GetUserId(username);
     count = 9;
     document.querySelector(".chat-bubbles").innerHTML = '';
+    let l = await GetMessageList(username + ' ' + count);
     (await GetMessageList(username + ' ' + count)).forEach(message => {
         date = new Date(message.createdTime);
 

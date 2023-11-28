@@ -59,6 +59,7 @@ public class Program
         builder.Services.AddScoped<ILogInService, LogInService>();
         builder.Services.AddScoped<IUserManagerService, UserManagerService>();
         builder.Services.AddScoped<ISignInManagerService, SignInManagerService>();
+        builder.Services.AddScoped<IFriendListService, FriendListService>();
         builder.Services.AddAuthentication();
         builder.Services.AddHostedService<EmailVerifiedClearHostedService>();
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

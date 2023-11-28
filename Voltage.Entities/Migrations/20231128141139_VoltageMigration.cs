@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Voltage.Entities.Migrations
 {
-    public partial class mig : Migration
+    public partial class VoltageMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -165,7 +165,7 @@ namespace Voltage.Entities.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ReceiverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ReqeustStatus = table.Column<int>(type: "int", nullable: true),
+                    RequestStatus = table.Column<int>(type: "int", nullable: false),
                     RequestedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AcceptedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },

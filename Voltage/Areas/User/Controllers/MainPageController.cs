@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Voltage.Business.CustomHelpers;
 using Voltage.Business.Services.Abstract;
+using Voltage.Entities;
 using Voltage.Entities.Entity;
 using Voltage.Entities.Models.Dtos;
 using Voltage.Entities.Models.HelperModels;
 using Voltage.Entities.Models.ViewModels;
+using MyUser = Voltage.Entities.Entity.User;
 
 namespace Voltage.Areas.User.Controllers;
 
@@ -17,15 +19,21 @@ public class MainPageController : Controller
     private readonly IUserManagerService _userManagerService;
     private readonly IMessageService _messageService;
     private readonly IEmailService _emailService;
+    private readonly IFriendListService _friendListService;
     private readonly IMapper _mapper;
+    private IEnumerable<MyUser>? _list;
+    private int _count;
 
-    public MainPageController(IMessageService messageService, IMapper mapper, 
-        IUserManagerService userManagerService, IEmailService emailConfiguration)
+    public MainPageController(IMessageService messageService, IMapper mapper,
+        IUserManagerService userManagerService,
+        IEmailService emailConfiguration,
+        IFriendListService friendListService)
     {
         _messageService = messageService;
         _mapper = mapper;
         _userManagerService = userManagerService;
         _emailService = emailConfiguration;
+        _friendListService = friendListService;
     }
 
     public async Task<IActionResult> Index()
@@ -53,7 +61,7 @@ public class MainPageController : Controller
             DateOfBirth = user.DateOfBirth,
             PhotoUrl = user.Photo,
         };
-        
+
         return View(viewmodel);
     }
 
@@ -159,24 +167,51 @@ public class MainPageController : Controller
     {
         if (!string.IsNullOrEmpty(searchObj.Content))
         {
-            var list = await _userManagerService.GetAllUsers(_ => _.UserName.Contains(searchObj.Content));
-            int count = list.Count();
-            bool next = default;
+            if (_list == null)
+            {
+                _list = (await _userManagerService.GetAllUsers(_ => _.UserName.Contains(searchObj.Content) &&
+                                                                       !_.Id.Equals(User.Claims.First().Value))).ToList();
 
-            next = (searchObj.Skip + searchObj.Take) >= count ? false : true;
+                //var friendList = (await _friendListService.GetListAsync()).ToList();
+                //
+                //var result = from user in users
+                //             join sender in friendList
+                //             on user.Id equals sender.SenderId
+                //             select new UserSearchDto
+                //             {
+                //                 UserName = user.UserName,
+                //                 Sender = sender.SenderId,
+                //                 Receiver = sender.ReceiverId,
+                //                 Stat = Status.Pending
+                //             };
 
-            return Json(new UsersResultDto { 
-                Users = list.Skip(searchObj.Skip).Take(searchObj.Take),
-                Count = count,
-                Next = next });
+                _count = _list.Count();
+            }
+            bool next = searchObj.Skip + searchObj.Take < _count;
+
+            return Json(new UsersResultDto
+            {
+                Users = _list.Skip(searchObj.Skip).Take(searchObj.Take),
+                Count = _count,
+                Next = next
+            });
         }
 
-        return Json(string.Empty);
+        return NoContent();
     }
 
     [HttpPost]
-    public async Task<IActionResult> FollowRequest()
+    public async Task<IActionResult> FollowRequest([FromBody] string name)
     {
+        string sender = User.Claims.FirstOrDefault()?.Value!,
+            receiver = (await _userManagerService.FindByNameAsync(name)).Id;
+
+        await _friendListService.AddAsync(new FriendList
+        {
+            SenderId = sender,
+            ReceiverId = receiver,
+            RequestStatus = Status.Pending
+        });
 
         return Json(string.Empty);
     }

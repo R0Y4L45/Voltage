@@ -12,8 +12,8 @@ using Voltage.Entities.DataBaseContext;
 namespace Voltage.Entities.Migrations
 {
     [DbContext(typeof(VoltageDbContext))]
-    [Migration("20231122202949_mig")]
-    partial class mig
+    [Migration("20231128141139_VoltageMigration")]
+    partial class VoltageMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -172,7 +172,7 @@ namespace Voltage.Entities.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("ReqeustStatus")
+                    b.Property<int>("RequestStatus")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("RequestedDate")

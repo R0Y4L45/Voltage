@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.DataBaseContext;
 using Voltage.Entities.Entity;
@@ -13,21 +14,21 @@ public class MessageService : IMessageService
 
     public async Task<int> AddAsync(Message entity)
     {
-        _context?.AddAsync(entity);
+        await _context.AddAsync(entity);
         return await _context!.SaveChangesAsync();
     }
 
-    public void Delete(Message entity) 
+    public void Delete(Message entity)
     {
         _context.Message?.Remove(entity);
         _context.SaveChanges();
     }
-    public Message Get(Expression<Func<Message, bool>> filter = null!) => 
-        _context.Message?.FirstOrDefault(filter)!;
+    public async Task<Message> GetAsync(Expression<Func<Message, bool>> filter = null!) =>
+        (await _context.Message?.FirstOrDefaultAsync(filter)!)!;
 
     public async Task<IEnumerable<Message>> GetListAsync(Expression<Func<Message, bool>> filter = null!) =>
         await Task.FromResult(filter == null ? _context.Message! : _context.Message!.Where(filter));
-
+     
     public bool Update(Message entity)
     {
         throw new NotImplementedException();

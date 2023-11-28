@@ -2,14 +2,14 @@
 
 namespace Voltage.Entities.Entity;
 
-public enum Status { Pending = 1, Accepted, Rejected }
+public enum Status { None, Pending, Accepted }
 public class FriendList : IEntity
 {
     public int Id { get; set; }
     public string SenderId { get; set; } = null!;
     public string ReceiverId { get; set; } = null!;
-    public Status? ReqeustStatus { get; set; } = null!;
-    public DateTime RequestedDate { get; set; }
+    public Status RequestStatus { get; set; } = Status.None;
+    public DateTime RequestedDate { get; set; } = DateTime.Now;
     public DateTime? AcceptedDate { get; set; } = null!;
 
     //Nav props
