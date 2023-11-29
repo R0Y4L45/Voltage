@@ -11,6 +11,7 @@ public class VoltageDbContext : IdentityDbContext<User, IdentityRole, string>
     public DbSet<Message>? Message { get; set; }
     public DbSet<FriendList>? FriendList { get; set; }
     public DbSet<Notification>? Notification { get; set; }
+    public DbSet<UsersFriendListResult>? UsersFriendListResult { get; set; }
 
     public VoltageDbContext() { }
     public VoltageDbContext(DbContextOptions<VoltageDbContext> optionsBuilder) : base(optionsBuilder) { }
@@ -28,6 +29,8 @@ public class VoltageDbContext : IdentityDbContext<User, IdentityRole, string>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<User>().Property(_ => _.DateOfBirth).IsRequired();
+
+        builder.Entity<UsersFriendListResult>().HasNoKey();
 
         builder.Entity<Message>()
             .HasOne(m => m.Sender)
