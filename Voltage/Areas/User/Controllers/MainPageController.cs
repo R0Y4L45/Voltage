@@ -45,6 +45,7 @@ public class MainPageController : Controller
         return View();
     }
 
+    public IActionResult MessageMobile()=>View();
     public IActionResult FollowRequests() => View();
     public IActionResult SearchUsers() => View();
 

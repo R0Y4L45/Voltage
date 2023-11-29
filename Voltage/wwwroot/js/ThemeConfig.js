@@ -14,7 +14,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
+    if (savedTheme) 
         document.body.setAttribute('data-bs-theme', savedTheme);
-    }
+    
 });
