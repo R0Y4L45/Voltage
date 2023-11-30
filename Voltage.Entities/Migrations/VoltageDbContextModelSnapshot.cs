@@ -326,6 +326,12 @@ namespace Voltage.Entities.Migrations
                     b.Property<DateTime?>("AcceptedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Photo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ReceiverId")
                         .HasColumnType("nvarchar(max)");
 
@@ -344,7 +350,10 @@ namespace Voltage.Entities.Migrations
                     b.Property<string>("SenderName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("UsersFriendListResult");
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("UsersFriendListResults");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

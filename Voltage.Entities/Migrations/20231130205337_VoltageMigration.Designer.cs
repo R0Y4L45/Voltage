@@ -12,7 +12,7 @@ using Voltage.Entities.DataBaseContext;
 namespace Voltage.Entities.Migrations
 {
     [DbContext(typeof(VoltageDbContext))]
-    [Migration("20231129174833_VoltageMigration")]
+    [Migration("20231130205337_VoltageMigration")]
     partial class VoltageMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -328,6 +328,12 @@ namespace Voltage.Entities.Migrations
                     b.Property<DateTime?>("AcceptedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Photo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ReceiverId")
                         .HasColumnType("nvarchar(max)");
 
@@ -346,7 +352,10 @@ namespace Voltage.Entities.Migrations
                     b.Property<string>("SenderName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("UsersFriendListResult");
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("UsersFriendListResults");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

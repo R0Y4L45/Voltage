@@ -23,21 +23,19 @@ public class MainPageController : Controller
     private readonly IEmailService _emailService;
     private readonly IFriendListService _friendListService;
     private readonly IMapper _mapper;
-    private IEnumerable<MyUser>? _list;
+    private IEnumerable<UsersFriendListResult>? _list;
     private int _count;
-    private VoltageDbContext _context;
 
     public MainPageController(IMessageService messageService, IMapper mapper,
         IUserManagerService userManagerService,
         IEmailService emailConfiguration,
-        IFriendListService friendListService, VoltageDbContext context)
+        IFriendListService friendListService)
     {
         _messageService = messageService;
         _mapper = mapper;
         _userManagerService = userManagerService;
         _emailService = emailConfiguration;
         _friendListService = friendListService;
-        _context = context;
     }
 
     public async Task<IActionResult> Index()
@@ -168,71 +166,21 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> FindUsers([FromBody] SearchDto searchObj)
+    public async Task<IActionResult> SearchUsers([FromBody] SearchDto searchObj)
     {
         if (!string.IsNullOrEmpty(searchObj.Content))
         {
             if (_list == null)
             {
                 string id = User.Claims.First().Value;
-
-                _list = await _userManagerService.GetAllUsers(_ => _.UserName.Contains(searchObj.Content));
-
-                var d = await _friendListService.GetListAsync();
-
-                var cmd = $@"SELECT 
-	                        	CASE
-	                        	WHEN senderUsers.UserName is null THEN 'Empty' 
-	                        	WHEN senderUsers.UserName is not null THEN senderUsers.UserName
-	                        	END AS [SenderName],
-	                        	CASE
-	                        	WHEN friendList.SenderId is null THEN 'Empty'
-	                        	WHEN friendList.SenderId is not null THEN friendList.SenderId 
-	                        	END AS [SenderId],
-	                        	CASE
-	                        	WHEN receiverUsers.UserName is null THEN 'Empty'
-	                        	WHEN receiverUsers.UserName is not null THEN receiverUsers.UserName
-	                        	END
-	                            AS [ReceiverName],
-	                        	CASE
-	                        	WHEN friendList.ReceiverId is null THEN 'NULL4'
-	                        	WHEN friendList.ReceiverId is not null THEN friendList.ReceiverId
-	                        	END
-	                            AS [ReceiverId],
-	                        	CASE
-	                        	WHEN friendList.RequestStatus is null THEN 0
-	                        	WHEN friendList.RequestStatus is not null THEN friendList.RequestStatus
-	                        	END
-	                            AS [RequestStatus],
-	                        	CASE
-	                        	WHEN friendList.RequestedDate is null THEN '0001-01-01 01:01:01.0000000'
-	                        	WHEN friendList.RequestedDate is not null THEN friendList.RequestedDate
-	                        	END
-	                            AS [RequestedDate],
-	                        	CASE
-	                        	WHEN friendList.AcceptedDate is null THEN '0001-01-01 01:01:01.0000000'
-	                        	WHEN friendList.AcceptedDate is not null THEN friendList.AcceptedDate
-	                        	END
-	                            AS [AcceptedDate]
-	                        From (SELECT * FROM AspNetUsers WHERE UserName LIKE '%' + @SearchTerm + '%') AS senderUsers
-	                        LEFT JOIN (SELECT * FROM FriendList
-	                        	   WHERE SenderId = @Id or ReceiverId = @Id) AS friendList
-	                        ON friendList.SenderId = senderUsers.Id
-	                        RIGHT JOIN (SELECT * FROM AspNetUsers WHERE UserName LIKE '%' + @SearchTerm + '%') AS receiverUsers
-	                        ON friendList.ReceiverId = receiverUsers.Id
-	                        ORDER BY senderUsers.UserName, receiverUsers.UserName";
-
-                var example = _context.UsersFriendListResult?.FromSqlRaw(cmd, new SqlParameter("@SearchTerm", searchObj.Content),
-    new SqlParameter("@Id", id));
-
-                _count = _list.Count();
+                _list = await _friendListService.GetUsersSearchResult(id, searchObj);                
             }
 
             bool next = searchObj.Skip + searchObj.Take < _count;
 
             return Json(new UsersResultDto
             {
-                Users = _list.Skip(searchObj.Skip).Take(searchObj.Take),
+                Users = _list,
                 Count = _count,
                 Next = next
             });
