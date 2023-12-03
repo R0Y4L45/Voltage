@@ -1,6 +1,13 @@
-async function followRequest(name) {
+﻿async function followRequest(name) {
     //const followBtn = document.getElementById('followBtn' + name);
     console.log('Follow');
+    //const btn = div.querySelector(`#btnId${i.userName}`);
+    //
+    //btn.addEventListener('click', () => {
+    //    // Показать модальное окно
+    //    const myModal = new bootstrap.Modal(document.getElementById('modal-danger'));
+    //    myModal.show();
+    //});
     //await FetchApiPost('FollowRequest', name);
 }
 
