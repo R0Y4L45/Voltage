@@ -33,9 +33,9 @@ public class FriendListService : IFriendListService
     public async Task<IEnumerable<UsersFriendListResult>> GetUsersSearchResult(string Id, SearchDto obj)
     {
         FormattableString cmd = 
-            $@"SELECT users.UserName, 
-                      users.Country,
-                      users.Photo, 
+            $@"SELECT users.UserName AS [UserName], 
+                      users.Country AS [Country],
+                      users.Photo AS [Photo], 
                       list.SenderName AS [SenderName],
                	      list.SenderId AS [SenderId],
                	      list.ReceiverName AS [ReceiverName],
@@ -59,17 +59,13 @@ public class FriendListService : IFriendListService
                		     ON friendList.ReceiverId = receiverUsers.Id) AS [list]
                ON list.ReceiverId = users.Id or list.SenderId = users.Id
                WHERE users.UserName LIKE '%' + {obj.Content} + '%' and users.Id != {Id}
-               ORDER BY users.UserName
-               OFFSET {obj.Skip} ROWS
-               FETCH NEXT {4} ROWS ONLY";
+               ORDER BY users.UserName";
 
-        return await Task.Run(() => _context.UsersFriendListResults?.FromSqlInterpolated(cmd)!);
+        return await Task.Run(() => _context.Set<UsersFriendListResult>()?.FromSqlInterpolated(cmd)!);
     }
 
     public bool Update(FriendList entity)
     {
         throw new NotImplementedException();
     }
-
-
 }

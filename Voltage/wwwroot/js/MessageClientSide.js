@@ -39,7 +39,6 @@ function hideFileDropArea() {
 }
 
 
-
 fileDropArea.addEventListener("dragleave", () => {
     fileDropArea.style.border = "2px dashed #ccc";
 });

@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Voltage.Business.CustomHelpers;
 using Voltage.Business.Services.Abstract;
-using Voltage.Entities.DataBaseContext;
 using Voltage.Entities.Entity;
 using Voltage.Entities.Models.Dtos;
 using Voltage.Entities.Models.HelperModels;
 using Voltage.Entities.Models.ViewModels;
-using MyUser = Voltage.Entities.Entity.User;
 
 namespace Voltage.Areas.User.Controllers;
 
@@ -38,6 +34,7 @@ public class MainPageController : Controller
         _friendListService = friendListService;
     }
 
+    #region ActionMethods
     public async Task<IActionResult> Index()
     {
         string? profilePhoto = await _userManagerService.GetProfilePhotoAsync(User.Identity!.Name!);
@@ -47,7 +44,7 @@ public class MainPageController : Controller
         return View();
     }
 
-    public IActionResult MessageMobile()=>View();
+    public IActionResult MessageMobile() => View();
     public IActionResult FollowRequests() => View();
     public IActionResult SearchUsers() => View();
 
@@ -127,6 +124,8 @@ public class MainPageController : Controller
 
     public IActionResult Settings() => View();
 
+    #endregion
+
     #region Messages Api
 
     [HttpPost]
@@ -172,15 +171,15 @@ public class MainPageController : Controller
         {
             if (_list == null)
             {
-                string id = User.Claims.First().Value;
-                _list = await _friendListService.GetUsersSearchResult(id, searchObj);                
+                _list = await _friendListService.GetUsersSearchResult(User.Claims.First().Value, searchObj);
+                _count = _list.Count();
             }
 
             bool next = searchObj.Skip + searchObj.Take < _count;
 
             return Json(new UsersResultDto
             {
-                Users = _list,
+                Users = _list.Skip(searchObj.Skip).Take(searchObj.Take),
                 Count = _count,
                 Next = next
             });
@@ -203,7 +202,7 @@ public class MainPageController : Controller
         });
 
         return Json(string.Empty);
-    }
+      }
 
     #endregion
 }
