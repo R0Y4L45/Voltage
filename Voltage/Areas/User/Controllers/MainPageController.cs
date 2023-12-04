@@ -189,20 +189,63 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> FollowRequest([FromBody] string name)
+    public async Task<IActionResult> FriendshipRequest([FromBody] string name)
     {
         string sender = User.Claims.FirstOrDefault()?.Value!,
             receiver = (await _userManagerService.FindByNameAsync(name)).Id;
 
-        await _friendListService.AddAsync(new FriendList
+        if (receiver != null)
         {
-            SenderId = sender,
-            ReceiverId = receiver,
-            RequestStatus = Status.Pending
-        });
+            await _friendListService.AddAsync(new FriendList
+            {
+                SenderId = sender,
+                ReceiverId = receiver,
+                RequestStatus = Status.Pending
+            });
 
-        return Json(string.Empty);
-      }
+            return Json(true);
+        }
+
+        return Json(false);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CancelRequest([FromBody] string name)
+    {
+        string sender = User.Claims.FirstOrDefault()?.Value!,
+            receiver = (await _userManagerService.FindByNameAsync(name)).Id;
+
+        FriendList entity = await _friendListService.GetAsync(_ => _.SenderId == sender &&
+        _.ReceiverId == receiver &&
+        _.RequestStatus == Status.Pending);
+
+        if (entity != null)
+        {
+            await _friendListService.DeleteAsync(entity);
+            return Json(true);
+        }
+
+        return Json(false);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> RemoveFriend([FromBody] string name)
+    {
+        string sender = User.Claims.FirstOrDefault()?.Value!,
+            receiver = (await _userManagerService.FindByNameAsync(name)).Id;
+
+        FriendList entity = await _friendListService.GetAsync(_ => _.SenderId == sender &&
+        _.ReceiverId == receiver &&
+        _.RequestStatus == Status.Accepted);
+
+        if (entity != null)
+        {
+            await _friendListService.DeleteAsync(entity);
+            return Json(true);
+        }
+
+        return Json(false);
+    }
 
     #endregion
 }

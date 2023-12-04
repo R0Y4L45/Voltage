@@ -19,10 +19,13 @@ public class FriendListService : IFriendListService
         await _context.AddAsync(entity);
         return await _context.SaveChangesAsync();
     }
-    public void Delete(FriendList entity)
-    {
-        throw new NotImplementedException();
-    }
+
+    public void Delete(FriendList entity) => _context.Remove(entity);
+    public async Task DeleteAsync(FriendList entity) => await Task.Run(() =>
+                                                                       {
+                                                                           _context.Remove(entity);
+                                                                           _context.SaveChanges();
+                                                                       });
 
     public async Task<FriendList> GetAsync(Expression<Func<FriendList, bool>> filter = null!) =>
         (await _context.FriendList?.FirstOrDefaultAsync(filter)!)!;
@@ -32,7 +35,7 @@ public class FriendListService : IFriendListService
 
     public async Task<IEnumerable<UsersFriendListResult>> GetUsersSearchResult(string Id, SearchDto obj)
     {
-        FormattableString cmd = 
+        FormattableString cmd =
             $@"SELECT users.UserName AS [UserName], 
                       users.Country AS [Country],
                       users.Photo AS [Photo], 

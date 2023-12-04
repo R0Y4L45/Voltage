@@ -8,4 +8,5 @@ namespace Voltage.Business.Services.Abstract;
 public interface IFriendListService : IEntityRepository<FriendList, VoltageDbContext>
 {
     Task<IEnumerable<UsersFriendListResult>> GetUsersSearchResult(string Id, SearchDto obj);
+    Task DeleteAsync(FriendList entity);
 }

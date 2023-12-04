@@ -27,28 +27,31 @@ document.getElementById('searchUsers').oninput = async _ => {
 }
 
 function showUsers(list) {
-    let methodName, btnContent;
+    let methodName, btnContent, modalAttribute;
 
     list.forEach(i => {
         let div = document.createElement('div');
+
         div.classList = "col-md-6 col-lg-3";
 
         if (i.requestStatus == 2) {
-            methodName = 'removeFriendship';
-            btnContent = 'Following...';
+            methodName = 'removeFriend';
+            btnContent = 'Friend...';
+            modalAttribute = `data-bs-toggle="modal" data-bs-target="#modal-danger"`;
         }
         else if (i.requestStatus == null) {
-            methodName = 'followRequest';
-            btnContent = 'Follow';
+            methodName = 'friendshipRequest';
+            btnContent = 'Send Friendship';
         }
         else {
-            if (i.senderName == i.userName && i.requestStatus == 1) {
+            if (i.requestStatus == 1 && i.senderName == i.userName) {
                 methodName = 'answerRequest';
                 btnContent = 'Accept or Decline';
             }
             else {
                 methodName = 'pendingRequest';
                 btnContent = 'Pending...';
+                modalAttribute = `data-bs-toggle="modal" data-bs-target="#modal-danger"`;
             }
         }
 
@@ -63,7 +66,7 @@ function showUsers(list) {
                         </div>
                     </div>
                     <div class="d-flex">
-                         <a href="#" id="btnId${i.userName}" onclick="${methodName}('${i.userName}')" class="card-btn">
+                         <a id="btnId${i.userName}" onclick="${methodName}('${i.userName}')" class="card-btn" ${modalAttribute}>
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg>
                             ${btnContent}
                         </a>
