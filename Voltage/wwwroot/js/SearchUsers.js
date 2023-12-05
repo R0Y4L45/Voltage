@@ -27,21 +27,21 @@ document.getElementById('searchUsers').oninput = async _ => {
 }
 
 function showUsers(list) {
-    let methodName, btnContent, modalAttribute;
-
     list.forEach(i => {
-        let div = document.createElement('div');
-
-        div.classList = "col-md-6 col-lg-3";
+        let methodName, btnContent, modalAttribute, icon,
+            div = document.createElement('div');
+            div.classList = "col-md-6 col-lg-3";
 
         if (i.requestStatus == 2) {
-            methodName = 'removeFriend';
+            methodName = 'removeRequest';
             btnContent = 'Friend...';
             modalAttribute = `data-bs-toggle="modal" data-bs-target="#modal-danger"`;
+            icon = '<img width="18" src="https://img.icons8.com/external-justicon-lineal-color-justicon/64/external-friend-notifications-justicon-lineal-color-justicon.png" alt="external-friend-notifications-justicon-lineal-color-justicon"/>';
         }
         else if (i.requestStatus == null) {
             methodName = 'friendshipRequest';
             btnContent = 'Send Friendship';
+            icon = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg>';
         }
         else {
             if (i.requestStatus == 1 && i.senderName == i.userName) {
@@ -52,6 +52,7 @@ function showUsers(list) {
                 methodName = 'pendingRequest';
                 btnContent = 'Pending...';
                 modalAttribute = `data-bs-toggle="modal" data-bs-target="#modal-danger"`;
+                icon = '<img width="16" height="16" src="https://img.icons8.com/office/16/hourglass-sand-top.png" alt="hourglass-sand-top"/>';
             }
         }
 
@@ -67,7 +68,7 @@ function showUsers(list) {
                     </div>
                     <div class="d-flex">
                          <a id="btnId${i.userName}" onclick="${methodName}('${i.userName}')" class="card-btn" ${modalAttribute}>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg>
+                            ${icon}
                             ${btnContent}
                         </a>
                     </div>
@@ -93,8 +94,6 @@ async function clickShowMore() {
     sessionStorage.setItem('skip', searchObj.skip)
 
     result = await FetchApiPost('SearchUsers', searchObj);
-
-    console.log(result);
 
     if (count > 0) {
         showUsers(result.users);
