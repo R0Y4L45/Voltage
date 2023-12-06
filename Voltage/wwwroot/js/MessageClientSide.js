@@ -122,10 +122,25 @@ document.getElementById("messageInput").addEventListener("keypress", async event
         await SendMessage(event)
 });
 async function ClickToUser(username) {
+    let chatHeader = document.getElementById("chatHeader");
+    let avatarElement = chatHeader.querySelector('.avatar');
+    let usernameElement = chatHeader.querySelector('.col-auto.ms-2 h4');
+    let clickedElement = document.querySelector(`[data-user-name="${username}"]`);
+    let userPhoto = clickedElement.getAttribute('data-user-photo');
+    let userStatus = clickedElement.getAttribute('data-user-status');
+
+    document.querySelector(".chat-bubbles").innerHTML = '';
+    avatarElement.style.backgroundImage = `url('${userPhoto}')`;
+    usernameElement.textContent = username;
+
+    let h5Element = chatHeader.querySelector('.col-auto.ms-2 h5');
+    h5Element.innerHTML = `${userStatus}<span class="badge bg-green badge-blink ms-1"></span>`;
+
     recUserName = username
     recUserId = await GetUserId(username);
     count = 9;
-    document.querySelector(".chat-bubbles").innerHTML = '';
+
+
     let l = await GetMessageList(username + ' ' + count);
     (await GetMessageList(username + ' ' + count)).forEach(message => {
         date = new Date(message.createdTime);
