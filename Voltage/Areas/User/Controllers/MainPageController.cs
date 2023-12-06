@@ -38,7 +38,7 @@ public class MainPageController : Controller
     public async Task<IActionResult> Index()
     {
         string? profilePhoto = await _userManagerService.GetProfilePhotoAsync(User.Identity!.Name!);
-
+        ViewBag.UserManagerService = _userManagerService;
         if (profilePhoto != null)
             HttpContext.Session.SetString("ProfilePhoto", profilePhoto);
         return View();

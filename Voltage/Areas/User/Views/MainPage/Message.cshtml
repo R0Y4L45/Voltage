@@ -39,10 +39,10 @@
                         <div class="nav flex-column nav-pills" role="tablist">
                             @foreach (var item in Model)
                             {
-                                <a href="#chat-@item.UserName" onclick="ClickToUser('@item.UserName')" class="nav-link text-start mw-100 p-3 active" id="chat-@item.UserName-tab" data-bs-toggle="pill" role="tab" aria-selected="true">
+                                <a href="#chat-@item.UserName" onclick="ClickToUser('@item.UserName')" class="nav-link text-start mw-100 p-3 active" id="chat-@item.UserName-tab" data-bs-toggle="pill" role="tab" aria-selected="true" data-user-name="@item.UserName" data-user-photo="@item.Photo" data-user-status="Online">
                                     <div class="row align-items-center flex-fill">
                                         <div class="col-auto">
-                                            <span class="avatar" style="background-image: url()"></span>
+                                            <span class="avatar" style="background-image: url('@item.Photo')"></span>
                                         </div>
                                         <div class="col text-body">
                                             <div>@item.UserName</div>
@@ -55,15 +55,14 @@
                     </div>
                 </div>
                 <div class="col-12 col-lg-7 col-xl-9 d-flex flex-column hide-on-small-screen">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                    <div id="chatHeader" class="card-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <div class="col-auto">
-                                <span class="avatar" style="background-image: url(./static/avatars/000m.jpg)"></span>
+                                <span class="avatar" style="background-image: url()"></span>
                             </div>
                             <div class="col-auto ms-2">
-                                <h4 class="mb-2">Nihat</h4>
+                                <h4 class="mb-2"></h4>
                                 <h5 class="mb-0">
-                                    Online<span class="badge bg-green badge-blink ms-1"></span>
                                 </h5>
                             </div>
                         </div>
@@ -77,12 +76,6 @@
                         </div>
                     </div>
                     <div id="overChatBubbles" class="card-body scrollable" style="height: 35rem">
-                    <div id="fileDropArea" style="display: none; width:100%; z-index:1;">
-                        <p>Перетащите сюда файлы</p>
-                        <input type="file" id="fileInput" multiple style="display: none;" />
-                        <textarea id="fileDescription" placeholder="Описание файла..."></textarea>
-                        <button onclick="handleSend()">Отправить</button>
-                    </div>
                         <div class="chat">
                             <div class="chat-bubbles">
                             </div>

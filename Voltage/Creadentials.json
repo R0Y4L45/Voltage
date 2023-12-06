@@ -1,0 +1,10 @@
+{
+  "web": {
+    "client_id": "293370192453-e31qg1ts4mch4disrdjv65kaoaipo0jb.apps.googleusercontent.com",
+    "project_id": "voltage-407117",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "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"
+  }
+}
