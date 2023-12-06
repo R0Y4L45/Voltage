@@ -1,7 +1,8 @@
 ﻿<div class="page-body">
     <div class="container-xl">
         <div class="card">
-            <div class="col-12 col-lg-7 col-xl-12 d-flex flex-column">
+            <div class="row g-0">
+                <div class="col-12 col-lg-7 col-xl-12 d-flex flex-column">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
                         <div class="col-auto mx-3">
@@ -29,16 +30,6 @@
                     </div>
                 </div>
                 <div id="overChatBubbles" class="card-body scrollable" style="height: 35rem">
-                    <div id="fileDropArea" style="display: none; width:100%; z-index:1;">
-                        <p>Перетащите сюда файлы</p>
-                        <input type="file" id="fileInput" multiple style="display: none;" />
-                        <textarea id="fileDescription" placeholder="Описание файла..."></textarea>
-                        <button onclick="handleSend()">Отправить</button>
-                    </div>
-                    <div class="chat">
-                        <div class="chat-bubbles">
-                        </div>
-                    </div>
                 </div>
                 <div class="card-footer">
                     <div class="input-group input-group-flat">
@@ -56,6 +47,7 @@
                         </span>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </div>

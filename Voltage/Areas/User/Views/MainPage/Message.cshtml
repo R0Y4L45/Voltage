@@ -26,8 +26,8 @@
     <div class="container-xl">
         <div class="card">
             <div class="row g-0">
-                <div class="col-12 col-lg-5 col-xl-3 border-end">
-                    <div class="card-header d-none d-md-block">
+                <div id="MessageFriendList" class="col-12 col-lg-5 col-xl-3 border-end">
+                    <div class="card-header d-block d-md-block">
                         <div class="input-icon">
                             <span class="input-icon-addon">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
@@ -54,10 +54,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-lg-7 col-xl-9 d-flex flex-column hide-on-small-screen">
+                <div id="messageAreas1" class="col-12 col-lg-7 col-xl-9 d-flex flex-column hide-on-small-screen">
                     <div id="chatHeader" class="card-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            <div class="col-auto">
+                            <div class="col-auto mx-3 backbtn">
+                                <button class="btn btn-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-arrow-left-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 2a10 10 0 0 1 .324 19.995l-.324 .005l-.324 -.005a10 10 0 0 1 .324 -19.995zm.707 5.293a1 1 0 0 0 -1.414 0l-4 4a1.048 1.048 0 0 0 -.083 .094l-.064 .092l-.052 .098l-.044 .11l-.03 .112l-.017 .126l-.003 .075l.004 .09l.007 .058l.025 .118l.035 .105l.054 .113l.043 .07l.071 .095l.054 .058l4 4l.094 .083a1 1 0 0 0 1.32 -1.497l-2.292 -2.293h5.585l.117 -.007a1 1 0 0 0 -.117 -1.993h-5.586l2.293 -2.293l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor" /></svg>
+                                </button>
+                            </div>
+                            <div class="col-auto mx-2">
                                 <span class="avatar" style="background-image: url()"></span>
                             </div>
                             <div class="col-auto ms-2">

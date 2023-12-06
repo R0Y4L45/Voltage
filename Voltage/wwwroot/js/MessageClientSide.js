@@ -6,7 +6,8 @@
     list = document.getElementById("messagesList"),
     count;
 
-overChatBubble.addEventListener("dragover", (event) => {
+
+/*overChatBubble.addEventListener("dragover", (event) => {
     event.preventDefault();
     showFileDropArea();
 });
@@ -99,7 +100,7 @@ function handleZipDrop(zipFile) {
 function handleSend() {
     const description = fileDescription.value;
     console.log('Description:', description);
-}
+}*/
 
 
 
@@ -117,6 +118,36 @@ connection.on("ReceiveMessage", (user, message, createdTime) => {
 
 //#region Events
 
+
+function showMessages() {
+    const messageFriendList = document.getElementById("MessageFriendList");
+    const messageAreas1 = document.getElementById("messageAreas1");
+
+    if (window.innerWidth > 993) {
+        messageFriendList.classList.remove('displaynone');
+        messageFriendList.classList.add('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
+        messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
+        messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
+    } else {
+        messageFriendList.classList.remove('displaynone');
+        messageFriendList.classList.add('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
+        messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
+        messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
+    }
+}
+
+function showMessagesClick() {
+    const messageFriendList = document.getElementById("MessageFriendList");
+    const messageAreas1 = document.getElementById("messageAreas1");
+
+    if (window.innerWidth < 993) {
+        messageFriendList.classList.add('displaynone');
+        messageFriendList.classList.remove('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
+        messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
+        messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
+    }
+}
+
 document.getElementById("messageInput").addEventListener("keypress", async event => {
     if (event.key === "Enter")
         await SendMessage(event)
@@ -128,6 +159,10 @@ async function ClickToUser(username) {
     let clickedElement = document.querySelector(`[data-user-name="${username}"]`);
     let userPhoto = clickedElement.getAttribute('data-user-photo');
     let userStatus = clickedElement.getAttribute('data-user-status');
+
+    showMessagesClick();
+    
+    
 
     document.querySelector(".chat-bubbles").innerHTML = '';
     avatarElement.style.backgroundImage = `url('${userPhoto}')`;
@@ -227,5 +262,11 @@ function MessageCreater(content, style, sender, date) {
 
     chatBubbles.appendChild(chatItem);
 }
+
+
+window.addEventListener('resize', () => {
+    showMessages();
+});
+
 
 //#endregion
