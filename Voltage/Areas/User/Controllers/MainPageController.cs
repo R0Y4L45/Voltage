@@ -247,5 +247,45 @@ public class MainPageController : Controller
         return Json(false);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> AcceptRequest([FromBody] string name)
+    {
+        string sender = User.Claims.FirstOrDefault()?.Value!,
+            receiver = (await _userManagerService.FindByNameAsync(name)).Id;
+
+        FriendList entity = await _friendListService.GetAsync(_ => _.SenderId == receiver &&
+        _.ReceiverId == sender &&
+        _.RequestStatus == Status.Pending);
+
+        if (entity != null)
+        {
+            entity.RequestStatus = Status.Accepted;
+            entity.AcceptedDate = DateTime.Now;
+
+            return await Task.Run(() => Json(_friendListService.Update(entity)));
+        }
+
+        return Json(false);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeclineRequest([FromBody] string name)
+    {
+        string sender = User.Claims.FirstOrDefault()?.Value!,
+            receiver = (await _userManagerService.FindByNameAsync(name)).Id;
+
+        FriendList entity = await _friendListService.GetAsync(_ => _.SenderId == receiver &&
+        _.ReceiverId == sender &&
+        _.RequestStatus == Status.Pending);
+
+        if (entity != null)
+        {
+            await _friendListService.DeleteAsync(entity);
+            return Json(true);
+        }
+
+        return Json(false);
+    }
+
     #endregion
 }

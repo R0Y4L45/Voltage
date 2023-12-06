@@ -21,11 +21,8 @@ public class FriendListService : IFriendListService
     }
 
     public void Delete(FriendList entity) => _context.Remove(entity);
-    public async Task DeleteAsync(FriendList entity) => await Task.Run(() =>
-                                                                       {
-                                                                           _context.Remove(entity);
-                                                                           _context.SaveChanges();
-                                                                       });
+
+    public async Task DeleteAsync(FriendList entity) => await Task.Run(() => { _context.Remove(entity); _context.SaveChanges(); });
 
     public async Task<FriendList> GetAsync(Expression<Func<FriendList, bool>> filter = null!) =>
         (await _context.FriendList?.FirstOrDefaultAsync(filter)!)!;
@@ -69,6 +66,12 @@ public class FriendListService : IFriendListService
 
     public bool Update(FriendList entity)
     {
-        throw new NotImplementedException();
+        if (_context.Update(entity) != null)
+        {
+            _context.SaveChanges();
+            return true;
+        }
+
+        return false;
     }
 }
