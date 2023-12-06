@@ -7,7 +7,8 @@ async function friendshipRequest(name) {
         btn.onclick = _ => pendingRequest(name);
         btn.setAttribute('data-bs-toggle', 'modal');
         btn.setAttribute('data-bs-target', '#modal-danger');
-        btn.innerHTML = '<img width="16" height="16" src="https://img.icons8.com/office/16/hourglass-sand-top.png" alt="hourglass-sand-top"/> Pending...';
+        btn.innerHTML = `<img width="16"  src="https://img.icons8.com/office/16/hourglass-sand-top.png" 
+                          alt="hourglass-sand-top"/> Pending...`;
     }
 }
 
@@ -21,12 +22,48 @@ async function cancelRequest(name) {
         btn.removeAttribute('data-bs-toggle');
         btn.removeAttribute('data-bs-target');
         btn.onclick = _ => friendshipRequest(name);
-        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship';
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24"
+            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" />
+            <path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship`;
     }
 }
 
 async function removeRequest(name) {
     create_modal_a_tags(removeFriend, name, 'Return Back', 'Remove Friend');
+}
+
+async function acceptRequest(name) {
+    if (await FetchApiPost('AcceptRequest', name)) {
+        let btn = document.getElementById(`btnId${name}`);
+        btn.innerHTML = '';
+        btn.onclick = _ => removeRequest(name);
+        btn.setAttribute('data-bs-toggle', 'modal');
+        btn.setAttribute('data-bs-target', '#modal-danger');
+        btn.innerHTML = '<img width="18" src="https://img.icons8.com/external-justicon-lineal-color-justicon/64/external-friend-notifications-justicon-lineal-color-justicon.png" alt="external-friend-notifications-justicon-lineal-color-justicon"/> Friend...';
+
+        console.log("accept")
+    }
+}
+
+async function declineRequest(name) {
+    if (await FetchApiPost('DeclineRequest', name)) {
+        let btn = document.getElementById(`btnId${name}`);
+        btn.innerHTML = '';
+        btn.onclick = _ => friendshipRequest(name);
+        btn.removeAttribute('data-bs-toggle');
+        btn.removeAttribute('data-bs-target');
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24"
+            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" />
+            <path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship`;
+
+        console.log("decline")
+    }
 }
 
 async function removeFriend(name) {
