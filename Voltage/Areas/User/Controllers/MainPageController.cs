@@ -45,7 +45,7 @@ public class MainPageController : Controller
     }
 
     public IActionResult MessageMobile() => View();
-    public IActionResult FollowRequests() => View();
+    public IActionResult FriendshipRequests() => View();
     public IActionResult SearchUsers() => View();
 
     public async Task<IActionResult> Message() => View(await _userManagerService.GetAllUsers());
@@ -236,6 +236,8 @@ public class MainPageController : Controller
 
         FriendList entity = await _friendListService.GetAsync(_ => _.SenderId == sender &&
         _.ReceiverId == receiver &&
+        _.RequestStatus == Status.Accepted || _.SenderId == receiver &&
+        _.ReceiverId == sender &&
         _.RequestStatus == Status.Accepted);
 
         if (entity != null)
