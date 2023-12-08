@@ -7,11 +7,7 @@ connection.start().then(() => {
     connection.invoke("GetConnectionId").then(id => curUserId = id);
 }).catch(err => console.error(err.toString()));
 
-connection.on("ReceiveRequests", (user, message, createTime) => {
-    console.log(user);
-    console.log(message);
-    console.log("hello notify");
-})
+
 
 async function FetchApiPost(methodName, object) {
     return await fetch(methodName, {
