@@ -9,7 +9,7 @@ body {
 }
 
 .displaynone{
-    display:none;
+    display:none!important;
 }
 
 .backbtn{
