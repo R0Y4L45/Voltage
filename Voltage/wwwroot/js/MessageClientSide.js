@@ -4,7 +4,8 @@
     fileInput = document.getElementById("fileInput"),
     fileDescription = document.getElementById("fileDescription"),
     list = document.getElementById("messagesList"),
-    count;
+    count, messageSection = document.getElementById("MessageSection"),
+    animationArea = document.getElementById("animationtext");
 
 
 /*overChatBubble.addEventListener("dragover", (event) => {
@@ -118,7 +119,6 @@ connection.on("ReceiveMessage", (user, message, createdTime) => {
 
 //#region Events
 
-
 function showMessages() {
     const messageFriendList = document.getElementById("MessageFriendList");
     const messageAreas1 = document.getElementById("messageAreas1");
@@ -128,23 +128,30 @@ function showMessages() {
         messageFriendList.classList.add('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
         messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
         messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
+        messageSection.classList.add("displaynone");
+        animationArea.style.display = 'flex';
+
     } else {
         messageFriendList.classList.remove('displaynone');
         messageFriendList.classList.add('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
         messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
         messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
+        animationArea.style.display = 'none';
     }
 }
 
 function showMessagesClick() {
     const messageFriendList = document.getElementById("MessageFriendList");
     const messageAreas1 = document.getElementById("messageAreas1");
+    messageSection.classList.remove("displaynone");
+    animationArea.style.display = 'none';
 
     if (window.innerWidth < 993) {
         messageFriendList.classList.add('displaynone');
         messageFriendList.classList.remove('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
         messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
         messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
+        animationArea.classList.add("displaynone");
     }
 }
 
