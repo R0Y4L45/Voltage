@@ -1,13 +1,14 @@
-﻿@import url("https://fonts.googleapis.com/css?  family=Lora:400,400i,700,700i");
+﻿@import url("https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i");
 
 .patterns {
-    height:80vh;
+    height: 80vh;
 }
+
 svg text {
     font-family: Lora;
-    letter-spacing: 10px;
+    letter-spacing: 1vw;
     stroke: #ffa5d8;
-    font-size: 150px;
+    font-size: 8vw; 
     font-weight: 700;
     stroke-width: 3;
     animation: textAnimate 5s infinite alternate;
@@ -17,12 +18,12 @@ svg text {
     0% {
         stroke-dasharray: 0 50%;
         stroke-dashoffset: 20%;
-        fill: hsl(189, 68%, 75%)
+        fill: hsl(189, 68%, 75%);
     }
 
     100% {
         stroke-dasharray: 50% 0;
-        stroke-dashoffstet: -20%;
-        fill: hsla(189, 68%, 75%,0%)
+        stroke-dashoffset: -20%;
+        fill: hsla(189, 68%, 75%, 0%);
     }
 }
