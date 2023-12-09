@@ -138,6 +138,15 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
+    public async Task<IActionResult> GetUser([FromBody] string name = "null")
+    {
+        if (name != "null")
+            return Json(_mapper.Map<UserDto>(await _userManagerService.FindByNameAsync(name)));
+
+        return Json("null");
+    }
+
+    [HttpPost]
     public async Task<IActionResult> MessageSaver([FromBody] MessageDto message)
     {
         if (message.Sender != null && message.Receiver != null && message.Content != null)

@@ -12,9 +12,10 @@ async function friendshipRequest(name) {
         btn.innerHTML = `<img width="16"  src="https://img.icons8.com/office/16/hourglass-sand-top.png" 
                           alt="hourglass-sand-top"/> Pending...`;
 
-        connection.invoke("SendRequest", 'a190de52-84bf-4b7d-bbdf-a7f948c5d039', 'halo')
-            .catch(err => console.error(err.toString()));
-        
+        let user = await getUser(name);
+        if (user.id != null)
+            connection.invoke("SendRequest", user.id, user)
+                .catch(err => console.error(err.toString()));
     }
 }
 
@@ -99,6 +100,10 @@ function create_modal_a_tags(methodName, parameter, denialText, approvalText) {
 
     approval_div.appendChild(approvalBtn);
     denial_div.appendChild(denialBtn);
+}
+
+async function getUser(name) {
+    return await FetchApiPost('GetUser', name);
 }
 
 //#endregion
