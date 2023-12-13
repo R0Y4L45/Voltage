@@ -129,7 +129,7 @@ function showMessages() {
         messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
         messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
         messageSection.classList.add("displaynone");
-        animationArea.style.display = 'flex';
+        animationArea.style.display = 'block';
 
     } else {
         messageFriendList.classList.remove('displaynone');
