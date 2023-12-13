@@ -138,12 +138,12 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetUser([FromBody] string name = "null")
+    public async Task<IActionResult> GetUser([FromBody] string? name = null)
     {
-        if (name != "null")
-            return Json(_mapper.Map<UserDto>(await _userManagerService.FindByNameAsync(name)));
+        if (name != null)
+            return Json(await _friendListService.GetUserDtoByNameAsync(name));
 
-        return Json("null");
+        return Json(null);
     }
 
     [HttpPost]
@@ -180,7 +180,7 @@ public class MainPageController : Controller
         {
             if (_list == null)
             {
-                _list = await _friendListService.GetUsersSearchResult(User.Claims.First().Value, searchObj);
+                _list = await _friendListService.GetUsersSearchResultAsync(User.Claims.First().Value, searchObj);
                 _count = _list.Count();
             }
 
@@ -203,7 +203,7 @@ public class MainPageController : Controller
         string sender = User.Claims.FirstOrDefault()?.Value!,
             receiver = (await _userManagerService.FindByNameAsync(name)).Id;
 
-        if (receiver != null)
+        if (receiver != null && !await _friendListService.CheckRequestAsync(sender, receiver))
         {
             await _friendListService.AddAsync(new FriendList
             {
@@ -225,8 +225,8 @@ public class MainPageController : Controller
             receiver = (await _userManagerService.FindByNameAsync(name)).Id;
 
         FriendList entity = await _friendListService.GetAsync(_ => _.SenderId == sender &&
-        _.ReceiverId == receiver &&
-        _.RequestStatus == Status.Pending);
+                                                                   _.ReceiverId == receiver &&
+                                                                   _.RequestStatus == Status.Pending);
 
         if (entity != null)
         {
@@ -297,6 +297,10 @@ public class MainPageController : Controller
 
         return Json(false);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> GetRequestList() => 
+        Json(await _friendListService.GetUsersByRequestAsync(User.Claims.FirstOrDefault()?.Value!));
 
     #endregion
 }

@@ -14,8 +14,11 @@ async function friendshipRequest(name) {
 
         let user = await getUser(name);
         if (user.id != null)
-            connection.invoke("SendRequest", user.id, user)
+            connection.invoke("SendRequest", user, 'request')
                 .catch(err => console.error(err.toString()));
+    }
+    else {
+        window.alert("U can't send friendship request. Please refresh page and try again..)");
     }
 }
 
@@ -35,7 +38,15 @@ async function cancelRequest(name) {
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" />
             <path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship`;
+
+        let user = await getUser(name);
+        console.log(user);
+        if (user.id != null)
+            connection.invoke("SendRequest", user, 'cancelled')
+                .catch(err => console.error(err.toString()));
     }
+    else
+        window.alert("U can't cancel friendship request. Please refresh page and try again..)");
 }
 
 async function removeRequest(name) {
@@ -51,6 +62,8 @@ async function acceptRequest(name) {
         btn.setAttribute('data-bs-target', '#modal-danger');
         btn.innerHTML = '<img width="18" src="https://img.icons8.com/external-justicon-lineal-color-justicon/64/external-friend-notifications-justicon-lineal-color-justicon.png" alt="external-friend-notifications-justicon-lineal-color-justicon"/> Friend...';
     }
+    else
+        window.alert("U can't accept friendship request. Please refresh page and try again..)");
 }
 
 async function declineRequest(name) {
@@ -67,6 +80,8 @@ async function declineRequest(name) {
             <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" />
             <path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship`;
     }
+    else
+        window.alert("U can't decline friendship request. Please refresh page and try again..)");
 }
 
 async function removeFriend(name) {
@@ -77,6 +92,8 @@ async function removeFriend(name) {
         btn.removeAttribute('data-bs-target');
         btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship';
     }
+    else
+        window.alert("U can't remove friendship. Please refresh page and try again..)");
 }
 
 //#endregion

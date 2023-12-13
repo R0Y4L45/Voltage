@@ -5,9 +5,7 @@ let curUserName = curUserId = null,
 connection.start().then(() => {
     connection.invoke("GetUserName").then(user => curUserName = user);
     connection.invoke("GetConnectionId").then(id => curUserId = id);
-}).catch(err => console.error(err.toString()));
-
-
+});
 
 async function FetchApiPost(methodName, object) {
     return await fetch(methodName, {

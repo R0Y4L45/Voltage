@@ -30,7 +30,7 @@ public class FriendListService : IFriendListService
     public async Task<IEnumerable<FriendList>> GetListAsync(Expression<Func<FriendList, bool>> filter = null!) =>
         await Task.FromResult(filter == null ? _context.FriendList! : _context.FriendList?.Where(filter)!);
 
-    public async Task<IEnumerable<UsersFriendListResult>> GetUsersSearchResult(string Id, SearchDto obj)
+    public async Task<IEnumerable<UsersFriendListResult>> GetUsersSearchResultAsync(string Id, SearchDto obj)
     {
         FormattableString cmd =
             $@"SELECT users.UserName AS [UserName], 
@@ -64,6 +64,53 @@ public class FriendListService : IFriendListService
         return await Task.Run(() => _context.Set<UsersFriendListResult>()?.FromSqlInterpolated(cmd)!);
     }
 
+    public async Task<IEnumerable<UserDto>?> GetUsersByRequestAsync(string id) =>
+        await Task.Run(() =>
+        {
+            return from users in _context.Users
+                   join friendList in _context.FriendList!
+                   on users.Id equals friendList.ReceiverId
+                   join userRole in _context.UserRoles
+                   on users.Id equals userRole.UserId
+                   join role in _context.Roles
+                   on userRole.RoleId equals role.Id
+                   where friendList.ReceiverId == id
+                   select new UserDto
+                   {
+                       Id = users.Id,
+                       UserName = users.UserName,
+                       Photo = users.Photo,
+                       Country = users.Country,
+                       Email = users.Email,
+                       Role = role.Name
+                   };
+        });
+
+    public async Task<UserDto> GetUserDtoByNameAsync(string name) =>
+        await Task.Run(async () =>
+        {
+            if (!string.IsNullOrEmpty(name))
+                return await (from users in _context.Users
+                              join friendList in _context.FriendList!
+                              on users.Id equals friendList.ReceiverId
+                              join userRole in _context.UserRoles
+                              on users.Id equals userRole.UserId
+                              join role in _context.Roles
+                              on userRole.RoleId equals role.Id
+                              where users.UserName == name
+                              select new UserDto
+                              {
+                                  Id = users.Id,
+                                  UserName = users.UserName,
+                                  Photo = users.Photo,
+                                  Country = users.Country,
+                                  Email = users.Email,
+                                  Role = role.Name
+                              }).FirstOrDefaultAsync() ?? new UserDto();
+            
+            return new UserDto();
+        });
+
     public bool Update(FriendList entity)
     {
         if (_context.Update(entity) != null)
@@ -74,4 +121,20 @@ public class FriendListService : IFriendListService
 
         return false;
     }
+
+    public async Task<bool> CheckRequestAsync(string sender, string receiver) =>
+        await Task.Run(() =>
+        {
+            if (_context.FriendList != null)
+            {
+                FriendList? temp = _context.FriendList.FirstOrDefault(_ => _.SenderId == sender &&
+                                                                           _.ReceiverId == receiver ||
+                                                                           _.SenderId == receiver &&
+                                                                           _.ReceiverId == sender);
+                if (temp != null)
+                    return true;
+            }
+
+            return false;
+        });
 }
