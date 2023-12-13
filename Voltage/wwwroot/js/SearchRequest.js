@@ -13,6 +13,7 @@ async function friendshipRequest(name) {
                           alt="hourglass-sand-top"/> Pending...`;
 
         let user = await getUser(name);
+        console.log(user);
         if (user.id != null)
             connection.invoke("SendRequest", user, 'request')
                 .catch(err => console.error(err.toString()));
@@ -27,26 +28,27 @@ async function pendingRequest(name) {
 }
 
 async function cancelRequest(name) {
-    if (await FetchApiPost('CancelRequest', name)) {
-        let btn = document.getElementById(`btnId${name}`);
-        btn.removeAttribute('data-bs-toggle');
-        btn.removeAttribute('data-bs-target');
-        btn.onclick = _ => friendshipRequest(name);
-        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24"
+    let user = await getUser(name);
+    if (user !== null) {
+        if (await FetchApiPost('CancelRequest', name)) {
+            let btn = document.getElementById(`btnId${name}`);
+            btn.removeAttribute('data-bs-toggle');
+            btn.removeAttribute('data-bs-target');
+            btn.onclick = _ => friendshipRequest(name);
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24"
             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
             stroke-linejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" />
             <path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship`;
 
-        let user = await getUser(name);
-        console.log(user);
-        if (user.id != null)
-            connection.invoke("SendRequest", user, 'cancelled')
-                .catch(err => console.error(err.toString()));
+            if (user.id !== null)
+                connection.invoke("SendRequest", user, 'cancelled')
+                    .catch(err => console.error(err.toString()));
+        }
+        else
+            window.alert("U can't cancel friendship request. Please refresh page and try again..)");
     }
-    else
-        window.alert("U can't cancel friendship request. Please refresh page and try again..)");
 }
 
 async function removeRequest(name) {
