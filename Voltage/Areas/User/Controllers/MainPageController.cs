@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using Voltage.Business.CustomHelpers;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Entity;
@@ -141,7 +140,12 @@ public class MainPageController : Controller
     [HttpPost]
     public async Task<IActionResult> GetUser([FromBody] string? name = null)
     {
-        if (name != null)
+        if (name == "+")
+        {
+            var d = await _friendListService.GetUserDtoByNameAsync(User.Identity?.Name!);
+            return Json(d);
+        }
+        else if (name != null)
             return Json(await _friendListService.GetUserDtoByNameAsync(name));
 
         return Json(string.Empty);

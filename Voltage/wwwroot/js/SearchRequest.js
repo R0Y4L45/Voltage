@@ -12,15 +12,13 @@ async function friendshipRequest(name) {
         btn.innerHTML = `<img width="16"  src="https://img.icons8.com/office/16/hourglass-sand-top.png" 
                           alt="hourglass-sand-top"/> Pending...`;
 
-        let user = await getUser(name);
-        console.log(user);
-        if (user.id != null)
-            connection.invoke("SendRequest", user, 'request')
+        let user = await getUserInfo('+'),
+            sender = await getUser(name);
+        if (user.userName != null && sender !== null)
+            connection.invoke("SendRequest", sender, user, 'request')
                 .catch(err => console.error(err.toString()));
     }
-    else {
-        window.alert("U can't send friendship request. Please refresh page and try again..)");
-    }
+    else window.alert("U can't send friendship request. Please refresh page and try again..)");
 }
 
 async function pendingRequest(name) {
@@ -28,8 +26,8 @@ async function pendingRequest(name) {
 }
 
 async function cancelRequest(name) {
-    let user = await getUser(name);
-    if (user !== null) {
+    let user = await getUserInfo('+'), sender = await getUser(name);
+    if (user !== null && user.userName !== null && sender !== null) {
         if (await FetchApiPost('CancelRequest', name)) {
             let btn = document.getElementById(`btnId${name}`);
             btn.removeAttribute('data-bs-toggle');
@@ -41,10 +39,9 @@ async function cancelRequest(name) {
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" />
             <path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship`;
-
-            if (user.id !== null)
-                connection.invoke("SendRequest", user, 'cancelled')
-                    .catch(err => console.error(err.toString()));
+            
+            connection.invoke("SendRequest", sender, user, 'cancelled')
+                .catch(err => console.error(err.toString()));
         }
         else
             window.alert("U can't cancel friendship request. Please refresh page and try again..)");
@@ -100,7 +97,7 @@ async function removeFriend(name) {
 
 //#endregion
 
-//#region Helper_Funtions
+//#region Helper_Functions
 
 function create_modal_a_tags(methodName, parameter, denialText, approvalText) {
     const approvalBtn = document.createElement('a'),
@@ -121,8 +118,12 @@ function create_modal_a_tags(methodName, parameter, denialText, approvalText) {
     denial_div.appendChild(denialBtn);
 }
 
-async function getUser(name) {
+async function getUserInfo(name) {
     return await FetchApiPost('GetUser', name);
+}
+
+async function getUser(name) {
+    return await FetchApiPost('GetUserId', name);
 }
 
 //#endregion

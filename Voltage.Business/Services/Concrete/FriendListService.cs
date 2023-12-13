@@ -69,7 +69,7 @@ public class FriendListService : IFriendListService
         {
             return from users in _context.Users
                    join friendList in _context.FriendList!
-                   on users.Id equals friendList.ReceiverId
+                   on users.Id equals friendList.SenderId
                    join userRole in _context.UserRoles
                    on users.Id equals userRole.UserId
                    join role in _context.Roles
@@ -77,7 +77,6 @@ public class FriendListService : IFriendListService
                    where friendList.ReceiverId == id
                    select new UserDto
                    {
-                       Id = users.Id,
                        UserName = users.UserName,
                        Photo = users.Photo,
                        Country = users.Country,
@@ -92,22 +91,21 @@ public class FriendListService : IFriendListService
             if (!string.IsNullOrEmpty(name))
             {
                 return await (from users in _context.Users
-                               join friendList in _context.FriendList!
-                               on users.Id equals friendList.ReceiverId
-                               join userRole in _context.UserRoles
-                               on users.Id equals userRole.UserId
-                               join role in _context.Roles
-                               on userRole.RoleId equals role.Id
-                               where users.UserName == name
-                               select new UserDto
-                               {
-                                   Id = users.Id,
-                                   UserName = users.UserName,
-                                   Photo = users.Photo,
-                                   Country = users.Country,
-                                   Email = users.Email,
-                                   Role = role.Name
-                               }).FirstOrDefaultAsync() ?? new UserDto();
+                              join friendList in _context.FriendList!
+                              on users.Id equals friendList.SenderId
+                              join userRole in _context.UserRoles
+                              on users.Id equals userRole.UserId
+                              join role in _context.Roles
+                              on userRole.RoleId equals role.Id
+                              where users.UserName == name
+                              select new UserDto
+                              {
+                                  UserName = users.UserName,
+                                  Photo = users.Photo,
+                                  Country = users.Country,
+                                  Email = users.Email,
+                                  Role = role.Name
+                              }).FirstOrDefaultAsync() ?? new UserDto();
             }
             
             return new UserDto();
