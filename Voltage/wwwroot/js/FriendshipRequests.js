@@ -56,7 +56,7 @@ function gotRequest(user) {
 }
 
 function cancelledRequest(user) {
-    tbody.removeChild(document.getElementById(`tr${user.userName}`));
+    tbody.removeChild(document.getElementById(`tr${user}`));
 }
 
 async function acceptRequest(name) {

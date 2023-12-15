@@ -11,5 +11,5 @@ public interface IFriendListService : IEntityRepository<FriendList, VoltageDbCon
     Task<IEnumerable<UserDto>?> GetUsersByRequestAsync(string id);
     Task<UserDto> GetUserDtoByNameAsync(string name);
     Task DeleteAsync(FriendList entity);
-    Task<bool> CheckRequestAsync(string sender, string receiver);
+    Task<FriendList?> CheckFriendListAsync(string sender, string receiver);
 }

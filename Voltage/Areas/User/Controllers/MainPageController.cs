@@ -141,10 +141,7 @@ public class MainPageController : Controller
     public async Task<IActionResult> GetUser([FromBody] string? name = null)
     {
         if (name == "+")
-        {
-            var d = await _friendListService.GetUserDtoByNameAsync(User.Identity?.Name!);
-            return Json(d);
-        }
+            return Json(await _friendListService.GetUserDtoByNameAsync(User.Identity?.Name!));
         else if (name != null)
             return Json(await _friendListService.GetUserDtoByNameAsync(name));
 
@@ -172,10 +169,9 @@ public class MainPageController : Controller
         string senderId = (await _userManagerService.FindByNameAsync(User.Identity?.Name!)).Id,
             recId = (await _userManagerService.FindByNameAsync(arr[0])).Id;
 
-        var d = _mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_
+        return Json(_mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_
             => _.ReceiverId == recId && _.SenderId == senderId
-                || _.ReceiverId == senderId && _.SenderId == recId)).OrderBy(_ => _.CreatedTime)).Take(int.Parse(arr[1]));
-        return Json(d);
+                || _.ReceiverId == senderId && _.SenderId == recId)).OrderBy(_ => _.CreatedTime)).Take(int.Parse(arr[1])));
     }
 
     [HttpPost]
@@ -208,19 +204,25 @@ public class MainPageController : Controller
         string sender = User.Claims.FirstOrDefault()?.Value!,
             receiver = (await _userManagerService.FindByNameAsync(name)).Id;
 
-        if (receiver != null && !await _friendListService.CheckRequestAsync(sender, receiver))
+        if (receiver != null)
         {
-            await _friendListService.AddAsync(new FriendList
+            FriendList? friendList = await _friendListService.CheckFriendListAsync(sender, receiver);
+            if (friendList == null)
             {
-                SenderId = sender,
-                ReceiverId = receiver,
-                RequestStatus = Status.Pending
-            });
+                await _friendListService.AddAsync(new FriendList
+                {
+                    SenderId = sender,
+                    ReceiverId = receiver,
+                    RequestStatus = Status.Pending
+                });
 
-            return Json(true);
+                return Json(Status.None);
+            }
+
+            return Json(friendList.RequestStatus);
         }
 
-        return Json(false);
+        return Json(null);
     }
 
     [HttpPost]
@@ -229,17 +231,27 @@ public class MainPageController : Controller
         string sender = User.Claims.FirstOrDefault()?.Value!,
             receiver = (await _userManagerService.FindByNameAsync(name)).Id;
 
-        FriendList entity = await _friendListService.GetAsync(_ => _.SenderId == sender &&
-                                                                   _.ReceiverId == receiver &&
-                                                                   _.RequestStatus == Status.Pending);
+        FriendList? entity = await _friendListService.CheckFriendListAsync(sender, receiver);
 
         if (entity != null)
         {
-            await _friendListService.DeleteAsync(entity);
-            return Json(true);
+            if (entity.SenderId == sender)
+            {
+                if (entity.RequestStatus == Status.Pending)
+                {
+                    await _friendListService.DeleteAsync(entity);
+                    return Json(0); //Cancel request
+                }
+                else if (entity.RequestStatus == Status.Accepted)
+                    return Json(1); //Request accepted
+            }
+
+            if (entity.RequestStatus == Status.Pending)
+                return Json(2); //Pending request
         }
 
-        return Json(false);
+        //Decline or not found such User
+        return Json(3);
     }
 
     [HttpPost]
@@ -248,19 +260,17 @@ public class MainPageController : Controller
         string sender = User.Claims.FirstOrDefault()?.Value!,
             receiver = (await _userManagerService.FindByNameAsync(name)).Id;
 
-        FriendList entity = await _friendListService.GetAsync(_ => _.SenderId == sender &&
-        _.ReceiverId == receiver &&
-        _.RequestStatus == Status.Accepted || _.SenderId == receiver &&
-        _.ReceiverId == sender &&
-        _.RequestStatus == Status.Accepted);
+        FriendList? entity = await _friendListService.CheckFriendListAsync(sender, receiver);
 
         if (entity != null)
         {
-            await _friendListService.DeleteAsync(entity);
-            return Json(true);
+            if (entity.RequestStatus == Status.Accepted)
+                await _friendListService.DeleteAsync(entity);
+            else if (entity.RequestStatus == Status.Pending && entity.SenderId == receiver)
+                return Json(false); //Pending...  
         }
 
-        return Json(false);
+        return Json(true);
     }
 
     [HttpPost]
@@ -269,17 +279,16 @@ public class MainPageController : Controller
         string sender = User.Claims.FirstOrDefault()?.Value!,
             receiver = (await _userManagerService.FindByNameAsync(name)).Id;
 
-        FriendList entity = await _friendListService.GetAsync(_ => _.SenderId == receiver &&
-        _.ReceiverId == sender &&
-        _.RequestStatus == Status.Pending);
+        FriendList? entity = await _friendListService.CheckFriendListAsync(sender, receiver);
 
-        if (entity != null)
-        {
-            entity.RequestStatus = Status.Accepted;
-            entity.AcceptedDate = DateTime.Now;
-
-            return await Task.Run(() => Json(_friendListService.Update(entity)));
-        }
+        if (entity != null && entity.SenderId == receiver && entity.RequestStatus == Status.Pending)
+            return await Task.Run(() =>
+            {
+                entity.AcceptedDate = DateTime.Now;
+                entity.RequestStatus = Status.Accepted;
+                _friendListService.Update(entity);
+                return Json(true);
+            });
 
         return Json(false);
     }
@@ -290,11 +299,9 @@ public class MainPageController : Controller
         string sender = User.Claims.FirstOrDefault()?.Value!,
             receiver = (await _userManagerService.FindByNameAsync(name)).Id;
 
-        FriendList entity = await _friendListService.GetAsync(_ => _.SenderId == receiver &&
-        _.ReceiverId == sender &&
-        _.RequestStatus == Status.Pending);
+        FriendList? entity = await _friendListService.CheckFriendListAsync(sender, receiver);
 
-        if (entity != null)
+        if (entity != null && entity.SenderId == receiver && entity.RequestStatus == Status.Pending)
         {
             await _friendListService.DeleteAsync(entity);
             return Json(true);
@@ -304,7 +311,7 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetRequestList() => 
+    public async Task<IActionResult> GetRequestList() =>
         Json(await _friendListService.GetUsersByRequestAsync(User.Claims.FirstOrDefault()?.Value!));
 
     #endregion

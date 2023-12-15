@@ -122,7 +122,7 @@ public class FriendListService : IFriendListService
         return false;
     }
 
-    public async Task<bool> CheckRequestAsync(string sender, string receiver) =>
+    public async Task<FriendList?> CheckFriendListAsync(string sender, string receiver) =>
         await Task.Run(() =>
         {
             if (_context.FriendList != null)
@@ -132,9 +132,9 @@ public class FriendListService : IFriendListService
                                                                            _.SenderId == receiver &&
                                                                            _.ReceiverId == sender);
                 if (temp != null)
-                    return true;
+                    return temp;
             }
 
-            return false;
+            return null;
         });
 }

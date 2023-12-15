@@ -4,20 +4,18 @@
 //#region Events
 
 async function friendshipRequest(name) {
-    if (await FetchApiPost('FriendshipRequest', name)) {
-        let btn = document.getElementById(`btnId${name}`);
-        btn.onclick = _ => pendingRequest(name);
-        btn.setAttribute('data-bs-toggle', 'modal');
-        btn.setAttribute('data-bs-target', '#modal-danger');
-        btn.innerHTML = `<img width="16"  src="https://img.icons8.com/office/16/hourglass-sand-top.png" 
-                          alt="hourglass-sand-top"/> Pending...`;
+    let result = await FetchApiPost('FriendshipRequest', name);
 
+    if (result === 0) {
         let user = await getUserInfo('+'),
             sender = await getUser(name);
-        if (user.userName != null && sender !== null)
-            connection.invoke("SendRequest", sender, user, 'request')
-                .catch(err => console.error(err.toString()));
+
+        if (user.userName !== null && sender !== null) {
+            pendingBtn(name, pendingRequest);
+            sendRequestSignal(user, sender, 'request');
+        }
     }
+    else if (result === 1) acceptOrDeclineBtn(name);
     else window.alert("U can't send friendship request. Please refresh page and try again..)");
 }
 
@@ -26,26 +24,25 @@ async function pendingRequest(name) {
 }
 
 async function cancelRequest(name) {
-    let user = await getUserInfo('+'), sender = await getUser(name);
-    if (user !== null && user.userName !== null && sender !== null) {
-        if (await FetchApiPost('CancelRequest', name)) {
-            let btn = document.getElementById(`btnId${name}`);
-            btn.removeAttribute('data-bs-toggle');
-            btn.removeAttribute('data-bs-target');
-            btn.onclick = _ => friendshipRequest(name);
-            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24"
-            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-            stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" />
-            <path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship`;
-            
-            connection.invoke("SendRequest", sender, user, 'cancelled')
-                .catch(err => console.error(err.toString()));
+    let result = await FetchApiPost('CancelRequest', name),
+        sender = await getUser(name);
+
+    if (result === 0) {
+        if (curUserName !== null && sender !== null) {
+            friendshipRequestBtn(name);
+            sendRequestSignal(curUserName, sender, 'cancelled');
         }
-        else
-            window.alert("U can't cancel friendship request. Please refresh page and try again..)");
     }
+    else {
+        if (result === 1)
+            friendBtn(name);
+        else if (result === 2)
+            acceptOrDeclineBtn(name);
+        else if (result === 3)
+            friendshipRequestBtn(name);
+        else window.alert("U can't cancel friendship request. Please refresh page and try again..)");
+    }
+
 }
 
 async function removeRequest(name) {
@@ -53,46 +50,29 @@ async function removeRequest(name) {
 }
 
 async function acceptRequest(name) {
-    if (await FetchApiPost('AcceptRequest', name)) {
-        let btn = document.getElementById(`btnId${name}`);
-        btn.innerHTML = '';
-        btn.onclick = _ => removeRequest(name);
-        btn.setAttribute('data-bs-toggle', 'modal');
-        btn.setAttribute('data-bs-target', '#modal-danger');
-        btn.innerHTML = '<img width="18" src="https://img.icons8.com/external-justicon-lineal-color-justicon/64/external-friend-notifications-justicon-lineal-color-justicon.png" alt="external-friend-notifications-justicon-lineal-color-justicon"/> Friend...';
+    let result = await FetchApiPost('AcceptRequest', name);
+
+    if (result) friendBtn(name);
+    else {
+        if (!result) friendshipRequestBtn(name);
+        else window.alert("U can't accept friendship request. Please refresh page and try again..)");
     }
-    else
-        window.alert("U can't accept friendship request. Please refresh page and try again..)");
 }
 
 async function declineRequest(name) {
-    if (await FetchApiPost('DeclineRequest', name)) {
-        let btn = document.getElementById(`btnId${name}`);
-        btn.innerHTML = '';
-        btn.onclick = _ => friendshipRequest(name);
-        btn.removeAttribute('data-bs-toggle');
-        btn.removeAttribute('data-bs-target');
-        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24"
-            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-            stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" />
-            <path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship`;
-    }
-    else
-        window.alert("U can't decline friendship request. Please refresh page and try again..)");
+    let result = await FetchApiPost('DeclineRequest', name);
+
+    if (result !== null) friendshipRequestBtn(name);
+    else window.alert("U can't accept friendship request. Please refresh page and try again..)");
 }
 
 async function removeFriend(name) {
-    if (await FetchApiPost('RemoveFriend', name)) {
-        let btn = document.getElementById(`btnId${name}`);
-        btn.onclick = _ => friendshipRequest(name);
-        btn.removeAttribute('data-bs-toggle');
-        btn.removeAttribute('data-bs-target');
-        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship';
+    let result = await FetchApiPost('RemoveFriend', name)
+    if (result) friendshipRequestBtn(name);
+    else {
+        if (!result) acceptOrDeclineBtn(name);
+        else window.alert("U can't remove friendship. Please refresh page and try again..)");
     }
-    else
-        window.alert("U can't remove friendship. Please refresh page and try again..)");
 }
 
 //#endregion
@@ -124,6 +104,51 @@ async function getUserInfo(name) {
 
 async function getUser(name) {
     return await FetchApiPost('GetUserId', name);
+}
+
+function pendingBtn(name) {
+    let btn = document.getElementById(`btnId${name}`);
+    btn.onclick = _ => pendingRequest(name);
+    btn.setAttribute('data-bs-toggle', 'modal');
+    btn.setAttribute('data-bs-target', '#modal-danger');
+    btn.innerHTML = `<img width="16"  src="https://img.icons8.com/office/16/hourglass-sand-top.png" 
+                          alt="hourglass-sand-top"/> Pending...`;
+}
+
+function friendshipRequestBtn(name) {
+    let btn = document.getElementById(`btnId${name}`);
+    btn.removeAttribute('data-bs-toggle');
+    btn.removeAttribute('data-bs-target');
+    btn.onclick = _ => friendshipRequest(name);
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24"
+            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" />
+            <path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg> Send Friendship`;
+}
+
+function acceptOrDeclineBtn(name) {
+    let btn = document.getElementById(`btnId${name}`);
+    btn.onclick = '';
+    btn.innerHTML = '';
+    btn.removeAttribute('data-bs-toggle');
+    btn.removeAttribute('data-bs-target');
+    btn.innerHTML = `<button style="width:45px; heigth: 18px;  margin:0, 9px, 0, 0" class="btn btn-success" onclick="acceptRequest('${name}')">Accept</button> <button style="width:45px; heigth: 18px; margin:0, 0, 0, 9px" class="btn btn-danger" onclick="declineRequest('${name}')">Decline</button>`;
+}
+
+function friendBtn(name) {
+    let btn = document.getElementById(`btnId${name}`);
+    btn.innerHTML = '';
+    btn.onclick = _ => removeRequest(name);
+    btn.setAttribute('data-bs-toggle', 'modal');
+    btn.setAttribute('data-bs-target', '#modal-danger');
+    btn.innerHTML = '<img width="18" src="https://img.icons8.com/external-justicon-lineal-color-justicon/64/external-friend-notifications-justicon-lineal-color-justicon.png" alt="external-friend-notifications-justicon-lineal-color-justicon"/> Friend...';
+}
+
+async function sendRequestSignal(user, sender, status) {
+    connection.invoke("SendRequest", sender, user, status)
+        .catch(err => console.error(err.toString()));
 }
 
 //#endregion
