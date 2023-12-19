@@ -10,9 +10,9 @@ let result, count,
 
 document.getElementById('searchUsers').oninput = async _ => {
     searchObj.content = document.getElementById('searchUsers').value;
-    result = await FetchApiPost('SearchUsers', searchObj);
-    count = result.count;
+    result = await FetchApiPost('/SearchUsersApi/SearchUsers', searchObj);
 
+    count = result.count;
     document.getElementById('countOfUsers').innerHTML = count == undefined ? '' :
         count > 1 ? count + ' Users' : count + ' User';
 
@@ -20,10 +20,11 @@ document.getElementById('searchUsers').oninput = async _ => {
     if (count > 0) {
         showUsers(result.users);
 
-        if (result.next) await addShowMoreButton();
+        if (result.next) addShowMoreButton();
         else showMore.innerHTML = '';
     }
     else showMore.innerHTML = '';
+
 }
 
 function showUsers(list) {
@@ -77,7 +78,7 @@ function showUsers(list) {
     });
 }
 
-async function addShowMoreButton() {
+function addShowMoreButton() {
     let btn = document.createElement('button');
     btn.innerHTML = "Show More";
     btn.classList = 'btn btn-outline-warning btn-lg';
@@ -92,7 +93,8 @@ async function clickShowMore() {
     searchObj.skip += 4;
     sessionStorage.setItem('skip', searchObj.skip)
 
-    result = await FetchApiPost('SearchUsers', searchObj);
+    result = await FetchApiPost('/SearchUsersApi/SearchUsers', searchObj);
+    console.log(result);
 
     if (count > 0) {
         showUsers(result.users);

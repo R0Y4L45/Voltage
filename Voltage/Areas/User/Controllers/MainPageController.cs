@@ -19,8 +19,6 @@ public class MainPageController : Controller
     private readonly IEmailService _emailService;
     private readonly IFriendListService _friendListService;
     private readonly IMapper _mapper;
-    private IEnumerable<UsersFriendListResult>? _list;
-    private int _count;
 
     public MainPageController(IMessageService messageService, IMapper mapper,
         IUserManagerService userManagerService,
@@ -35,6 +33,7 @@ public class MainPageController : Controller
     }
 
     #region ActionMethods
+
     public async Task<IActionResult> Index()
     {
         string? profilePhoto = await _userManagerService.GetProfilePhotoAsync(User.Identity!.Name!);
@@ -146,36 +145,12 @@ public class MainPageController : Controller
     public async Task<IActionResult> TakeMessages([FromBody] string receiver)
     {
         string[] arr = receiver.Split(' ');
-        string senderId = (await _userManagerService.FindByNameAsync(User.Identity?.Name!)).Id,
-            recId = (await _userManagerService.FindByNameAsync(arr[0])).Id;
+        string senderId = (await _userManagerService.FindByNameAsync(User.Identity?.Name!) ?? new Entities.Entity.User()).Id,
+            recId = (await _userManagerService.FindByNameAsync(arr[0]) ?? new Entities.Entity.User()).Id;
 
-        return Json(_mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_
-            => _.ReceiverId == recId && _.SenderId == senderId
+        return Json(_mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_ =>
+            _.ReceiverId == recId && _.SenderId == senderId
                 || _.ReceiverId == senderId && _.SenderId == recId)).OrderBy(_ => _.CreatedTime)).Take(int.Parse(arr[1])));
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> SearchUsers([FromBody] SearchDto searchObj)
-    {
-        if (!string.IsNullOrEmpty(searchObj.Content))
-        {
-            if (_list == null)
-            {
-                _list = await _friendListService.GetUsersSearchResultAsync(User.Claims.First().Value, searchObj);
-                _count = _list.Count();
-            }
-
-            bool next = searchObj.Skip + searchObj.Take < _count;
-
-            return Json(new UsersResultDto
-            {
-                Users = _list.Skip(searchObj.Skip).Take(searchObj.Take),
-                Count = _count,
-                Next = next
-            });
-        }
-
-        return Json(string.Empty);
     }
 
     #endregion
