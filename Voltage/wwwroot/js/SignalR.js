@@ -20,3 +20,14 @@ async function FetchApiPost(methodName, object) {
         .catch(error => console.error(error));
 }
 
+async function fetchApiGet(url) {
+    return await fetch(url)
+        .then(response => {
+            if (response.ok) {
+                const contentType = response.headers.get('Content-Type');
+
+                if (contentType && contentType.includes('application/json')) return response.json();
+                else return response.text();
+            }
+        });
+}

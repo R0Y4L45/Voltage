@@ -11,7 +11,7 @@ public interface IUserManagerService
     Task<IdentityResult> AddToRoleAsync(User user, string roleName);
     Task<User> FindByLoginAsync(string loginProvider, string providerKey);
     Task<User> FindByEmailAsync(string email);
-    Task<User> FindByNameAsync(string name);
+    Task<User?> FindByNameAsync(string name);
     Task<User> FindByIdAsync(string Id);
     Task<IEnumerable<User>> GetAllUsers(Expression<Func<User, bool>> filter = null!);
     Task<bool> CheckPasswordAsync(User user, string password);

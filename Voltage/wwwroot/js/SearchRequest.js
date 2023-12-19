@@ -4,19 +4,18 @@
 //#region Events
 
 async function friendshipRequest(name) {
-    let result = await FetchApiPost('FriendshipRequest', name);
+    let result = await FetchApiPost('/RequestApi/FriendshipRequest', name);
 
     if (result === 0) {
-        let user = await getUserInfo('+'),
-            sender = await getUser(name);
+        let user = await getUser(curUserName),
+            sender = await getUserInfo(name);
 
-        if (user.userName !== null && sender !== null) {
+        if (user.UserName !== null && sender !== null) {
             pendingBtn(name, pendingRequest);
-            sendRequestSignal(user, sender, 'request');
+            sendRequestSignal(sender, user, 'request');
         }
     }
-    else if (result === 1) acceptOrDeclineBtn(name);
-    else window.alert("U can't send friendship request. Please refresh page and try again..)");
+    else acceptOrDeclineBtn(name);
 }
 
 async function pendingRequest(name) {
@@ -24,25 +23,19 @@ async function pendingRequest(name) {
 }
 
 async function cancelRequest(name) {
-    let result = await FetchApiPost('CancelRequest', name),
-        sender = await getUser(name);
+    let result = await FetchApiPost('/RequestApi/CancelRequest', name),
+        sender = await getUserInfo(name);
 
     if (result === 0) {
         if (curUserName !== null && sender !== null) {
             friendshipRequestBtn(name);
-            sendRequestSignal(curUserName, sender, 'cancelled');
+            sendRequestSignal(sender, curUserName, 'cancelled');
         }
     }
-    else {
-        if (result === 1)
-            friendBtn(name);
-        else if (result === 2)
-            acceptOrDeclineBtn(name);
-        else if (result === 3)
-            friendshipRequestBtn(name);
-        else window.alert("U can't cancel friendship request. Please refresh page and try again..)");
-    }
-
+    else if (result === 1) friendBtn(name);
+    else if (result === 2) acceptOrDeclineBtn(name);
+    else friendshipRequestBtn(name);
+    
 }
 
 async function removeRequest(name) {
@@ -50,29 +43,24 @@ async function removeRequest(name) {
 }
 
 async function acceptRequest(name) {
-    let result = await FetchApiPost('AcceptRequest', name);
+    let result = await FetchApiPost('/RequestApi/AcceptRequest', name);
 
     if (result) friendBtn(name);
-    else {
-        if (!result) friendshipRequestBtn(name);
-        else window.alert("U can't accept friendship request. Please refresh page and try again..)");
-    }
+    else friendshipRequestBtn(name);
 }
 
 async function declineRequest(name) {
-    let result = await FetchApiPost('DeclineRequest', name);
-
-    if (result !== null) friendshipRequestBtn(name);
-    else window.alert("U can't accept friendship request. Please refresh page and try again..)");
+    await FetchApiPost('/RequestApi/DeclineRequest', name);
+    friendshipRequestBtn(name);
 }
 
 async function removeFriend(name) {
-    let result = await FetchApiPost('RemoveFriend', name)
+    let result = await FetchApiPost('/RequestApi/RemoveFriend', name)
+
+    console.log(result);
+
     if (result) friendshipRequestBtn(name);
-    else {
-        if (!result) acceptOrDeclineBtn(name);
-        else window.alert("U can't remove friendship. Please refresh page and try again..)");
-    }
+    else acceptOrDeclineBtn(name);
 }
 
 //#endregion
@@ -99,11 +87,11 @@ function create_modal_a_tags(methodName, parameter, denialText, approvalText) {
 }
 
 async function getUserInfo(name) {
-    return await FetchApiPost('GetUser', name);
+    return await fetchApiGet(`/UserInfo/GetId?name=${name}`);
 }
 
 async function getUser(name) {
-    return await FetchApiPost('GetUserId', name);
+    return await fetchApiGet(`/UserInfo/GetUser?name=${name}`)
 }
 
 function pendingBtn(name) {
@@ -146,7 +134,7 @@ function friendBtn(name) {
     btn.innerHTML = '<img width="18" src="https://img.icons8.com/external-justicon-lineal-color-justicon/64/external-friend-notifications-justicon-lineal-color-justicon.png" alt="external-friend-notifications-justicon-lineal-color-justicon"/> Friend...';
 }
 
-async function sendRequestSignal(user, sender, status) {
+async function sendRequestSignal(sender, user, status) {
     connection.invoke("SendRequest", sender, user, status)
         .catch(err => console.error(err.toString()));
 }

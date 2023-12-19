@@ -9,7 +9,7 @@ public interface IFriendListService : IEntityRepository<FriendList, VoltageDbCon
 {
     Task<IEnumerable<UsersFriendListResult>> GetUsersSearchResultAsync(string Id, SearchDto obj);
     Task<IEnumerable<UserDto>?> GetUsersByRequestAsync(string id);
-    Task<UserDto> GetUserDtoByNameAsync(string name);
+    Task<UserDto?> GetUserDtoByNameAsync(string name);
     Task DeleteAsync(FriendList entity);
     Task<FriendList?> CheckFriendListAsync(string sender, string receiver);
 }

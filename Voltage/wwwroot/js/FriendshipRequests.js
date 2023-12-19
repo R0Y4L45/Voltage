@@ -12,7 +12,7 @@ connection.on("ReceiveRequests", (user, status) => {
 window.onload = getRequestList();
 
 async function getRequestList() {
-    (await FetchApiPost('GetRequestList')).forEach(i => gotRequest(i));
+    (await fetchApiGet('/UserInfo/GetRequestList')).forEach(i => gotRequest(i));
 }
 
 function gotRequest(user) {
@@ -60,7 +60,7 @@ function cancelledRequest(user) {
 }
 
 async function acceptRequest(name) {
-    if (await FetchApiPost('AcceptRequest', name)) 
+    if (await FetchApiPost('AcceptRequest', name))
         tbody.removeChild(document.getElementById(`tr${name}`));
     else
         window.alert("U can't accept friendship request. Please refresh page and try again..)");

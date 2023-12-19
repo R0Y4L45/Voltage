@@ -11,8 +11,8 @@ let result, count,
 document.getElementById('searchUsers').oninput = async _ => {
     searchObj.content = document.getElementById('searchUsers').value;
     result = await FetchApiPost('SearchUsers', searchObj);
-
     count = result.count;
+
     document.getElementById('countOfUsers').innerHTML = count == undefined ? '' :
         count > 1 ? count + ' Users' : count + ' User';
 

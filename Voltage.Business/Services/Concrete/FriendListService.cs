@@ -85,7 +85,7 @@ public class FriendListService : IFriendListService
                    };
         });
 
-    public async Task<UserDto> GetUserDtoByNameAsync(string name) =>
+    public async Task<UserDto?> GetUserDtoByNameAsync(string name) =>
         await Task.Run(async () =>
         {
             if (!string.IsNullOrEmpty(name))
@@ -105,10 +105,10 @@ public class FriendListService : IFriendListService
                                   Country = users.Country,
                                   Email = users.Email,
                                   Role = role.Name
-                              }).FirstOrDefaultAsync() ?? new UserDto();
+                              }).FirstOrDefaultAsync();
             }
             
-            return new UserDto();
+            return null;
         });
 
     public bool Update(FriendList entity)

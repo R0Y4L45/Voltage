@@ -57,8 +57,8 @@ public class UserManagerService : IUserManagerService
     public async Task<User> FindByEmailAsync(string email) =>
         await _userManager.FindByEmailAsync(email);
 
-    public async Task<User> FindByNameAsync(string name) =>
-        await _userManager.FindByNameAsync(name);
+    public async Task<User?> FindByNameAsync(string name) =>
+        await _userManager.FindByNameAsync(name) ?? null;
 
     public async Task<IdentityResult> ResetAccessFailedCountAsync(User user) =>
         await _userManager.ResetAccessFailedCountAsync(user);

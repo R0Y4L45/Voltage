@@ -65,6 +65,7 @@ public class Program
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
         builder.Services.AddSignalR();
         builder.Services.AddSession();
+        builder.Services.AddControllers();
 
         var app = builder.Build();
 
@@ -80,6 +81,7 @@ public class Program
         app.MapHub<SignalRHub>("/signalRHub");
         app.UseRouting();
 
+        app.MapControllers();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseSession();
