@@ -37,14 +37,18 @@ function gotRequest(user) {
                     ${user.role}
                 </td>
                 <td>
-                    <div class="btn-list d-flex flex-nowrap">
-                        <div class="col py-3">
-                            <a onclick="acceptRequest('${user.userName}')" class="btn btn-icon btn-green w-100">
+                    <div class="align-items-center">
+                        <div class="class="col-6 col-sm-4 col-md-2 col-xl-auto py-3">
+                            <a onclick="acceptRequest('${user.userName}')" class="btn btn-icon btn-green w-100" style="display: inline-flex;">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg>
                             </a>
                         </div>
-                        <div class="col py-3">
-                            <a onclick="declineRequest('${user.userName}')" class="btn btn-icon btn-red w-100">
+                    </div>
+                </td>
+                <td>
+                    <div class="align-items-center">
+                        <div class="class="col-6 col-sm-4 col-md-2 col-xl-auto py-3">
+                            <a onclick="declineRequest('${user.userName}')" class="btn btn-icon btn-red w-100" style="display: inline-flex;">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
                             </a>
                         </div>
