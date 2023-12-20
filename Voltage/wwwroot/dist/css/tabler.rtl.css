@@ -154,7 +154,7 @@
     --tblr-link-hover-decoration: underline;
     --tblr-code-color: var(--tblr-gray-600);
     --tblr-highlight-bg: #fdeccc;
-    --tblr-border-width: 1px;
+    --tblr-border-width: 3px;
     --tblr-border-style: solid;
     --tblr-border-color: #dadfe5;
     --tblr-border-color-translucent: rgba(4, 32, 69, 0.14);
