@@ -7,7 +7,7 @@ connection.start().then(() => {
     connection.invoke("GetConnectionId").then(id => curUserId = id);
 });
 
-async function FetchApiPost(methodName, object) {
+async function fetchApiPost(methodName, object) {
     return await fetch(methodName, {
         method: 'Post',
         headers: {
@@ -30,4 +30,8 @@ async function fetchApiGet(url) {
                 else return response.text();
             }
         });
+}
+
+async function getUserInfo(name) {
+    return await fetchApiGet(`/UserInfo/GetId?name=${name}`);
 }

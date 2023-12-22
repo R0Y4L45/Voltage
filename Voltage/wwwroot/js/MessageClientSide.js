@@ -110,7 +110,7 @@ function handleSend() {
 connection.on("ReceiveMessage", (user, message, createdTime) => {
     date = new Date(createdTime)
     if (curUserName !== user) {
-        MessageCreater(message, '', user, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'));
+        messageCreater(message, '', user, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'));
         overChatBubble.scrollTop = overChatBubble.scrollHeight;
     }
 });
@@ -120,8 +120,8 @@ connection.on("ReceiveMessage", (user, message, createdTime) => {
 //#region Events
 
 function showMessages() {
-    const messageFriendList = document.getElementById("MessageFriendList");
-    const messageAreas1 = document.getElementById("messageAreas1");
+    const messageFriendList = document.getElementById("MessageFriendList"),
+        messageAreas1 = document.getElementById("messageAreas1");
 
     if (window.innerWidth > 993) {
         messageFriendList.classList.remove('displaynone');
@@ -141,8 +141,9 @@ function showMessages() {
 }
 
 function showMessagesClick() {
-    const messageFriendList = document.getElementById("MessageFriendList");
-    const messageAreas1 = document.getElementById("messageAreas1");
+    const messageFriendList = document.getElementById("MessageFriendList"),
+        messageAreas1 = document.getElementById("messageAreas1");
+
     messageSection.classList.remove("displaynone");
     animationArea.style.display = 'none';
 
@@ -157,37 +158,34 @@ function showMessagesClick() {
 
 document.getElementById("messageInput").addEventListener("keypress", async event => {
     if (event.key === "Enter")
-        await SendMessage(event)
+        await sendMessage(event)
 });
 async function ClickToUser(username) {
-    let chatHeader = document.getElementById("chatHeader");
-    let avatarElement = chatHeader.querySelector('.avatar');
-    let usernameElement = chatHeader.querySelector('.col-auto.ms-2 h4');
-    let clickedElement = document.querySelector(`[data-user-name="${username}"]`);
-    let userPhoto = clickedElement.getAttribute('data-user-photo');
-    let userStatus = clickedElement.getAttribute('data-user-status');
+    let chatHeader = document.getElementById("chatHeader"),
+        avatarElement = chatHeader.querySelector('.avatar'),
+        usernameElement = chatHeader.querySelector('.col-auto.ms-2 h4'),
+        clickedElement = document.querySelector(`[data-user-name="${username}"]`),
+        userPhoto = clickedElement.getAttribute('data-user-photo'),
+        userStatus = clickedElement.getAttribute('data-user-status'),
+        h5Element;
 
     showMessagesClick();
-    
-    
 
     document.querySelector(".chat-bubbles").innerHTML = '';
     avatarElement.style.backgroundImage = `url('${userPhoto}')`;
     usernameElement.textContent = username;
 
-    let h5Element = chatHeader.querySelector('.col-auto.ms-2 h5');
+    h5Element = chatHeader.querySelector('.col-auto.ms-2 h5');
     h5Element.innerHTML = `${userStatus}<span class="badge bg-green badge-blink ms-1"></span>`;
 
     recUserName = username
-    recUserId = await GetUserId(username);
+    recUserId = await getUserInfo(username);
     count = 9;
 
-
-    let l = await GetMessageList(username + ' ' + count);
-    (await GetMessageList(username + ' ' + count)).forEach(message => {
+    (await getMessageList(username + ' ' + count)).forEach(message => {
         date = new Date(message.createdTime);
 
-        MessageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
+        messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
             message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'))
         overChatBubble.scrollTop = overChatBubble.scrollHeight;
     });
@@ -196,10 +194,10 @@ async function ClickToUser(username) {
 overChatBubble.addEventListener("scroll", async _ => {
     if (overChatBubble.scrollTop === 0) {
         count += 9;
-        (await GetMessageList(recUserName + ' ' + count)).forEach(message => {
+        (await getMessageList(recUserName + ' ' + count)).forEach(message => {
             date = new Date(message.createdTime);
 
-            MessageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
+            messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
                 message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'))
         });
     }
@@ -208,43 +206,40 @@ overChatBubble.addEventListener("scroll", async _ => {
 //#endregion
 
 //#region Api's
-async function GetUserId(username) {
-    return await FetchApiPost('GetUserId', username);
+
+async function getMessageList(receiver) {
+    return await fetchApiPost('/MessagesApi/TakeMessages', receiver);
 }
 
-async function GetMessageList(receiver) {
-    return await FetchApiPost('TakeMessages', receiver);
-}
-
-async function MessageSaver(message, sender, receiver) {
+async function messageSaver(message, sender, receiver) {
     let object = {
         Content: message,
         Sender: sender,
         Receiver: receiver
     };
 
-    return await FetchApiPost('MessageSaver', object);
+    return await fetchApiPost('/MessagesApi/MessageSaver', object);
 }
 
 //#endregion
 
 //#region HelperMethods
-async function SendMessage(event) {
+async function sendMessage(event) {
     let message = document.getElementById("messageInput").value;
     date = new Date();
 
     if (recUserId !== null)
-        if ((await MessageSaver(message, curUserId, recUserId)) !== 0) {
+        if ((await messageSaver(message, curUserId, recUserId)) !== 0) {
             connection.invoke("SendToUser", recUserId, message).catch(err => console.error(err.toString()));
 
-            MessageCreater(message, 'justify-content-end', curUserName, date.getHours() + ':' + date.getMinutes().toString().padStart(2, '0'));
+            messageCreater(message, 'justify-content-end', curUserName, date.getHours() + ':' + date.getMinutes().toString().padStart(2, '0'));
             overChatBubble.scrollTop = overChatBubble.scrollHeight;
 
             document.getElementById("messageInput").value = '';
             event.preventDefault();
         }
 }
-function MessageCreater(content, style, sender, date) {
+function messageCreater(content, style, sender, date) {
     let chatBubbles = document.querySelector(".chat-bubbles"),
         chatItem = document.createElement("div");
 

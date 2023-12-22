@@ -4,7 +4,7 @@
 //#region Events
 
 async function friendshipRequest(name) {
-    let result = await FetchApiPost('/RequestApi/FriendshipRequest', name);
+    let result = await fetchApiPost('/RequestApi/FriendshipRequest', name);
 
     if (result === 0) {
         let user = await getUser(curUserName),
@@ -23,7 +23,7 @@ async function pendingRequest(name) {
 }
 
 async function cancelRequest(name) {
-    let result = await FetchApiPost('/RequestApi/CancelRequest', name),
+    let result = await fetchApiPost('/RequestApi/CancelRequest', name),
         sender = await getUserInfo(name);
 
     if (result === 0) {
@@ -35,7 +35,6 @@ async function cancelRequest(name) {
     else if (result === 1) friendBtn(name);
     else if (result === 2) acceptOrDeclineBtn(name);
     else friendshipRequestBtn(name);
-    
 }
 
 async function removeRequest(name) {
@@ -43,19 +42,19 @@ async function removeRequest(name) {
 }
 
 async function acceptRequest(name) {
-    let result = await FetchApiPost('/RequestApi/AcceptRequest', name);
+    let result = await fetchApiPost('/RequestApi/AcceptRequest', name);
 
     if (result) friendBtn(name);
     else friendshipRequestBtn(name);
 }
 
 async function declineRequest(name) {
-    await FetchApiPost('/RequestApi/DeclineRequest', name);
+    await fetchApiPost('/RequestApi/DeclineRequest', name);
     friendshipRequestBtn(name);
 }
 
 async function removeFriend(name) {
-    let result = await FetchApiPost('/RequestApi/RemoveFriend', name)
+    let result = await fetchApiPost('/RequestApi/RemoveFriend', name)
 
     if (result) friendshipRequestBtn(name);
     else acceptOrDeclineBtn(name);
@@ -82,10 +81,6 @@ function create_modal_a_tags(methodName, parameter, denialText, approvalText) {
 
     approval_div.appendChild(approvalBtn);
     denial_div.appendChild(denialBtn);
-}
-
-async function getUserInfo(name) {
-    return await fetchApiGet(`/UserInfo/GetId?name=${name}`);
 }
 
 async function getUser(name) {

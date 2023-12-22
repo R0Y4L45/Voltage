@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Voltage.Business.CustomHelpers;
 using Voltage.Business.Services.Abstract;
-using Voltage.Entities.Entity;
-using Voltage.Entities.Models.Dtos;
 using Voltage.Entities.Models.HelperModels;
 using Voltage.Entities.Models.ViewModels;
 
@@ -65,7 +63,6 @@ public class MainPageController : Controller
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Profile(EditProfileViewModel viewModel)
     {
         try
@@ -122,36 +119,6 @@ public class MainPageController : Controller
     }
 
     public IActionResult Settings() => View();
-
-    #endregion
-
-    #region Messages Api
-
-    [HttpPost]
-    public async Task<IActionResult> MessageSaver([FromBody] MessageDto message)
-    {
-        if (message.Sender != null && message.Receiver != null && message.Content != null)
-            return Json(await _messageService.AddAsync(new Message
-            {
-                SenderId = message.Sender,
-                ReceiverId = message.Receiver,
-                Content = message.Content
-            }));
-
-        return await Task.FromResult(Json(0));
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> TakeMessages([FromBody] string receiver)
-    {
-        string[] arr = receiver.Split(' ');
-        string senderId = (await _userManagerService.FindByNameAsync(User.Identity?.Name!) ?? new Entities.Entity.User()).Id,
-            recId = (await _userManagerService.FindByNameAsync(arr[0]) ?? new Entities.Entity.User()).Id;
-
-        return Json(_mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_ =>
-            _.ReceiverId == recId && _.SenderId == senderId
-                || _.ReceiverId == senderId && _.SenderId == recId)).OrderBy(_ => _.CreatedTime)).Take(int.Parse(arr[1])));
-    }
 
     #endregion
 }

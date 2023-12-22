@@ -64,15 +64,11 @@ function cancelledRequest(user) {
 }
 
 async function acceptRequest(name) {
-    if (await FetchApiPost('AcceptRequest', name))
-        tbody.removeChild(document.getElementById(`tr${name}`));
-    else
-        window.alert("U can't accept friendship request. Please refresh page and try again..)");
+    await fetchApiPost('/RequestApi/AcceptRequest', name);
+    tbody.removeChild(document.getElementById(`tr${name}`));
 }
 
 async function declineRequest(name) {
-    if (await FetchApiPost('DeclineRequest', name))
-        tbody.removeChild(document.getElementById(`tr${name}`));
-    else
-        window.alert("U can't decline friendship request. Please refresh page and try again..)");
+    await fetchApiPost('/RequestApi/DeclineRequest', name);
+    tbody.removeChild(document.getElementById(`tr${name}`));
 }

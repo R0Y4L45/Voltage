@@ -10,7 +10,7 @@ let result, count,
 
 document.getElementById('searchUsers').oninput = async _ => {
     searchObj.content = document.getElementById('searchUsers').value;
-    result = await FetchApiPost('/SearchUsersApi/SearchUsers', searchObj);
+    result = await fetchApiPost('/SearchUsersApi/SearchUsers', searchObj);
 
     count = result.count;
     document.getElementById('countOfUsers').innerHTML = count == undefined ? '' :
@@ -93,8 +93,7 @@ async function clickShowMore() {
     searchObj.skip += 4;
     sessionStorage.setItem('skip', searchObj.skip)
 
-    result = await FetchApiPost('/SearchUsersApi/SearchUsers', searchObj);
-    console.log(result);
+    result = await fetchApiPost('/SearchUsersApi/SearchUsers', searchObj);
 
     if (count > 0) {
         showUsers(result.users);
