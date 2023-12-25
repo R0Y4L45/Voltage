@@ -35,9 +35,9 @@ function showUsers(list) {
 
         if (i.requestStatus == 2) {
             methodName = `removeRequest('${i.userName}')`;
-            btnContent = 'Friend...';
+            btnContent = ' Remove Friend ';
             modalAttribute = `data-bs-toggle="modal" data-bs-target="#modal-danger"`;
-            icon = '<img width="18" src="https://img.icons8.com/external-justicon-lineal-color-justicon/64/external-friend-notifications-justicon-lineal-color-justicon.png" alt="external-friend-notifications-justicon-lineal-color-justicon"/>';
+            icon = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-minus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4c.348 0 .686 .045 1.009 .128" /><path d="M16 19h6" /></svg>';
         }
         else if (i.requestStatus == null) {
             methodName = `friendshipRequest('${i.userName}')`;
@@ -46,7 +46,9 @@ function showUsers(list) {
         }
         else {
             if (i.requestStatus == 1 && i.senderName == i.userName) {
-                btnContent = `<button style="width:45px; heigth: 18px;  margin:0, 9px, 0, 0" class="btn btn-success" onclick="acceptRequest('${i.userName}')">Accept</button> <button style="width:45px; heigth: 18px; margin:0, 0, 0, 9px" class="btn btn-danger" onclick="declineRequest('${i.userName}')">Decline</button>`;
+                methodName = `acceptRequest('${i.userName}')`;
+                icon = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"/></svg>'
+                btnContent = 'Accept';
             }
             else {
                 methodName = `pendingRequest('${i.userName}')`;
@@ -69,13 +71,36 @@ function showUsers(list) {
                     <div class="d-flex">
                          <a id="btnId${i.userName}" onclick="${methodName}" class="card-btn" ${modalAttribute}>
                             ${icon}
+                            <span style="margin-right: 5px;" ></span>
                             ${btnContent}
                         </a>
+                        ${generateDeclineIcon(i)}
                     </div>
                 </div>`;
 
         cardDiv.appendChild(div);
     });
+}
+
+function generateDeclineIcon(user) {
+    let methodName, icon, btnContent;
+    if (user.requestStatus === 1 && user.senderName === user.userName) {
+        methodName = `onclick="declineRequest('${user.userName}')"`;
+        icon = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-x-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-6.489 5.8a1 1 0 0 0 -1.218 1.567l1.292 1.293l-1.292 1.293l-.083 .094a1 1 0 0 0 1.497 1.32l1.293 -1.292l1.293 1.292l.094 .083a1 1 0 0 0 1.32 -1.497l-1.292 -1.293l1.292 -1.293l.083 -.094a1 1 0 0 0 -1.497 -1.32l-1.293 1.292l-1.293 -1.292l-.094 -.083z" stroke-width="0" fill="currentColor" /></svg>'
+        btnContent = 'Decline';
+    } else {
+        methodName = '';
+        icon = '';
+        btnContent = '';
+        return '';
+    }
+
+    return `
+        <a id="btnIdDecline${user.userName}" ${methodName} class="card-btn">
+            ${icon}
+            <span style="margin-right: 5px;" ></span>
+            ${btnContent}
+        </a>`;
 }
 
 function addShowMoreButton() {

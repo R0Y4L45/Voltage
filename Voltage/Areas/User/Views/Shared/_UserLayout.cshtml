@@ -18,8 +18,8 @@
 <body>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.11/signalr.min.js"></script>
     <script src="~/js/SignalR.js"></script>
-    <script src="/js/ThemeConfig.js"></script>
-    <div class="page page-center" id="app">
+    <script src="~/js/ThemeConfig.js"></script>
+    <div class="page page-center" id="loader">
         <div class="container container-slim py-4">
             <div class="text-center">
                 <div class="mb-3">
@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <div class="page">
+    <div class="page" id="MainPage">
         <partial name="/Areas/User/Views/Shared/SharedPartials/HeaderPartial.cshtml" />
         <div class="page-wrapper">
             <div class="page-body">
@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <script src="~/js/site.js" defer asp-append-version="true"></script>
+    <script src="~/js/LoaderMain.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     <!--js lib-->

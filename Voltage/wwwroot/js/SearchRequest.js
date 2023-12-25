@@ -50,7 +50,11 @@ async function acceptRequest(name) {
 
 async function declineRequest(name) {
     await fetchApiPost('/RequestApi/DeclineRequest', name);
+    const declineBtn = document.getElementById('btnIdDecline${name}');
+    if (declineBtn)
+        declineBtn.remove();
     friendshipRequestBtn(name);
+    location.reload();
 }
 
 async function removeFriend(name) {
