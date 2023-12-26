@@ -20,20 +20,22 @@ function gotRequest(user) {
         let tr = document.createElement('tr');
         tr.id = `tr${user.userName}`;
         tr.innerHTML = `
-                <td data-label="Name">
+                <td class="text-sm-center">
+                    <span class="avatar" style="background-image: url(${user.photo})"></span>
+                </td>
+                <td class="text-sm-center" data-label="Name">
                     <div class="d-flex py-1 align-items-center">
-                        <span class="avatar me-2" style="background-image: url(${user.photo})"></span>
                         <div class="flex-fill">
                             <div class="font-weight-medium">${user.userName}</div>
                             <div class="text-secondary"><a href="#" class="text-reset">${user.email}</a></div>
                         </div>
                     </div>
                 </td>
-                <td>
+                <td class="text-sm-center">
                     <span class="flag flag-xs flag-country-az me-2"></span>
                     ${user.country}
                 </td>
-                <td class="text-secondary" data-label="Role">
+                <td class="text-secondary text-sm-center" data-label="Role">
                     ${user.role}
                 </td>
                 <td>

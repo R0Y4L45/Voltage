@@ -12420,7 +12420,7 @@ textarea.form-control-lg {
     columns: 4 !important
 }
 
-@media (min-width:576px) {
+@media (min-width:276px) {
     .float-sm-start {
         float: left !important
     }

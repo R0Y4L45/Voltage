@@ -106,7 +106,7 @@ function generateDeclineIcon(user) {
 function addShowMoreButton() {
     let btn = document.createElement('button');
     btn.innerHTML = "Show More";
-    btn.classList = 'btn btn-outline-warning btn-lg';
+    btn.classList = 'btn btn-outline-info btn-lg';
     btn.addEventListener('click', clickShowMore);
 
     showMore.innerHTML = '';

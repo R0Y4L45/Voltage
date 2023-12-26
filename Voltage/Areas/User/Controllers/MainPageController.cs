@@ -42,8 +42,16 @@ public class MainPageController : Controller
     }
 
     public IActionResult MessageMobile() => View();
-    public IActionResult FriendshipRequests() => View();
-    public IActionResult SearchUsers() => View();
+    public IActionResult FriendshipRequests()
+    {
+        ViewData["ShowFooter"] = false;
+        return View();
+    }
+    public IActionResult SearchUsers()
+    {
+        ViewData["ShowFooter"] = false;
+        return View();
+    }
 
     public async Task<IActionResult> Message() => View(await _userManagerService.GetAllUsers());
     public async Task<IActionResult> Profile(string Id)

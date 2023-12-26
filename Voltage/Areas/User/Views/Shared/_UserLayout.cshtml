@@ -43,7 +43,10 @@
                     </div>
                 </div>
             </div>
-            <partial name="/Areas/User/Views/Shared/SharedPartials/FooterPartial.cshtml" />
+            @if (ViewData["ShowFooter"] == null || (bool)ViewData["ShowFooter"])
+            {
+                <partial name="/Areas/User/Views/Shared/SharedPartials/FooterPartial.cshtml" />
+            }
         </div>
     </div>
 
