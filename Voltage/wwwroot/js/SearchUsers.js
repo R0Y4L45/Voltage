@@ -68,7 +68,7 @@ function showUsers(list) {
                             <span class="badge bg-purple-lt">Owner</span>
                         </div>
                     </div>
-                    <div class="d-flex">
+                    <div id="DivId" class="d-flex">
                          <a id="btnId${i.userName}" onclick="${methodName}" class="card-btn" ${modalAttribute}>
                             ${icon}
                             <span style="margin-right: 5px;" ></span>

@@ -23,7 +23,7 @@
         <div class="container container-slim py-4">
             <div class="text-center">
                 <div class="mb-3">
-@*                     <a href="/Main/MainPage/Index" class="navbar-brand navbar-brand-autodark"><img src="/wwwroot/dist/img/logos/logo-small.svg" height="36" alt=""></a> *@
+                     <img href="/Main/MainPage/Index" class="navbar-brand navbar-brand-autodark"><img src="/dist/img/logos/logo-white.svg" height="36" alt="Logo" />
                 </div>
                 <div class="text-secondary mb-3">Preparing application</div>
                 <div class="progress progress-sm">
@@ -43,7 +43,8 @@
                     </div>
                 </div>
             </div>
-            @if (ViewData["ShowFooter"] == null || (bool)ViewData["ShowFooter"])
+
+            @if ((ViewData["ShowFooter"] as bool?) ?? true)
             {
                 <partial name="/Areas/User/Views/Shared/SharedPartials/FooterPartial.cshtml" />
             }
