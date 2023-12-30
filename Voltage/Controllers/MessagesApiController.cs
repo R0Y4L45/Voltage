@@ -14,7 +14,7 @@ public class MessagesApiController : Controller
     private readonly IMessageService _messageService;
     private readonly IMapper _mapper;
 
-    public MessagesApiController(IUserManagerService userManagerService, 
+    public MessagesApiController(IUserManagerService userManagerService,
                                  IMessageService messageService,
                                  IMapper mapper)
     {
@@ -38,14 +38,15 @@ public class MessagesApiController : Controller
     }
 
     [HttpPost("TakeMessages")]
-    public async Task<IActionResult> TakeMessages([FromBody] string receiver)
+    public async Task<IActionResult> TakeMessages([FromBody] TakeMessagesDto takeMsgDto)
     {
-        string[] arr = receiver.Split(' ');
-        string senderId = (await _userManagerService.FindByNameAsync(User.Identity?.Name!) ?? new User()).Id,
-            recId = (await _userManagerService.FindByNameAsync(arr[0]) ?? new User()).Id;
+        if (takeMsgDto.UserName != null &&
+            await _userManagerService.FindByNameAsync(User.Identity?.Name!) is User sender &&
+            await _userManagerService.FindByNameAsync(takeMsgDto.UserName) is User rec)
+            return Json(_mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_ =>
+                _.ReceiverId == rec.Id && _.SenderId == sender.Id
+                    || _.ReceiverId == sender.Id && _.SenderId == rec.Id)).OrderBy(_ => _.CreatedTime)).SkipLast(takeMsgDto.Skip).TakeLast(9));
 
-        return Json(_mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_ =>
-            _.ReceiverId == recId && _.SenderId == senderId
-                || _.ReceiverId == senderId && _.SenderId == recId)).OrderBy(_ => _.CreatedTime)).Take(int.Parse(arr[1])));
+        return Json(new List<MessageDto>());
     }
 }
