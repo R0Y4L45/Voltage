@@ -5,7 +5,11 @@
     fileDescription = document.getElementById("fileDescription"),
     list = document.getElementById("messagesList"),
     count, messageSection = document.getElementById("MessageSection"),
-    animationArea = document.getElementById("animationtext");
+    animationArea = document.getElementById("animationtext"),
+    obj = {
+        userName: '',
+        skip: 0
+    };
 
 
 /*overChatBubble.addEventListener("dragover", (event) => {
@@ -180,26 +184,37 @@ async function ClickToUser(username) {
 
     recUserName = username
     recUserId = await getUserInfo(username);
-    count = 9;
 
-    (await getMessageList(username + ' ' + count)).forEach(message => {
+    obj.userName = username;
+    obj.skip = 0;
+
+    let d = await getMessageList(obj);
+
+    (d.slice().reverse()).forEach(message => {
         date = new Date(message.createdTime);
 
         messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
-            message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'))
+            message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'), false)
+
         overChatBubble.scrollTop = overChatBubble.scrollHeight;
     });
 }
 
 overChatBubble.addEventListener("scroll", async _ => {
-    if (overChatBubble.scrollTop === 0) {
-        count += 9;
-        (await getMessageList(recUserName + ' ' + count)).forEach(message => {
-            date = new Date(message.createdTime);
+    if (overChatBubble.scrollTop === 2) {
+        obj.userName = recUserName;
+        obj.skip += 9;
 
+        let d = await getMessageList(obj);
+        console.log('scroll');
+
+        (d).slice().reverse().forEach(message => {
+            date = new Date(message.createdTime);
             messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
-                message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'))
+                message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'), false);
         });
+
+        console.log("end");
     }
 });
 
@@ -232,14 +247,14 @@ async function sendMessage(event) {
         if ((await messageSaver(message, curUserId, recUserId)) !== 0) {
             connection.invoke("SendToUser", recUserId, message).catch(err => console.error(err.toString()));
 
-            messageCreater(message, 'justify-content-end', curUserName, date.getHours() + ':' + date.getMinutes().toString().padStart(2, '0'));
+            messageCreater(message, 'justify-content-end', curUserName, date.getHours() + ':' + date.getMinutes().toString().padStart(2, '0'), true);
             overChatBubble.scrollTop = overChatBubble.scrollHeight;
 
             document.getElementById("messageInput").value = '';
             event.preventDefault();
         }
 }
-function messageCreater(content, style, sender, date) {
+function messageCreater(content, style, sender, date, flag) {
     let chatBubbles = document.querySelector(".chat-bubbles"),
         chatItem = document.createElement("div");
 
@@ -259,12 +274,11 @@ function messageCreater(content, style, sender, date) {
                     </div>
                 </div>
             </div>
-        </div>
-    `;
+        </div>`;
 
-    chatBubbles.appendChild(chatItem);
+    if (flag) chatBubbles.append(chatItem)
+    else chatBubbles.prepend(chatItem);
 }
-
 
 window.addEventListener('resize', () => {
     showMessages();
