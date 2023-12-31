@@ -343,7 +343,7 @@ p {
     text-decoration: none;
 }
 
-.dropupbtn:hover .dropupbtn-content {
+.dropupbtn.active .dropupbtn-content {
     display: block;
 }
 

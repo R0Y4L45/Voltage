@@ -82,7 +82,7 @@
                     </div>
                         <div id="chat-footer" class="card-footer" @* style="border-left-style:solid;" *@>
                         <div class="input-group input-group-flat">
-                            <input type="text" class="form-control" autocomplete="off" id="messageInput" placeholder="Type message" />
+                            <textarea class="form-control" rows="1" style="resize:none;" autocomplete="off" id="messageInput" placeholder="Type message"></textarea>
                             <span class="input-group-text">
                                 <div class="dropupbtn" onclick="toggleMenu()">
                                     <button type="button" class="link-secondary ms-2 bg-transparent border-0 dropup-button">
@@ -130,7 +130,21 @@
     
 <script>
     function toggleMenu() {
-        let dropupContent = document.querySelector('.dropupbtn-content');
-        dropupContent.style.display = (dropupContent.style.display === 'block') ? 'none' : 'block';
+        let dropupBtn = document.querySelector('.dropupbtn');
+        dropupBtn.classList.toggle('active');
+
+        if (dropupBtn.classList.contains('active'))
+            document.addEventListener('click', closeMenuOnClickOutside);
+        else
+            document.removeEventListener('click', closeMenuOnClickOutside);
+        
+
+        function closeMenuOnClickOutside(event) {
+            if (!dropupBtn.contains(event.target)) {
+                dropupBtn.classList.remove('active');
+                document.removeEventListener('click', closeMenuOnClickOutside);
+            }
+        }
     }
+
 </script>
