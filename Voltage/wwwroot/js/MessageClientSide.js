@@ -114,7 +114,7 @@ function handleSend() {
 connection.on("ReceiveMessage", (user, message, createdTime) => {
     date = new Date(createdTime)
     if (curUserName !== user) {
-        messageCreater(message, '', user, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'));
+        messageCreater(message, '', user, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'),'');
         overChatBubble.scrollTop = overChatBubble.scrollHeight;
     }
 });
@@ -194,7 +194,7 @@ async function ClickToUser(username) {
         date = new Date(message.createdTime);
 
         messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
-            message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'), false)
+            message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'), false, message.sender == curUserName ? 'chat-bubble-me' : '')
 
         overChatBubble.scrollTop = overChatBubble.scrollHeight;
     });
@@ -211,7 +211,7 @@ overChatBubble.addEventListener("scroll", async _ => {
         (d).slice().reverse().forEach(message => {
             date = new Date(message.createdTime);
             messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
-                message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'), false);
+                message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'), false, message.sender == curUserName ? 'chat-bubble-me' : '');
         });
 
         console.log("end");
@@ -247,14 +247,14 @@ async function sendMessage(event) {
         if ((await messageSaver(message, curUserId, recUserId)) !== 0) {
             connection.invoke("SendToUser", recUserId, message).catch(err => console.error(err.toString()));
 
-            messageCreater(message, 'justify-content-end', curUserName, date.getHours() + ':' + date.getMinutes().toString().padStart(2, '0'), true);
+            messageCreater(message, 'justify-content-end', curUserName, date.getHours() + ':' + date.getMinutes().toString().padStart(2, '0'), true,'chat-bubble-me');
             overChatBubble.scrollTop = overChatBubble.scrollHeight;
 
             document.getElementById("messageInput").value = '';
             event.preventDefault();
         }
 }
-function messageCreater(content, style, sender, date, flag) {
+function messageCreater(content, style, sender, date, flag,messageColor) {
     let chatBubbles = document.querySelector(".chat-bubbles"),
         chatItem = document.createElement("div");
 
@@ -262,7 +262,7 @@ function messageCreater(content, style, sender, date, flag) {
     chatItem.innerHTML = `
         <div class="row align-items-end ${style}">
             <div class="col col-lg-6">
-                <div class="chat-bubble">
+                <div class="chat-bubble ${messageColor}">
                     <div class="chat-bubble-title">
                         <div class="row">
                             <div class="col chat-bubble-author">${sender}</div>

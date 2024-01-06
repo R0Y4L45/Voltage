@@ -4,6 +4,10 @@
     height: 80vh;
 }
 
+.resize-none{
+    resize:none;
+}
+
 svg text {
     font-family: Lora;
     letter-spacing: 1vw;
