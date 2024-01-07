@@ -44,8 +44,8 @@ public class MessagesApiController : Controller
             await _userManagerService.FindByNameAsync(User.Identity?.Name!) is User sender &&
             await _userManagerService.FindByNameAsync(takeMsgDto.UserName) is User rec)
             return Json(_mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_ =>
-                _.ReceiverId == rec.Id && _.SenderId == sender.Id
-                    || _.ReceiverId == sender.Id && _.SenderId == rec.Id)).OrderBy(_ => _.CreatedTime)).SkipLast(takeMsgDto.Skip).TakeLast(9));
+                    _.ReceiverId == rec.Id && _.SenderId == sender.Id ||
+                    _.ReceiverId == sender.Id && _.SenderId == rec.Id)).OrderBy(_ => _.CreatedTime)).SkipLast(takeMsgDto.Skip).TakeLast(9));
 
         return Json(new List<MessageDto>());
     }
