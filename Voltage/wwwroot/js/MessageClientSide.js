@@ -116,7 +116,8 @@ connection.on("ReceiveMessage", (user, message, createdTime) => {
     date = new Date(createdTime);
     console.log(date);
     if (curUserName !== user) {
-        messageCreater(message, '', user, date, true);
+        messageCreater(message, '', user, date, true, '');
+
         overChatBubble.scrollTop = overChatBubble.scrollHeight;
     }
 });
@@ -197,6 +198,9 @@ async function ClickToUser(username) {
 
         var groupedArr = arr.reduce((arr, item) => {
             const key = (new Date(item.createdTime)).toISOString().split('T')[0];
+        messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
+            message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'), false, message.sender == curUserName ? 'chat-bubble-me' : '')
+
 
             if (!arr[key])
                 arr[key] = [];
@@ -236,6 +240,7 @@ let scrollLoad = (async _ => {
 
         console.log('scroll');
 
+
         var arr = await getMessageList(obj);
 
         var reduced = arr.reduce((arr, item) => {
@@ -260,6 +265,11 @@ let scrollLoad = (async _ => {
         
             offsetHeight += (messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '', message.sender,
                 date, false));
+          
+        (d).slice().reverse().forEach(message => {
+            date = new Date(message.createdTime);
+            messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
+                message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'), false, message.sender == curUserName ? 'chat-bubble-me' : '');
         });
         
         overChatBubble.scrollTop = offsetHeight;
@@ -298,16 +308,18 @@ async function sendMessage(event) {
     if (recUserId !== null && message.trim().length != 0)
         if ((await messageSaver(message, curUserId, recUserId)) !== 0) {
             connection.invoke("SendToUser", recUserId, message).catch(err => console.error(err.toString()));
-
-            messageCreater(message, 'justify-content-end', curUserName, new Date(), true);
-            overChatBubble.scrollTop = overChatBubble.scrollHeight;
+          
+            messageCreater(message, 'justify-content-end', curUserName, new Date(), true, 'chat-bubble-me');
+          
+          overChatBubble.scrollTop = overChatBubble.scrollHeight;
 
             document.getElementById("messageInput").value = '';
         }
 
     event.preventDefault();
 }
-function messageCreater(content, style, sender, date, flag) {
+      
+function messageCreater(content, style, sender, date, flag, messageColor) {
     const chatBubbles = document.querySelector(".chat-bubbles"),
         chatItem = document.createElement("div");
     let dayOffset, weekOffset = Math.floor(dayOffset / 7),
@@ -321,7 +333,7 @@ function messageCreater(content, style, sender, date, flag) {
     chatItem.innerHTML = `
         <div class="row align-items-end ${style}">
             <div class="col col-lg-6">
-                <div class="chat-bubble">
+                <div class="chat-bubble ${messageColor}">
                     <div class="chat-bubble-title">
                         <div class="row">
                             <div class="col chat-bubble-author">${sender}</div>
