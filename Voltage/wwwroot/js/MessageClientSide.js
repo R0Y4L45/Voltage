@@ -5,7 +5,7 @@
     fileDescription = document.getElementById("fileDescription"),
     list = document.getElementById("messagesList"),
     count, messageSection = document.getElementById("MessageSection"),
-    animationArea = document.getElementById("animationtext"),
+    animationArea = document.getElementById("animationtext"),isBckButtonPressed = false,
     obj = {
         userName: '',
         skip: 0
@@ -123,26 +123,16 @@ connection.on("ReceiveMessage", (user, message, createdTime) => {
 
 //#region Events
 
-function showMessages() {
+
+function backFriendList() {
     const messageFriendList = document.getElementById("MessageFriendList"),
         messageAreas1 = document.getElementById("messageAreas1");
+    messageAreas1.classList.add('displaynone');
+    messageFriendList.classList.remove('displaynone');
 
-    if (window.innerWidth > 993) {
-        messageFriendList.classList.remove('displaynone');
-        messageFriendList.classList.add('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
-        messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
-        messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
-        messageSection.classList.add("displaynone");
-        animationArea.style.display = 'block';
-
-    } else {
-        messageFriendList.classList.remove('displaynone');
-        messageFriendList.classList.add('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
-        messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
-        messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
-        animationArea.style.display = 'none';
-    }
+    isBckButtonPressed = true;
 }
+
 
 function showMessagesClick() {
     const messageFriendList = document.getElementById("MessageFriendList"),
@@ -151,13 +141,38 @@ function showMessagesClick() {
     messageSection.classList.remove("displaynone");
     animationArea.style.display = 'none';
 
-    if (window.innerWidth < 993) {
+
+    // if user logged from the phone and does not have to expand the window//
+    if (window.innerWidth <= 993) {
         messageFriendList.classList.add('displaynone');
         messageFriendList.classList.remove('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
         messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
         messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
         animationArea.classList.add("displaynone");
+        if (isBckButtonPressed) {
+            messageAreas1.classList.remove('displaynone');
+        }
     }
+
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth <= 993) {
+            messageFriendList.classList.add('displaynone');
+            messageFriendList.classList.remove('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
+            messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
+            messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
+            animationArea.classList.add("displaynone");
+            if (isBckButtonPressed) {
+                messageAreas1.classList.remove('displaynone');
+            }
+        }
+        else {
+            messageFriendList.classList.add('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
+            messageFriendList.classList.remove('displaynone');
+            messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
+            messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
+        }    
+    });
 }
 
 document.getElementById("messageInput").addEventListener("keypress", async event => {
@@ -280,9 +295,6 @@ function messageCreater(content, style, sender, date, flag,messageColor) {
     else chatBubbles.prepend(chatItem);
 }
 
-window.addEventListener('resize', () => {
-    showMessages();
-});
 
 
 //#endregion
