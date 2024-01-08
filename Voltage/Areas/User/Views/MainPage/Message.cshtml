@@ -22,7 +22,7 @@
                         <div class="nav flex-column nav-pills" role="tablist">
                             @foreach (var item in Model)
                             {
-                                <a href="#chat-@item.UserName" onclick="ClickToUser('@item.UserName')" class="nav-link text-start mw-100 p-3" id="chat-@item.UserName-tab" data-bs-toggle="pill" role="tab" aria-selected="true" data-user-name="@item.UserName" data-user-photo="@item.Photo" data-user-status="Online">
+                                <a href="#chat-@item.UserName" onclick="clickToUser('@item.UserName')" class="nav-link text-start mw-100 p-3" id="chat-@item.UserName-tab" data-bs-toggle="pill" role="tab" aria-selected="true" data-user-name="@item.UserName" data-user-photo="@item.Photo" data-user-status="Online">
                                     <div class="row align-items-center flex-fill">
                                         <div class="col-auto">
                                             <span class="avatar" style="background-image: url('@item.Photo')"></span>

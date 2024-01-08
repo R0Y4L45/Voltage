@@ -182,7 +182,10 @@ document.getElementById("messageInput").addEventListener("keypress", async event
     if (event.key === "Enter")
         await sendMessage(event)
 });
-async function ClickToUser(username) {
+async function clickToUser(username) {
+    if (window.innerWidth <= 993)
+        usernameFlag = '';
+
     if (username !== usernameFlag) {
         overChatBubble.removeEventListener('scroll', scrollLoad);
 
@@ -213,9 +216,6 @@ async function ClickToUser(username) {
 
         var groupedArr = arr.reduce((arr, item) => {
             const key = (new Date(item.createdTime)).toISOString().split('T')[0];
-        messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
-            message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'), false, message.sender == curUserName ? 'chat-bubble-me' : '')
-
 
             if (!arr[key])
                 arr[key] = [];
@@ -280,11 +280,6 @@ let scrollLoad = (async _ => {
         
             offsetHeight += (messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '', message.sender,
                 date, false));
-          
-        (d).slice().reverse().forEach(message => {
-            date = new Date(message.createdTime);
-            messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
-                message.sender, date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0'), false, message.sender == curUserName ? 'chat-bubble-me' : '');
         });
         
         overChatBubble.scrollTop = offsetHeight;
