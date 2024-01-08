@@ -5,12 +5,12 @@
     fileDescription = document.getElementById("fileDescription"),
     list = document.getElementById("messagesList"),
     count, messageSection = document.getElementById("MessageSection"),
-    animationArea = document.getElementById("animationtext"),isBckButtonPressed = false,
+    animationArea = document.getElementById("animationtext"), isBckButtonPressed = false,
     obj = {
         userName: '',
         skip: 0
     },
-    usernameFlag, firstObj = null;
+    usernameFlag;
 
 
 /*overChatBubble.addEventListener("dragover", (event) => {
@@ -112,12 +112,17 @@ function handleSend() {
 
 //#region SignalR Connection and its events
 
+//Messages Receiver
 connection.on("ReceiveMessage", (user, message, createdTime) => {
-    date = new Date(createdTime);
-    console.log(date);
-    if (curUserName !== user) {
-        messageCreater(message, '', user, date, true, '');
+    let msgObj = { //new message obj created to send function
+        sender: user,
+        receiver: curUserName,
+        content: message,
+        createdTime: new Date(createdTime)
+    };
 
+    if (curUserName !== user) {
+        messageCreater(msgObj, '', true);
         overChatBubble.scrollTop = overChatBubble.scrollHeight;
     }
 });
@@ -125,7 +130,6 @@ connection.on("ReceiveMessage", (user, message, createdTime) => {
 //#endregion
 
 //#region Events
-
 
 function backFriendList() {
     const messageFriendList = document.getElementById("MessageFriendList"),
@@ -136,14 +140,12 @@ function backFriendList() {
     isBckButtonPressed = true;
 }
 
-
 function showMessagesClick() {
     const messageFriendList = document.getElementById("MessageFriendList"),
         messageAreas1 = document.getElementById("messageAreas1");
 
     messageSection.classList.remove("displaynone");
     animationArea.style.display = 'none';
-
 
     // if user logged from the phone and does not have to expand the window//
     if (window.innerWidth <= 993) {
@@ -165,26 +167,24 @@ function showMessagesClick() {
             messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
             messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
             animationArea.classList.add("displaynone");
-            if (isBckButtonPressed) {
-                messageAreas1.classList.remove('displaynone');
-            }
+
+            if (isBckButtonPressed) messageAreas1.classList.remove('displaynone');
         }
         else {
             messageFriendList.classList.add('col-12', 'col-lg-5', 'col-xl-3', 'border-end');
             messageFriendList.classList.remove('displaynone');
             messageAreas1.classList.remove('col-12', 'col-lg-7', 'col-xl-12', 'd-flex', 'flex-column');
             messageAreas1.classList.add('col-12', 'col-lg-7', 'col-xl-9', 'd-flex', 'flex-column', 'hide-on-small-screen');
-        }    
+        }
     });
 }
 
 document.getElementById("messageInput").addEventListener("keypress", async event => {
-    if (event.key === "Enter")
-        await sendMessage(event)
+    if (event.key === "Enter") await sendMessage(event)
 });
+
 async function clickToUser(username) {
-    if (window.innerWidth <= 993)
-        usernameFlag = '';
+    if (window.innerWidth <= 993) usernameFlag = '';
 
     if (username !== usernameFlag) {
         overChatBubble.removeEventListener('scroll', scrollLoad);
@@ -195,7 +195,7 @@ async function clickToUser(username) {
             clickedElement = document.querySelector(`[data-user-name="${username}"]`),
             userPhoto = clickedElement.getAttribute('data-user-photo'),
             userStatus = clickedElement.getAttribute('data-user-status'),
-            h5Element, first = true;
+            h5Element, msgArr, groupedArr;
 
         showMessagesClick();
 
@@ -212,78 +212,67 @@ async function clickToUser(username) {
         obj.userName = username;
         obj.skip = 0;
 
-        var arr = await getMessageList(obj);
-
-        var groupedArr = arr.reduce((arr, item) => {
+        msgArr = (await getMessageList(obj)).reduce((arr, item) => { // get messages and grouped them by created time 
             const key = (new Date(item.createdTime)).toISOString().split('T')[0];
 
-            if (!arr[key])
-                arr[key] = [];
-
+            if (!arr[key]) arr[key] = [];
             arr[key].push(item);
 
             return arr;
         }, {});
 
-        console.log(groupedArr);
+        groupedArr = Object.entries(msgArr).map(([key, value]) => ({ key, value })).reverse(); // string convert to key and value
+        groupedArr.forEach(item => {
+            let prmtr = '';
+            console.log(item.key);
+            console.log(item.value);
+            for (var i = item.value.length - 1; i >= 0; i--) {
+                if (i === 0)
+                    prmtr = item.key;
 
-        arr.reverse().forEach(message => {
-
-            if (first) {
-                firstObj = message;
-                first = false;
+                messageCreater(item.value[i], prmtr, false)
             }
-
-            messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '',
-                message.sender, new Date(message.createdTime), false)
-
-            overChatBubble.scrollTop = overChatBubble.scrollHeight;
         });
 
-        overChatBubble.addEventListener('scroll', scrollLoad);
-
+        overChatBubble.scrollTop = overChatBubble.scrollHeight;
         usernameFlag = username;
+
+        overChatBubble.addEventListener('scroll', scrollLoad);
     }
 }
 
 let scrollLoad = (async _ => {
     if (overChatBubble.scrollTop === 0) {
         overChatBubble.removeEventListener('scroll', scrollLoad);
-        let offsetHeight = 0, first = true;
+        let offsetHeight = 0, msgArr, groupedArr;
         obj.userName = recUserName;
         obj.skip += 9;
 
         console.log('scroll');
 
-
-        var arr = await getMessageList(obj);
-
-        var reduced = arr.reduce((arr, item) => {
+        msgArr = (await getMessageList(obj)).reduce((arr, item) => { // get messages and grouped them by created time 
             const key = (new Date(item.createdTime)).toISOString().split('T')[0];
 
-            if (!arr[key])
-                arr[key] = [];
-
+            if (!arr[key]) arr[key] = [];
             arr[key].push(item);
 
             return arr;
         }, {});
 
-        console.log('arr => ');
-        var d = Object.entries(reduced).map(([key, value]) => ({ key, value }));
-        console.log(d);
-        console.log(d[0].key);
-        console.log(d[0].value);
+        groupedArr = Object.entries(msgArr).map(([key, value]) => ({ key, value })).reverse(); // string convert to key and value
+        groupedArr.forEach(item => {
+            let prmtr = '';
+            console.log(item.key);
+            console.log(item.value);
+            for (var i = item.value.length - 1; i >= 0; i--) {
+                if (i === 0)
+                    prmtr = item.key;
 
-        arr.reverse().forEach(message => {
-            date = new Date(message.createdTime); 
-        
-            offsetHeight += (messageCreater(message.content, message.sender == curUserName ? 'justify-content-end' : '', message.sender,
-                date, false));
+                offsetHeight += messageCreater(item.value[i], prmtr, false)
+            }
         });
-        
-        overChatBubble.scrollTop = offsetHeight;
 
+        overChatBubble.scrollTop = offsetHeight;
         console.log('end');
         overChatBubble.addEventListener('scroll', scrollLoad);
     }
@@ -318,40 +307,43 @@ async function sendMessage(event) {
     if (recUserId !== null && message.trim().length != 0)
         if ((await messageSaver(message, curUserId, recUserId)) !== 0) {
             connection.invoke("SendToUser", recUserId, message).catch(err => console.error(err.toString()));
-          
-            messageCreater(message, 'justify-content-end', curUserName, new Date(), true, 'chat-bubble-me');
-          
-          overChatBubble.scrollTop = overChatBubble.scrollHeight;
+            let msgObj = { //new message obj created to send function
+                sender: curUserName,
+                receiver: recUserName,
+                content: message,
+                createdTime: new Date()
+            };
 
+            messageCreater(msgObj, '', true);
+            overChatBubble.scrollTop = overChatBubble.scrollHeight;
             document.getElementById("messageInput").value = '';
         }
 
     event.preventDefault();
 }
-      
-function messageCreater(content, style, sender, date, flag, messageColor) {
-    const chatBubbles = document.querySelector(".chat-bubbles"),
-        chatItem = document.createElement("div");
-    let dayOffset, weekOffset = Math.floor(dayOffset / 7),
-        monthOffset = Math.floor(dayOffset / 30),
-        yearOffset = Math.floor(dayOffset / 365),
-        timeOffSet = (new Date()) - date;
 
-    dayOffset = Math.floor(timeOffSet / (1000 * 60 * 60 * 24))
+function messageCreater(msgObj, groupedDate, flag) {
+    const chatBubbles = document.querySelector(".chat-bubbles"),
+        chatItem = document.createElement("div"),
+        date = new Date(msgObj.createdTime),
+        groupedDateHtm = groupedDate !== '' ? `<p class='text-center'>${groupedDate}</p>` : '',
+        style = msgObj.sender == curUserName ? 'justify-content-end' : '',
+        messageColor = msgObj.sender == curUserName ? 'chat-bubble-me' : '';
 
     chatItem.classList.add("chat-item");
     chatItem.innerHTML = `
         <div class="row align-items-end ${style}">
+            ${groupedDateHtm}
             <div class="col col-lg-6">
                 <div class="chat-bubble ${messageColor}">
                     <div class="chat-bubble-title">
                         <div class="row">
-                            <div class="col chat-bubble-author">${sender}</div>
-                            <div class="col-auto chat-bubble-date">${date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0')} </div>
+                            <div class="col chat-bubble-author">${msgObj.sender}</div>
+                            <div class="col-auto chat-bubble-date">${date.getHours().toString() + ':' + date.getMinutes().toString().padStart(2, '0')}</div>
                         </div>
                     </div>
                     <div class="chat-bubble-body">
-                        <p>${content}</p>
+                        <p>${msgObj.content}</p>
                     </div>
                 </div>
             </div>
@@ -362,7 +354,5 @@ function messageCreater(content, style, sender, date, flag, messageColor) {
 
     return chatItem.offsetHeight;
 }
-
-
 
 //#endregion

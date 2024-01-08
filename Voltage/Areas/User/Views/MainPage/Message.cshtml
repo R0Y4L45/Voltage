@@ -83,7 +83,7 @@
                     </div>
                         <div id="chat-footer" class="card-footer" @* style="border-left-style:solid;" *@>
                         <div class="input-group input-group-flat">
-                            <span class="input-group-text">
+                            <div class="input-group-text"> @* span to div converted *@
                                 <div class="dropupbtn" onclick="toggleMenu()">
                                     <button type="button" class="link-secondary bg-transparent border-0 dropup-button">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -111,7 +111,7 @@
                                 <a href="#" class="link-secondary" data-bs-toggle="tooltip" aria-label="Clear search" title="Emojies">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 10l.01 0" /><path d="M15 10l.01 0" /><path d="M9.5 15a3.5 3.5 0 0 0 5 0" /></svg>
                                 </a>
-                            </span>
+                            </div>
                             <textarea class="form-control resize-none" rows="1" id="messageInput" placeholder="Type message" oninput="adjustTextareaRows()"></textarea>
                             <span class="input-group-text">
                                 <a href="#" id="sendButton" class="link-secondary ms-2" data-bs-toggle="tooltip" >
