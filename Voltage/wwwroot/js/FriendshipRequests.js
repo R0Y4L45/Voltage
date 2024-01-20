@@ -67,6 +67,7 @@ function cancelledRequest(user) {
 
 async function acceptRequest(name) {
     await fetchApiPost('/RequestApi/AcceptRequest', name);
+    createAlert(true, "Succsesfuly Accepted");
     tbody.removeChild(document.getElementById(`tr${name}`));
 }
 

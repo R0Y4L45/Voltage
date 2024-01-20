@@ -62,6 +62,59 @@ document.addEventListener("DOMContentLoaded", _ => {
             { code: 'dk', flagClass: 'flag-country-dk', name: 'Denmark' },
             { code: 'dm', flagClass: 'flag-country-dm', name: 'Dominica' },
             { code: 'do', flagClass: 'flag-country-do', name: 'Dominican Republic' },
+
+            //C
+            { code: 'ec', flagClass: 'flag-country-ec', name: 'Ecuador' },
+            { code: 'ee', flagClass: 'flag-country-ee', name: 'Estonia' },
+            { code: 'eg', flagClass: 'flag-country-eg', name: 'Egypt' },
+            { code: 'eh', flagClass: 'flag-country-eh', name: 'Western Sahara' },
+            { code: 'er', flagClass: 'flag-country-er', name: 'Eritrea' },
+            { code: 'es', flagClass: 'flag-country-es', name: 'Spain' },
+            { code: 'et', flagClass: 'flag-country-et', name: 'Ethiopia' },
+            { code: 'eu', flagClass: 'flag-country-eu', name: 'European Union' },
+
+            //F
+            { code: 'fi', flagClass: 'flag-country-fi', name: 'Finland' },
+            { code: 'fj', flagClass: 'flag-country-fj', name: 'Fiji' },
+            { code: 'fk', flagClass: 'flag-country-fk', name: 'Falkland Islands' },
+            { code: 'fm', flagClass: 'flag-country-fm', name: 'Federated States of Micronesia' },
+            { code: 'fo', flagClass: 'flag-country-fo', name: 'Faroe Islands' },
+            { code: 'fr', flagClass: 'flag-country-fr', name: 'France' },
+
+            //G
+            { code: 'ga', flagClass: 'flag-country-ga', name: 'Gabon' },
+            { code: 'gb', flagClass: 'flag-country-gb', name: 'United Kingdom' },
+            { code: 'gb-eng', flagClass: 'flag-country-gb-eng', name: 'England' },
+            { code: 'gb-nir', flagClass: 'flag-country-gb-nir', name: 'Northern Ireland' },
+            { code: 'gb-sct', flagClass: 'flag-country-gb-sct', name: 'Scotland' },
+            { code: 'gb-wls', flagClass: 'flag-country-gb-wls', name: 'Wales' },
+            { code: 'gd', flagClass: 'flag-country-gd', name: 'Grenada' },
+            { code: 'ge', flagClass: 'flag-country-ge', name: 'Georgia' },
+            { code: 'gf', flagClass: 'flag-country-gf', name: 'French Guiana' },
+            { code: 'gg', flagClass: 'flag-country-gg', name: 'Guernsey' },
+            { code: 'gh', flagClass: 'flag-country-gh', name: 'Ghana' },
+            { code: 'gi', flagClass: 'flag-country-gi', name: 'Gibraltar' },
+            { code: 'gl', flagClass: 'flag-country-gl', name: 'Greenland' },
+            { code: 'gm', flagClass: 'flag-country-gm', name: 'Gambia' },
+            { code: 'gn', flagClass: 'flag-country-gn', name: 'Guinea' },
+            { code: 'gp', flagClass: 'flag-country-gp', name: 'Guadeloupe' },
+            { code: 'gq', flagClass: 'flag-country-gq', name: 'Equatorial Guinea' },
+            { code: 'gr', flagClass: 'flag-country-gr', name: 'Greece' },
+            { code: 'gs', flagClass: 'flag-country-gs', name: 'South Georgia' },
+            { code: 'gt', flagClass: 'flag-country-gt', name: 'Guatemala' },
+            { code: 'gu', flagClass: 'flag-country-gu', name: 'Guam' },
+            { code: 'gw', flagClass: 'flag-country-gw', name: 'Guinea-Bissau' },
+            { code: 'gy', flagClass: 'flag-country-gy', name: 'Guyana' },
+
+
+            //H
+            { code: 'hk', flagClass: 'flag-country-hk', name: 'Hong Kong' },
+            { code: 'hm', flagClass: 'flag-country-hm', name: 'Heard Island and McDonald Islands' },
+            { code: 'hn', flagClass: 'flag-country-hn', name: 'Honduras' },
+            { code: 'hr', flagClass: 'flag-country-hr', name: 'Croatia' },
+            { code: 'ht', flagClass: 'flag-country-ht', name: 'Haiti' },
+            { code: 'hu', flagClass: 'flag-country-hu', name: 'Hungary' },
+            
         ];
 
     countries.forEach(country => {

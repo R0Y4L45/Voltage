@@ -2,6 +2,25 @@
 @model IEnumerable<User>
 
 
+<style>
+    .rectangle {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow: hidden;   
+        border-radius: 10px;
+        background: lightgray;
+        max-width: 650px;
+        margin: 10px;
+    }
+
+    .voiceEfect {
+        margin: 2px;
+        border-radius: 30px;
+        background: blue;
+        min-width: 10px;
+    }
+</style>
+
 <link rel="stylesheet" type="text/css" href="/css/Textanimate.css" />
 <link href="/dist/libs/dropzone/dist/dropzone.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.css" crossorigin="anonymous" />
@@ -82,7 +101,7 @@
                         </div>
                     </div>
                         <div id="chat-footer" class="card-footer" @* style="border-left-style:solid;" *@>
-                        <div class="input-group input-group-flat">
+                            <div id="chat-inputs" class="input-group input-group-flat">
                             <span class="input-group-text">
                                 <div class="dropupbtn" onclick="toggleMenu()">
                                     <button type="button" class="link-secondary bg-transparent border-0 dropup-button">
@@ -116,11 +135,12 @@
                             <span class="input-group-text">
                                 <a href="#" id="sendButton" class="link-secondary ms-2" data-bs-toggle="tooltip" >
                                     <svg id="sendBtnIc" style="display:none;" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
-                                    <svg id="voiceBtnIc" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-microphone" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 2m0 3a3 3 0 0 1 3 -3h0a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3h0a3 3 0 0 1 -3 -3z" /><path d="M5 10a7 7 0 0 0 14 0" /><path d="M8 21l8 0" /><path d="M12 17l0 4" /></svg>
+                                    <svg id="voiceBtnIc" onclick="startRecording()" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-microphone" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 2m0 3a3 3 0 0 1 3 -3h0a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3h0a3 3 0 0 1 -3 -3z" /><path d="M5 10a7 7 0 0 0 14 0" /><path d="M8 21l8 0" /><path d="M12 17l0 4" /></svg>
                                 </a>
                             </span>
                         </div>
-                    </div>
+                            <div class="rectangle"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -179,6 +199,53 @@
             if (!dropupBtn.contains(event.target)) {
                 dropupBtn.classList.remove('active');
                 document.removeEventListener('click', closeMenuOnClickOutside);
+            }
+        }
+    }
+
+
+    let voiceEfect, height, src, myElements, sampleRate, analyser, num = 52,
+    array = new Uint8Array(num * 2), width = 10, context = null, isRecording = false;
+
+    function startRecording() {
+        let chatinputs = document.getElementById("chat-inputs");
+        chatinputs.style.display = "none";
+        if (!context) {
+            let rectangle = document.querySelector('.rectangle');
+            for (let i = 0; i < num; i++) {
+                voiceEfect = document.createElement('div');
+                voiceEfect.className = 'voiceEfect';
+                rectangle.appendChild(voiceEfect);
+            }
+
+            myElements = document.getElementsByClassName('voiceEfect');
+            context = new AudioContext();
+            sampleRate = context.sampleRate;
+
+            analyser = context.createAnalyser();
+
+            navigator.mediaDevices.getUserMedia({
+                audio: true
+            }).then(stream => {
+                src = context.createMediaStreamSource(stream);
+                src.connect(analyser);
+                loop();
+            }).catch(error => {
+                alert(error + '\r\n\ sondurulub reload ver');
+                location.reload();
+            });
+        }
+        isRecording = true;
+    }
+
+    function loop() {
+        window.requestAnimationFrame(loop);
+        analyser.getByteFrequencyData(array);
+        if (isRecording) {
+            for (var i = 0; i < num; i++) {
+                height = Math.max(array[i + num], 5); 
+                myElements[i].style.height = height * 0.1 + 'px';
+                myElements[i].style.opacity = 0.008 * height;
             }
         }
     }

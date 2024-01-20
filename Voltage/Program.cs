@@ -11,6 +11,7 @@ using Voltage.Helper;
 using Voltage.Entities.Models.HelperModels;
 using Voltage.Services.Abstract;
 using Voltage.Services.Concrete;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Voltage;
 
@@ -20,7 +21,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
-        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn"]));
+        builder.Services.AddDbContext<VoltageDbContext>(_ => _.UseSqlServer(builder.Configuration["ConnectionStrings:sqlConn2"]));
         builder.Services.Configure<DataProtectionTokenProviderOptions>(_ => _.TokenLifespan = TimeSpan.FromHours(1));
         builder.Services.ConfigureApplicationCookie(_=> _.ExpireTimeSpan = TimeSpan.FromHours(1));
         builder.Services.AddIdentity<User, IdentityRole>(_ =>
@@ -71,13 +72,18 @@ public class Program
 
         if (!app.Environment.IsDevelopment())
         {
-            app.UseExceptionHandler("/Home/Error");
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseExceptionHandler("/Account/ServerError");
             app.UseHsts();
         }
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
-
+        app.UseStatusCodePagesWithReExecute("/Account/NotFound", "?statusCode={0}");
+            
         app.MapHub<SignalRHub>("/signalRHub");
         app.UseRouting();
 

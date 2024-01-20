@@ -141,7 +141,7 @@ public class AccountController : Controller
 
         if (externalLoginInfo == null)
         {
-            return RedirectToAction(nameof(Error));
+            return NotFound();
         }
 
         var result = await _signInManagerService.ExternalLoginSignInAsync(externalLoginInfo);
@@ -259,9 +259,17 @@ public class AccountController : Controller
         return View(model);
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error(string message)
+
+    #region errors
+    public IActionResult NotFound()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
+        return View("NotFound");
     }
+
+    public IActionResult ServerError()
+    {
+        return View("ServerError");
+    }
+    #endregion
+
 }

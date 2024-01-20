@@ -16,8 +16,13 @@
                                     <span class="avatar avatar-xl" style="background-image: url('@Context.Session.GetString("ProfilePhoto")')"></span>
                                 </div>
                                 <div class="col-auto">
-                                    <a href="#" class="btn" id="changeAvatarBtn">
+                                    <a href="#" class="btn btn-outline-secondary" id="changeAvatarBtn">
                                         Change avatar
+                                    </a>
+                                </div>
+                                <div class="col-auto">
+                                    <a href="#" class="btn btn-outline-secondary">
+                                        Friend List
                                     </a>
                                 </div>
                                 <input type="file" asp-for="Photo" id="avatarInput" style="display: none;" />
@@ -89,21 +94,6 @@
                                 <a href="/Account/ForgotPassword" class="btn">
                                     Set new password
                                 </a>
-                            </div>
-                            <h3 class="card-title mt-4">Public profile</h3>
-                            <p class="card-subtitle">
-                                Making your profile public means that anyone on the Dashkit network will be able to find
-                                you.
-                            </p>
-                            <div>
-                                <label class="form-check form-switch form-switch-lg">
-                                    <input class="form-check-input" type="checkbox">
-                                    <span class="form-check-label form-check-label-on">You're currently visible</span>
-                                    <span class="form-check-label form-check-label-off">
-                                        You're
-                                        currently invisible
-                                    </span>
-                                </label>
                             </div>
                         </div>
                         <div class="card-footer bg-transparent mt-auto">

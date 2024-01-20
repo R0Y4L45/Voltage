@@ -44,8 +44,14 @@ async function removeRequest(name) {
 async function acceptRequest(name) {
     let result = await fetchApiPost('/RequestApi/AcceptRequest', name);
 
-    if (result) friendBtn(name);
-    else friendshipRequestBtn(name);
+    if (result) {
+        friendBtn(name);
+        createAlert(true, "Succsesfuly Accepted");
+    }
+    else {
+        friendshipRequestBtn(name);
+        createAlert(false, "Oops! Something went wrong...");
+    }
 }
 
 async function declineRequest(name) {
@@ -59,7 +65,6 @@ async function declineRequest(name) {
 
 async function removeFriend(name) {
     await fetchApiPost('/RequestApi/RemoveFriend', name)
-
     if (result) friendshipRequestBtn(name);
     else acceptOrDeclineBtn(name);
 }
