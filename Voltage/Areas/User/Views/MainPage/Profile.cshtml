@@ -12,18 +12,18 @@
                             <h2 class="mb-4">My Account</h2>
                             <h3 class="card-title">Profile Details</h3>
                             <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <span class="avatar avatar-xl" style="background-image: url('@Context.Session.GetString("ProfilePhoto")')"></span>
-                                </div>
-                                <div class="col-auto">
-                                    <a href="#" class="btn btn-outline-secondary" id="changeAvatarBtn">
-                                        Change avatar
-                                    </a>
-                                </div>
-                                <div class="col-auto">
-                                    <a href="#" class="btn btn-outline-secondary">
-                                        Friend List
-                                    </a>
+                                <div id="ppSettings">
+                                    <div class="col-auto">
+                                        <span class="avatar avatar-xl" style="background-image: url('@Context.Session.GetString("ProfilePhoto")')"></span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="#" class="btn btn-outline-secondary" id="changeAvatarBtn">
+                                            Change avatar
+                                        </a>
+                                        <a href="#" class="btn btn-outline-secondary">
+                                            Friend List
+                                        </a>
+                                    </div>
                                 </div>
                                 <input type="file" asp-for="Photo" id="avatarInput" style="display: none;" />
                             </div>

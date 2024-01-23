@@ -9,7 +9,7 @@
         overflow: hidden;   
         border-radius: 10px;
         background: lightgray;
-        max-width: 650px;
+        max-width: 680px;
         margin: 10px;
     }
 
@@ -100,45 +100,47 @@
                             </div>
                         </div>
                     </div>
-                        <div id="chat-footer" class="card-footer" @* style="border-left-style:solid;" *@>
-                        <div class="input-group input-group-flat">
-                            <span class="input-group-text"> @* span to div converted *@
-                                <div class="dropupbtn" onclick="toggleMenu()">
-                                    <button type="button" class="link-secondary bg-transparent border-0 dropup-button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5" />
-                                        </svg>
-                                    </button>
-                                    <div class="dropupbtn-content">
-                                        <a href="#">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <div id="chat-footer" class="card-footer">
+                            <div id="chat-inputs" class="input-group input-group-flat">
+                                <span class="input-group-text">
+                                    <div class="dropupbtn" onclick="toggleMenu()">
+                                        <button type="button" class="link-secondary bg-transparent border-0 dropup-button">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                                                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                                            </svg>Documents
-                                        </a>
-                                        <a href="#">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-photo" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M15 8h.01" />
-                                                <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" />
-                                                <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" /><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3" />
-                                            </svg>Send Photo
-                                        </a>
+                                                <path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5" />
+                                            </svg>
+                                        </button>
+                                        <div class="dropupbtn-content">
+                                            <a href="#">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                                                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                                                </svg>Documents
+                                            </a>
+                                            <a href="#">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-photo" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M15 8h.01" />
+                                                    <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" />
+                                                    <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" />
+                                                    <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3" />
+                                                </svg>Send Photo
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
-                                <a href="#" class="link-secondary" data-bs-toggle="tooltip" aria-label="Clear search" title="Emojies">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 10l.01 0" /><path d="M15 10l.01 0" /><path d="M9.5 15a3.5 3.5 0 0 0 5 0" /></svg>
-                                </a>
+                                    <a href="#" class="link-secondary" data-bs-toggle="tooltip" aria-label="Clear search" title="Emojies">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 10l.01 0" /><path d="M15 10l.01 0" /><path d="M9.5 15a3.5 3.5 0 0 0 5 0" /></svg>
+                                    </a>
+                                </span>
+                                <textarea class="form-control resize-none" rows="1" id="messageInput" placeholder="Type message" oninput="adjustTextareaRows()"></textarea>
+                                <span class="input-group-text">
+                                    <a href="#" id="sendButton" class="link-secondary ms-2" data-bs-toggle="tooltip">
+                                        <svg id="sendBtnIc" style="display:none;" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
+                                        <svg id="voiceBtnIc" onclick="startRecording()" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-microphone" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 2m0 3a3 3 0 0 1 3 -3h0a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3h0a3 3 0 0 1 -3 -3z" /><path d="M5 10a7 7 0 0 0 14 0" /><path d="M8 21l8 0" /><path d="M12 17l0 4" /></svg>
+                                    </a>
+                                </span>
                             </div>
-                            <textarea class="form-control resize-none" rows="1" id="messageInput" placeholder="Type message" oninput="adjustTextareaRows()"></textarea>
-                            <span class="input-group-text">
-                                <a href="#" id="sendButton" class="link-secondary ms-2" data-bs-toggle="tooltip" >
-                                    <svg id="sendBtnIc" style="display:none;" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
-                                    <svg id="voiceBtnIc" onclick="startRecording()" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-microphone" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 2m0 3a3 3 0 0 1 3 -3h0a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3h0a3 3 0 0 1 -3 -3z" /><path d="M5 10a7 7 0 0 0 14 0" /><path d="M8 21l8 0" /><path d="M12 17l0 4" /></svg>
-                                </a>
-                            </span>
-                        </div>
                             <div class="rectangle"></div>
                         </div>
                     </div>
@@ -154,13 +156,13 @@
 <script>
 
     function adjustTextareaRows() {
-        let textarea = document.getElementById('messageInput'),micIcon = document.getElementById('voiceBtnIc'),
-        sendIcon = document.getElementById('sendBtnIc'),
-        lineHeight = parseFloat(getComputedStyle(textarea).lineHeight),minRows = 1,maxRows = 3,maxHeight = maxRows * lineHeight,
-        rows = 1,innerHeight = textarea.scrollHeight - parseFloat(getComputedStyle(textarea).paddingTop) - parseFloat(getComputedStyle(textarea).paddingBottom);
+        let textarea = document.getElementById('messageInput'), micIcon = document.getElementById('voiceBtnIc'),
+            sendIcon = document.getElementById('sendBtnIc'),
+            lineHeight = parseFloat(getComputedStyle(textarea).lineHeight), minRows = 1, maxRows = 3, maxHeight = maxRows * lineHeight,
+            rows = 1, innerHeight = textarea.scrollHeight - parseFloat(getComputedStyle(textarea).paddingTop) - parseFloat(getComputedStyle(textarea).paddingBottom);
 
 
-        if (textarea.value.length > 100) 
+        if (textarea.value.length > 100)
             minRows = 2;
 
         if (textarea.value.trim() !== '') {
@@ -168,7 +170,7 @@
             micIcon.style.display = "none";
             sendIcon.style.display = "inline-block";
         }
-        else{
+        else {
             micIcon.style.display = "inline-block";
             sendIcon.style.display = "none";
         }
@@ -179,7 +181,7 @@
 
         if (innerHeight > maxHeight)
             textarea.style.overflowY = 'auto';
-        else 
+        else
             textarea.style.overflowY = 'hidden';
     }
 
@@ -193,7 +195,7 @@
             document.addEventListener('click', closeMenuOnClickOutside);
         else
             document.removeEventListener('click', closeMenuOnClickOutside);
-        
+
 
         function closeMenuOnClickOutside(event) {
             if (!dropupBtn.contains(event.target)) {
@@ -205,7 +207,7 @@
 
 
     let voiceEfect, height, src, myElements, sampleRate, analyser, num = 52,
-    array = new Uint8Array(num * 2), width = 10, context = null, isRecording = false;
+        array = new Uint8Array(num * 2), width = 10, context = null, isRecording = false;
 
     function startRecording() {
         let chatinputs = document.getElementById("chat-inputs");
@@ -243,7 +245,7 @@
         analyser.getByteFrequencyData(array);
         if (isRecording) {
             for (var i = 0; i < num; i++) {
-                height = Math.max(array[i + num], 5); 
+                height = Math.max(array[i + num], 5);
                 myElements[i].style.height = height * 0.1 + 'px';
                 myElements[i].style.opacity = 0.008 * height;
             }

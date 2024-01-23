@@ -93,7 +93,7 @@ function create_modal_a_tags(methodName, parameter, denialText, approvalText) {
 }
 
 async function getUser(name) {
-    return await fetchApiGet(`/UserInfo/GetUser?name=${name}`)
+    return await fetchApiGet(`/UserInfo/GetUser?name=${name}`);
 }
 
 function pendingBtn(name) {

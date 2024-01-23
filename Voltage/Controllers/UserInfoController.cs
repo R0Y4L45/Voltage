@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Entity;
 using Voltage.Entities.Models.Dtos;
@@ -37,7 +36,6 @@ public class UserInfoController : ControllerBase
     {
         if (User.Identity!.IsAuthenticated && name != null && await _friendListService.GetUserDtoByNameAsync(name) is UserDto uDto)
             return Ok(uDto);
-        
         return NotFound();
     }
 

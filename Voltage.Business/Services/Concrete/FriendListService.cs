@@ -74,7 +74,7 @@ public class FriendListService : IFriendListService
                    on users.Id equals userRole.UserId
                    join role in _context.Roles
                    on userRole.RoleId equals role.Id
-                   where friendList.ReceiverId == id
+                   where friendList.ReceiverId == id && friendList.RequestStatus == Status.Pending
                    select new UserDto
                    {
                        UserName = users.UserName,

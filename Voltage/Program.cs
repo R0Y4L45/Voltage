@@ -67,6 +67,8 @@ public class Program
         builder.Services.AddSignalR();
         builder.Services.AddSession();
         builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
 
@@ -91,6 +93,8 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseSession();
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         app.MapControllerRoute(
             name: "UserArea",
