@@ -3,6 +3,20 @@ const monthSelect = document.getElementById("month"),
     yearSelect = document.getElementById("year"),
     hiddenDateOfBirthInput = document.getElementById("hiddenDateOfBirth");
 
+
+//Show Friend List
+
+$(document).ready(function () {
+    $("#friendListBtn").click(function (event) {
+        event.preventDefault();
+        $("#EditFromSection").addClass("displaynone");
+        $("#FriendListSection").removeClass("displaynone");
+        console.log("friend list pressed");
+    });
+});
+
+
+//Birthday select
 function updateDays() {
     const selectedMonth = monthSelect.value,
         selectedYear = yearSelect.value;

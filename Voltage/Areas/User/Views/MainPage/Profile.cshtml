@@ -3,8 +3,8 @@
 
 <div class="page-body">
     <div class="container-xl">
-        <div class="card">
-            <div class="row g-0">
+        <div class="card" id="EditFromSection">
+            <div  class="row g-0">
                 <form asp-area="User" asp-controller="MainPage" asp-action="Profile" method="post" enctype="multipart/form-data">
                     <input type="hidden" asp-for="Id"/>
                     <div class="col-12 col-md-9 d-flex flex-column">
@@ -20,9 +20,9 @@
                                         <a href="#" class="btn btn-outline-secondary" id="changeAvatarBtn">
                                             Change avatar
                                         </a>
-                                        <a href="#" class="btn btn-outline-secondary">
+                                        <button class="btn btn-outline-secondary" id="friendListBtn">
                                             Friend List
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                                 <input type="file" asp-for="Photo" id="avatarInput" style="display: none;" />
@@ -108,6 +108,60 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+        <div id="FriendListSection" class="displaynone">
+            <div class="row justify-content-center">
+                <div class="col-10">
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-vcenter table-mobile-md card-table">
+                                <thead class="text-sm-center">
+                                    <tr>
+                                        <th>Photo</th>
+                                        <th>Name</th>
+                                        <th>Location</th>
+                                        <th>Role</th>
+                                        <th class="w-1"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <td class="text-sm-center">
+                                        <span class="avatar" style="background-image: url(${user.photo})"></span>
+                                    </td>
+                                    <td class="text-sm-center" data-label="Name">
+                                        <div class="d-flex py-1 align-items-center">
+                                            <div class="flex-fill">
+                                                <div class="font-weight-medium">Samir Kisi</div>
+                                                <div class="text-secondary"><a href="#" class="text-reset">qriqoriy3@gmail.com</a></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-sm-center">
+                                        <span class="flag flag-xs flag-country-az me-2"></span>
+                                        Azerbj
+                                    </td>
+                                    <td class="text-secondary text-sm-center" data-label="Role">
+                                        User
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="dropdown">
+                                            <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" href="#">
+                                                    Action
+                                                </a>
+                                                <a class="dropdown-item" href="#">
+                                                    Another action
+                                                </a>
+                                            </div>
+                                        </span>
+                                    </td>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

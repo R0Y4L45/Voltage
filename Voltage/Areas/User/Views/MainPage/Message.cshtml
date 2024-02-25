@@ -102,7 +102,8 @@
                     </div>
                         <div id="chat-footer" class="card-footer">
                             <div id="chat-inputs" class="input-group input-group-flat">
-                                <span class="input-group-text">
+                            <div class="rectangle"></div>
+                                <span id="dropbtnstate" class="input-group-text">
                                     <div class="dropupbtn" onclick="toggleMenu()">
                                         <button type="button" class="link-secondary bg-transparent border-0 dropup-button">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -141,7 +142,6 @@
                                     </a>
                                 </span>
                             </div>
-                            <div class="rectangle"></div>
                         </div>
                     </div>
                 </div>
@@ -149,15 +149,18 @@
         </div>
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.js" integrity="sha512-aGWPnmdBhJ0leVHhQaRASgb0InV/Z2BWsscdj1Vwt29Oic91wECPixuXsWESpFfCcYPLfOlBZzN2nqQdMxlGTQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js" integrity="sha512-VQQXLthlZQO00P+uEu4mJ4G4OAgqTtKG1hri56kQY1DtdLeIqhKUp9W/lllDDu3uN3SnUNawpW7lBda8+dSi7w==" crossorigin="anonymous"></script>
 <script src="~/js/MessageClientSide.js"></script>
 <script>
 
+    let micIcon = document.getElementById('voiceBtnIc'), sendIcon = document.getElementById('sendBtnIc'),
+        drpstate = document.getElementById("dropbtnstate");
+
     function adjustTextareaRows() {
-        let textarea = document.getElementById('messageInput'), micIcon = document.getElementById('voiceBtnIc'),
-            sendIcon = document.getElementById('sendBtnIc'),
+        let textarea = document.getElementById('messageInput'),
             lineHeight = parseFloat(getComputedStyle(textarea).lineHeight), minRows = 1, maxRows = 3, maxHeight = maxRows * lineHeight,
             rows = 1, innerHeight = textarea.scrollHeight - parseFloat(getComputedStyle(textarea).paddingTop) - parseFloat(getComputedStyle(textarea).paddingBottom);
 
@@ -210,8 +213,12 @@
         array = new Uint8Array(num * 2), width = 10, context = null, isRecording = false;
 
     function startRecording() {
-        let chatinputs = document.getElementById("chat-inputs");
-        chatinputs.style.display = "none";
+        //let chatinputs = document.getElementById("chat-inputs");
+        //chatinputs.style.display = "none";
+        let txtarea = document.getElementById("messageInput");
+        txtarea.style.display = "none";
+        drpstate.style.display = "none";
+        sendIcon.style.display = "inline-block";
         if (!context) {
             let rectangle = document.querySelector('.rectangle');
             for (let i = 0; i < num; i++) {
