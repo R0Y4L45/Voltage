@@ -137,4 +137,62 @@ public class FriendListService : IFriendListService
 
             return null;
         });
+
+
+    /*public async Task<IEnumerable<FriendListItemDto>> GetFriendListAsync(string userId)
+    {
+        var cmd = $@"
+    SELECT 
+        users.UserName AS [UserName], 
+        users.Country AS [Country],
+        users.Photo AS [Photo], 
+        friendList.SenderId AS [FriendId],
+        friendList.RequestStatus AS [RequestStatus],
+        friendList.RequestedDate AS [RequestedDate],
+        friendList.AcceptedDate AS [AcceptedDate]
+    FROM 
+        FriendList AS [friendList]
+    INNER JOIN 
+        AspNetUsers AS [users]
+    ON 
+        (friendList.SenderId = users.Id OR friendList.ReceiverId = users.Id)
+        AND (friendList.RequestStatus = '2' OR friendList.RequestStatus = '1')
+    WHERE 
+        (friendList.SenderId = {userId} OR friendList.ReceiverId = {userId})
+        AND users.Id != {userId}
+    ORDER BY 
+        users.UserName;";
+
+        return await _context.Set<FriendListItemDto>().FromSqlRaw(cmd).ToListAsync();
+    }*/
+
+
+    public async Task<List<FriendListItemDto>> GetFriendListAsync(string userId)
+    {
+        var friendList = await _context.FriendList
+            .Where(fl => (fl.SenderId == userId || fl.ReceiverId == userId) &&
+                         (fl.RequestStatus == Status.Pending || fl.RequestStatus == Status.Accepted))
+            .Join(_context.Users,
+                  fl => fl.SenderId == userId ? fl.ReceiverId : fl.SenderId,
+                  user => user.Id,
+                  (fl, user) => new FriendListItemDto
+                  {
+                      UserName = user.UserName,
+                      Country = user.Country,
+                      Photo = user.Photo,
+                      FriendId = fl.SenderId == userId ? fl.ReceiverId : fl.SenderId,
+                      RequestStatus = fl.RequestStatus.ToString(),
+                      RequestedDate = fl.RequestedDate,
+                      AcceptedDate = fl.AcceptedDate
+                  })
+            .Where(dto => dto.FriendId != userId)
+            .OrderBy(dto => dto.UserName)
+            .ToListAsync();
+
+        return friendList;
+    }
+
+
+
 }
+
