@@ -179,6 +179,7 @@ public class FriendListService : IFriendListService
                   {
                       UserName = user.UserName,
                       Country = user.Country,
+                      Email = user.Email,
                       Photo = user.Photo,
                       FriendId = fl.SenderId == userId ? fl.ReceiverId : fl.SenderId,
                       RequestStatus = fl.RequestStatus.ToString(),
