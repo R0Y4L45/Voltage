@@ -41,12 +41,14 @@ public class UserInfoController : ControllerBase
 
 
     [HttpGet("GetMyFriend")]
-    public async Task<IActionResult> GetMyFriend(string id)
+    public async Task<IActionResult> GetMyFriend(string id, string? requestStatus = null)
     {
-        if (User.Identity!.IsAuthenticated && await _friendListService.GetFriendListAsync(id) is List<FriendListItemDto> friendList)
+        if (User.Identity!.IsAuthenticated && await _friendListService.GetFriendListAsync(id, requestStatus!) is List<FriendListItemDto> friendList)
             return Ok(friendList);
         return NotFound();
     }
+
+
 
 
     [HttpGet("GetRequestList")]
