@@ -54,4 +54,7 @@ body {
     #ppSettings div a{
         margin:10px 0 10px 0;
     }
+    .custom-inp{
+        min-width:100px
+    }
 }

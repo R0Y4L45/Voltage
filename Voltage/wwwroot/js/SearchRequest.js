@@ -64,7 +64,8 @@ async function declineRequest(name) {
 }
 
 async function removeFriend(name) {
-    await fetchApiPost('/RequestApi/RemoveFriend', name)
+    await fetchApiPost('/RequestApi/RemoveFriend', name);
+    console.log("pressed")
     if (result) friendshipRequestBtn(name);
     else acceptOrDeclineBtn(name);
 }
