@@ -170,19 +170,15 @@ public class FriendListService : IFriendListService
 
     public async Task<List<FriendListItemDto>> GetFriendListAsync(string userId, string? requestStatus = null)
     {
-        var friendListQuery = _context.FriendList
+        var friendListQuery = _context.FriendList!
             .Where(fl => (fl.SenderId == userId || fl.ReceiverId == userId));
 
         if (!string.IsNullOrEmpty(requestStatus))
         {
             if (requestStatus == "Pending")
-            {
                 friendListQuery = friendListQuery.Where(fl => fl.RequestStatus == Status.Pending);
-            }
             else if (requestStatus == "Accepted")
-            {
                 friendListQuery = friendListQuery.Where(fl => fl.RequestStatus == Status.Accepted);
-            }
         }
 
         var friendList = await friendListQuery
@@ -206,10 +202,5 @@ public class FriendListService : IFriendListService
 
         return friendList;
     }
-
-
-
-
-
 }
 

@@ -101,8 +101,7 @@ function pendingBtn(name) {
     btn.onclick = _ => pendingRequest(name);
     btn.setAttribute('data-bs-toggle', 'modal');
     btn.setAttribute('data-bs-target', '#modal-danger');
-    btn.innerHTML = `<img id = "changingGif" width="16"  src="/staticPhotos/output-onlinegiftools.gif" 
-                          alt="hourglass-sand-top"/> Pending...`;
+    btn.innerHTML = `<img id = "changingGif" width="16"  src="/staticPhotos/output-onlinegiftools.gif" alt="hourglass-sand-top"/> Pending...`;
 }
 
 function friendshipRequestBtn(name) {
