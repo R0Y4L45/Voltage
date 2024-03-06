@@ -37,16 +37,30 @@ public class MessagesApiController : Controller
         return Json(0);
     }
 
+    /// <summary>
+    /// This Api return ordered MessageDto's Dictionary which keys are created time
+    /// </summary>
+    /// <param name="takeMsgDto"></param>
+    /// <returns></returns>
     [HttpPost("TakeMessages")]
     public async Task<IActionResult> TakeMessages([FromBody] TakeMessagesDto takeMsgDto)
     {
         if (takeMsgDto.UserName != null &&
             await _userManagerService.FindByNameAsync(User.Identity?.Name!) is User sender &&
             await _userManagerService.FindByNameAsync(takeMsgDto.UserName) is User rec)
-            return Json(_mapper.Map<IEnumerable<MessageDto>>((await _messageService.GetListAsync(_ =>
-                    _.ReceiverId == rec.Id && _.SenderId == sender.Id ||
-                    _.ReceiverId == sender.Id && _.SenderId == rec.Id)).OrderBy(_ => _.CreatedTime)).SkipLast(takeMsgDto.Skip).TakeLast(9));
+        {
+            Dictionary<string, List<MessageDto>> groupedDic = _mapper.Map<IEnumerable<MessageDto>>(await _messageService.GetListAsync(message => //return IEnumerable<Message>
+                    message.ReceiverId == rec.Id && message.SenderId == sender.Id ||
+                    message.ReceiverId == sender.Id && message.SenderId == rec.Id))
+                .OrderByDescending(mesDto => mesDto.CreatedTime) //Ordered by DESC by createdTime
+                .Skip(takeMsgDto.Skip) //Skip ordered messages of list according to parameter(takeMsgDto.Skip)
+                .Take(9) //Take 9 message to send client 
+                .GroupBy(_ => _.CreatedTime.ToShortDateString()) //Grouped IEnumerable<MessageDto> according to createdTime. Return IGrouping<string, MessageDto> 
+                .ToDictionary(_ => _.Key, _ => _.ToList()); //IGrouping<string, MessageDto> was converted to dictionary
 
-        return Json(new List<MessageDto>());
+            return Json(groupedDic); //return dictionary which Converted to JSON
+        }
+
+        return Json(new Dictionary<string, List<MessageDto>>()); //return empty dictionary which Converted to JSON
     }
 }

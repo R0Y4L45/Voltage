@@ -212,22 +212,17 @@ async function clickToUser(username) {
         obj.userName = username;
         obj.skip = 0;
 
-        msgArr = (await getMessageList(obj)).reduce((arr, item) => { // get messages and grouped them by created time 
-            const key = (new Date(item.createdTime)).toISOString().split('T')[0];
+        //takeMessages return dictionary which contains keys and messages array
+        msgArr = convert(await takeMessages(obj)); // Convert method convert Object to Dictionary
 
-            if (!arr[key]) arr[key] = [];
-            arr[key].push(item);
+        for (var i = 0; i < msgArr.length; i++) {
+            console.log(msgArr[i]);
+        }
 
-            return arr;
-        }, {});
-
-        groupedArr = Object.entries(msgArr).map(([key, value]) => ({ key, value })).reverse(); // string convert to key and value
-        groupedArr.forEach(item => {
+        msgArr.forEach(item => {
             let prmtr = '';
-            console.log(item.key);
-            console.log(item.value);
-            for (var i = item.value.length - 1; i >= 0; i--) {
-                if (i === 0)
+            for (var i = 0; i < item.value.length; i++) {
+                if (i === item.value.length - 1)
                     prmtr = item.key;
 
                 messageCreater(item.value[i], prmtr, false)
@@ -241,31 +236,26 @@ async function clickToUser(username) {
     }
 }
 
+function convert(obj) {
+    return Object.keys(obj).map(key => ({
+        key: key,
+        value: obj[key]
+    }));
+}
+
 let scrollLoad = (async _ => {
     if (overChatBubble.scrollTop === 0) {
         overChatBubble.removeEventListener('scroll', scrollLoad);
-        let offsetHeight = 0, msgArr, groupedArr;
+
+        let offsetHeight = 0, msgArr;
         obj.userName = recUserName;
         obj.skip += 9;
 
-        console.log('scroll');
-
-        msgArr = (await getMessageList(obj)).reduce((arr, item) => { // get messages and grouped them by created time 
-            const key = (new Date(item.createdTime)).toISOString().split('T')[0];
-
-            if (!arr[key]) arr[key] = [];
-            arr[key].push(item);
-
-            return arr;
-        }, {});
-
-        groupedArr = Object.entries(msgArr).map(([key, value]) => ({ key, value })).reverse(); // string convert to key and value
-        groupedArr.forEach(item => {
+        msgArr = convert(await takeMessages(obj));
+        msgArr.forEach(item => {
             let prmtr = '';
-            console.log(item.key);
-            console.log(item.value);
-            for (var i = item.value.length - 1; i >= 0; i--) {
-                if (i === 0)
+            for (var i = 0; i < item.value.length; i++) {
+                if (i === item.value.length - 1)
                     prmtr = item.key;
 
                 offsetHeight += messageCreater(item.value[i], prmtr, false)
@@ -273,7 +263,6 @@ let scrollLoad = (async _ => {
         });
 
         overChatBubble.scrollTop = offsetHeight;
-        console.log('end');
         overChatBubble.addEventListener('scroll', scrollLoad);
     }
 });
@@ -284,7 +273,7 @@ overChatBubble.addEventListener("scroll", scrollLoad);
 
 //#region Api's
 
-async function getMessageList(receiver) {
+async function takeMessages(receiver) {
     return await fetchApiPost('/MessagesApi/TakeMessages', receiver);
 }
 

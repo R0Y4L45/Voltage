@@ -79,7 +79,6 @@ public class MainPageController : Controller
         try
         {
             if (ModelState.IsValid)
-            {
                 try
                 {
                     var user = await _userManagerService.FindByIdAsync(viewModel.Id!);
@@ -120,7 +119,7 @@ public class MainPageController : Controller
                 {
                     throw;
                 }
-            }
+
             return NotFound();
         }
         catch (Exception ex)
