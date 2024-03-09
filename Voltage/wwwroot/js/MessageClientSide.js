@@ -13,6 +13,7 @@
     usernameFlag;
 
 
+
 /*overChatBubble.addEventListener("dragover", (event) => {
     event.preventDefault();
     showFileDropArea();
@@ -244,6 +245,9 @@ function convert(obj) {
 }
 
 let scrollLoad = (async _ => {
+
+    //console.log("test");
+
     if (overChatBubble.scrollTop === 0) {
         overChatBubble.removeEventListener('scroll', scrollLoad);
 
@@ -290,6 +294,7 @@ async function messageSaver(message, sender, receiver) {
 //#endregion
 
 //#region HelperMethods
+
 async function sendMessage(event) {
     let message = document.getElementById("messageInput").value;
 
@@ -311,18 +316,19 @@ async function sendMessage(event) {
     event.preventDefault();
 }
 
+let stylishDiv = document.getElementById("stylishDiv");
 function messageCreater(msgObj, groupedDate, flag) {
     const chatBubbles = document.querySelector(".chat-bubbles"),
         chatItem = document.createElement("div"),
         date = new Date(msgObj.createdTime),
-        groupedDateHtm = groupedDate !== '' ? `<p class='text-center'>${groupedDate}</p>` : '',
+        //groupedDateHtm = groupedDate !== '' ? `<p class='text-center'>${groupedDate}</p>` : '',
         style = msgObj.sender == curUserName ? 'justify-content-end' : '',
         messageColor = msgObj.sender == curUserName ? 'chat-bubble-me' : '';
 
     chatItem.classList.add("chat-item");
     chatItem.innerHTML = `
         <div class="row align-items-end ${style}">
-            ${groupedDateHtm}
+            ${groupedDate !== '' ? `<p id="groupedDateText" class='text-center'>${groupedDate}</p>` : ''}
             <div class="col col-lg-6">
                 <div class="chat-bubble ${messageColor}">
                     <div class="chat-bubble-title">
@@ -338,10 +344,25 @@ function messageCreater(msgObj, groupedDate, flag) {
             </div>
         </div>`;
 
+    
+    stylishDiv.innerHTML = groupedDate
+
     if (flag) chatBubbles.append(chatItem)
     else chatBubbles.prepend(chatItem);
 
     return chatItem.offsetHeight;
 }
+
+
+
+
+function showStylishDiv() {
+    stylishDiv.classList.remove("hide");
+    setTimeout(function () {
+        stylishDiv.classList.add("hide");
+    }, 5000);
+}
+
+document.getElementById("overChatBubbles").addEventListener("scroll", showStylishDiv);
 
 //#endregion

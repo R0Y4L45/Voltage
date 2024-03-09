@@ -1,0 +1,33 @@
+﻿@keyframes text-animation {
+    0% {
+        margin-top: -100px;
+        opacity: 0;
+    }
+
+    100% {
+        margin-top: 0;
+        opacity: 1;
+    }
+}
+
+.stylish-div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: text-animation 1s ease forwards;
+}
+
+@keyframes hide-animation {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+#stylishDiv.hide {
+    animation: hide-animation 1s ease forwards;
+}
