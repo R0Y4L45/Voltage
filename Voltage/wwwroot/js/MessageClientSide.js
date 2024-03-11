@@ -10,7 +10,7 @@
         userName: '',
         skip: 0
     },
-    usernameFlag;
+    usernameFlag, keySaverArr = [], isEndOfMessages = false;
 
 
 
@@ -160,7 +160,6 @@ function showMessagesClick() {
         }
     }
 
-
     window.addEventListener('resize', () => {
         if (window.innerWidth <= 993) {
             messageFriendList.classList.add('displaynone');
@@ -196,7 +195,7 @@ async function clickToUser(username) {
             clickedElement = document.querySelector(`[data-user-name="${username}"]`),
             userPhoto = clickedElement.getAttribute('data-user-photo'),
             userStatus = clickedElement.getAttribute('data-user-status'),
-            h5Element, msgArr, groupedArr;
+            h5Element, msgArr;
 
         showMessagesClick();
 
@@ -212,21 +211,26 @@ async function clickToUser(username) {
 
         obj.userName = username;
         obj.skip = 0;
+        isEndOfMessages = false;
+        keySaverArr = [];
 
         //takeMessages return dictionary which contains keys and messages array
         msgArr = convert(await takeMessages(obj)); // Convert method convert Object to Dictionary
-
-        for (var i = 0; i < msgArr.length; i++) {
-            console.log(msgArr[i]);
-        }
+        stylishDiv.innerHTML = msgArr.length > 0 ? msgArr[msgArr.length - 1].key : '';
+        showStylishDiv();
 
         msgArr.forEach(item => {
-            let prmtr = '';
+            let prmtr = '', flag = true;
+            keySaverArr.push(item.key);
+
+            if (msgArr[msgArr.length - 1] === item)
+                flag = false;
+
             for (var i = 0; i < item.value.length; i++) {
-                if (i === item.value.length - 1)
+                if (i === item.value.length - 1 && flag)
                     prmtr = item.key;
 
-                messageCreater(item.value[i], prmtr, false)
+                messageCreater(item.value[i], prmtr)
             }
         });
 
@@ -245,9 +249,6 @@ function convert(obj) {
 }
 
 let scrollLoad = (async _ => {
-
-    //console.log("test");
-
     if (overChatBubble.scrollTop === 0) {
         overChatBubble.removeEventListener('scroll', scrollLoad);
 
@@ -256,13 +257,35 @@ let scrollLoad = (async _ => {
         obj.skip += 9;
 
         msgArr = convert(await takeMessages(obj));
+        if (msgArr.length === 0 && !isEndOfMessages) {
+            messageCreater(null, keySaverArr[keySaverArr.length - 1]);
+            isEndOfMessages = true;
+        }
+
         msgArr.forEach(item => {
-            let prmtr = '';
+
+            let prmtr = '',
+                isDateBeforeMsg = false,
+                isDateAfterMsg = true;
+
+            keySaverArr.push(item.key);
+
+            if (msgArr[0] === item && keySaverArr[keySaverArr.length - 1] !== msgArr[0].key)
+                isDateBeforeMsg = true;
+
+            if (msgArr[msgArr.length - 1] === item)
+                isDateAfterMsg = false;
+
             for (var i = 0; i < item.value.length; i++) {
-                if (i === item.value.length - 1)
+                if (i === 0 && isDateBeforeMsg) {
+                    console.log(isDateBeforeMsg);
+                    messageCreater(null, keySaverArr[keySaverArr.length - 1]);
+                }
+
+                if (i === item.value.length - 1 && isDateAfterMsg)
                     prmtr = item.key;
 
-                offsetHeight += messageCreater(item.value[i], prmtr, false)
+                offsetHeight += messageCreater(item.value[i], prmtr);
             }
         });
 
@@ -317,20 +340,19 @@ async function sendMessage(event) {
 }
 
 let stylishDiv = document.getElementById("stylishDiv");
-function messageCreater(msgObj, groupedDate, flag) {
+function messageCreater(msgObj, msgGroupedDate, flag = false) {
     const chatBubbles = document.querySelector(".chat-bubbles"),
-        chatItem = document.createElement("div"),
-        date = new Date(msgObj.createdTime),
-        //groupedDateHtm = groupedDate !== '' ? `<p class='text-center'>${groupedDate}</p>` : '',
-        style = msgObj.sender == curUserName ? 'justify-content-end' : '',
-        messageColor = msgObj.sender == curUserName ? 'chat-bubble-me' : '';
+        chatItem = document.createElement("div");
 
     chatItem.classList.add("chat-item");
-    chatItem.innerHTML = `
-        <div class="row align-items-end ${style}">
-            ${groupedDate !== '' ? `<p id="groupedDateText" class='text-center'>${groupedDate}</p>` : ''}
+    if (msgObj !== null) {
+        date = new Date(msgObj.createdTime);
+
+        chatItem.innerHTML = `
+        <div class="row align-items-end p ${msgObj.sender == curUserName ? 'justify-content-end' : ''}">
+            ${msgGroupedDate !== '' ? `<p class='text-center'>${msgGroupedDate}</p>` : ''}
             <div class="col col-lg-6">
-                <div class="chat-bubble ${messageColor}">
+                <div class="chat-bubble ${msgObj.sender == curUserName ? 'chat-bubble-me' : ''}">
                     <div class="chat-bubble-title">
                         <div class="row">
                             <div class="col chat-bubble-author">${msgObj.sender}</div>
@@ -343,9 +365,13 @@ function messageCreater(msgObj, groupedDate, flag) {
                 </div>
             </div>
         </div>`;
-
-    
-    stylishDiv.innerHTML = groupedDate
+    }
+    else {
+        chatItem.innerHTML = `
+        <div class="row align-items-end">
+            ${msgGroupedDate !== '' ? `<p id="groupedDateText" class='text-center'>${msgGroupedDate}</p>` : ''}
+        </div>`
+    }
 
     if (flag) chatBubbles.append(chatItem)
     else chatBubbles.prepend(chatItem);
@@ -353,14 +379,11 @@ function messageCreater(msgObj, groupedDate, flag) {
     return chatItem.offsetHeight;
 }
 
-
-
-
 function showStylishDiv() {
     stylishDiv.classList.remove("hide");
     setTimeout(function () {
         stylishDiv.classList.add("hide");
-    }, 5000);
+    }, 1000);
 }
 
 document.getElementById("overChatBubbles").addEventListener("scroll", showStylishDiv);
