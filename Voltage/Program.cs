@@ -86,6 +86,7 @@ public class Program
         app.UseStatusCodePagesWithReExecute("/Account/NotFound", "?statusCode={0}");
             
         app.MapHub<SignalRHub>("/signalRHub");
+        app.MapHub<WebRTCHub>("/webRTCHub");
         app.UseRouting();
 
         app.MapControllers();

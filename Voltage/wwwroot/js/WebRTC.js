@@ -1,4 +1,5 @@
-"use strict";
+
+var conn = new signalR.HubConnectionBuilder().withUrl("/webRTCHub").build();
 
 /****************************************************************************
 * Initial setup
@@ -14,7 +15,7 @@ const peerConn = new RTCPeerConnection(configuration);
 const roomNameTxt = document.getElementById('roomNameTxt');
 const createRoomBtn = document.getElementById('createRoomBtn');
 const roomTable = document.getElementById('roomTable');
-const connectionStatusMessage = document.getElementById('connectionStatusMessage');
+const connStatusMessage = document.getElementById('connStatusMessage');
 const fileInput = document.getElementById('fileInput');
 const sendFileBtn = document.getElementById('sendFileBtn');
 const fileTable = document.getElementById('fileTable');
@@ -52,73 +53,77 @@ grabWebCamVideo();
 ****************************************************************************/
 
 // Connect to the signaling server
+conn.start().then(function () {
 
-    connection.on('updateRoom', function (data) {
+    conn.on('updateRoom', function (data) {
         var obj = JSON.parse(data);
         $(roomTable).DataTable().clear().rows.add(obj).draw();
     });
 
-    connection.on('created', function (roomId) {
+    conn.on('created', function (roomId) {
         console.log('Created room', roomId);
         roomNameTxt.disabled = true;
         createRoomBtn.disabled = true;
         hasRoomJoined = true;
-        connectionStatusMessage.innerText = 'You created Room ' + roomId + '. Waiting for participants...';
+        connStatusMessage.innerText = 'You created Room ' + roomId + '. Waiting for participants...';
         myRoomId = roomId;
         isInitiator = true;
     });
 
-    connection.on('joined', function (roomId) {
+    conn.on('joined', function (roomId) {
         console.log('This peer has joined room', roomId);
         myRoomId = roomId;
         isInitiator = false;
     });
 
-    connection.on('error', function (message) {
+    conn.on('error', function (message) {
         alert(message);
     });
 
-    connection.on('ready', function () {
+    conn.on('ready', function () {
         console.log('Socket is ready');
         roomNameTxt.disabled = true;
         createRoomBtn.disabled = true;
         hasRoomJoined = true;
-        connectionStatusMessage.innerText = 'Connecting...';
+        connStatusMessage.innerText = 'Connecting...';
         createPeerConnection(isInitiator, configuration);
     });
 
-    connection.on('message', function (message) {
+    conn.on('message', function (message) {
         console.log('Client received message:', message);
         signalingMessageCallback(message);
     });
 
-    connection.on('bye', function () {
+    conn.on('bye', function () {
         console.log(`Peer leaving room.`);
         // If peer did not create the room, re-enter to be creator.
-        connectionStatusMessage.innerText = `Other peer left room ${myRoomId}.`;
+        connStatusMessage.innerText = `Other peer left room ${myRoomId}.`;
     });
 
     window.addEventListener('unload', function () {
         if (hasRoomJoined) {
             console.log(`Unloading window. Notifying peers in ${myRoomId}.`);
-            connection.invoke("LeaveRoom", myRoomId).catch(function (err) {
+            conn.invoke("LeaveRoom", myRoomId).catch(function (err) {
                 return console.error(err.toString());
             });
         }
     });
 
     //Get room list.
-    connection.invoke("GetRoomInfo").catch(function (err) {
+    conn.invoke("GetRoomInfo").catch(function (err) {
         return console.error(err.toString());
     });
 
+}).catch(function (err) {
+    return console.error(err.toString());
+});
 
 /**
 * Send message to signaling server
 */
 function sendMessage(message) {
     console.log('Client sending message: ', message);
-    connection.invoke("SendMessage", myRoomId, message).catch(function (err) {
+    conn.invoke("SendMessage", myRoomId, message).catch(function (err) {
         return console.error(err.toString());
     });
 }
@@ -129,7 +134,7 @@ function sendMessage(message) {
 
 $(createRoomBtn).click(function () {
     var name = roomNameTxt.value;
-    connection.invoke("CreateRoom", name).catch(function (err) {
+    conn.invoke("CreateRoom", name).catch(function (err) {
         return console.error(err.toString());
     });
 });
@@ -139,7 +144,7 @@ $('#roomTable tbody').on('click', 'button', function () {
         alert('You already joined the room. Please use a new tab or window.');
     } else {
         var data = $(roomTable).DataTable().row($(this).parents('tr')).data();
-        connection.invoke("Join", data.RoomId).catch(function (err) {
+        conn.invoke("Join", data.RoomId).catch(function (err) {
             return console.error(err.toString());
         });
     }
@@ -183,7 +188,7 @@ function gotStream(stream) {
 }
 
 /****************************************************************************
-* WebRTC peer connection and data channel
+* WebRTC peer conn and data channel
 ****************************************************************************/
 
 var dataChannel;
@@ -209,7 +214,7 @@ function signalingMessageCallback(message) {
 }
 
 function createPeerConnection(isInitiator, config) {
-    console.log('Creating Peer connection as initiator?', isInitiator, 'config:',
+    console.log('Creating Peer conn as initiator?', isInitiator, 'config:',
         config);
 
     // send any ice candidates to the other peer
@@ -265,13 +270,13 @@ function onDataChannelCreated(channel) {
 
     channel.onopen = function () {
         console.log('Channel opened!!!');
-        connectionStatusMessage.innerText = 'Channel opened!!';
+        connStatusMessage.innerText = 'Channel opened!!';
         fileInput.disabled = false;
     };
 
     channel.onclose = function () {
         console.log('Channel closed.');
-        connectionStatusMessage.innerText = 'Channel closed.';
+        connStatusMessage.innerText = 'Channel closed.';
     }
 
     channel.onmessage = onReceiveMessageCallback();
