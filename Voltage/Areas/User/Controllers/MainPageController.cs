@@ -41,6 +41,16 @@ public class MainPageController : Controller
         return View();
     }
 
+    public IActionResult WebRTC()
+    {
+        return View();
+    }
+
+    public IActionResult Test()
+    {
+        return View();
+    }
+
     public IActionResult FriendshipRequests()
     {
         ViewData["ShowFooter"] = false;
