@@ -2,16 +2,11 @@
 using System.Collections.Concurrent;
 using System.Text.Json;
 
-namespace Voltage.Hubs;
-
 public class WebRTCHub : Hub
 {
     private static RoomManager roomManager = new RoomManager();
 
-    public override Task OnConnectedAsync()
-    {
-        return base.OnConnectedAsync();
-    }
+    public override Task OnConnectedAsync() => OnConnectedAsync();
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
@@ -30,9 +25,7 @@ public class WebRTCHub : Hub
             await NotifyRoomInfoAsync(false);
         }
         else
-        {
             await Clients.Caller.SendAsync("error", "error occurred when creating a new room.");
-        }
     }
 
     public async Task Join(string roomId)
@@ -49,20 +42,14 @@ public class WebRTCHub : Hub
         }
     }
 
-    public async Task LeaveRoom(string roomId)
-    {
+    public async Task LeaveRoom(string roomId) =>
         await Clients.Group(roomId).SendAsync("bye");
-    }
 
-    public async Task GetRoomInfo()
-    {
+    public async Task GetRoomInfo() =>
         await NotifyRoomInfoAsync(true);
-    }
 
-    public async Task SendMessage(string roomId, object message)
-    {
+    public async Task SendMessage(string roomId, object message) => 
         await Clients.OthersInGroup(roomId).SendAsync("message", message);
-    }
 
     public async Task NotifyRoomInfoAsync(bool notifyOnlyCaller)
     {
@@ -77,13 +64,9 @@ public class WebRTCHub : Hub
         var data = JsonSerializer.Serialize(list);
 
         if (notifyOnlyCaller)
-        {
             await Clients.Caller.SendAsync("updateRoom", data);
-        }
         else
-        {
             await Clients.All.SendAsync("updateRoom", data);
-        }
     }
 }
 
@@ -123,37 +106,23 @@ public class RoomManager
             return roomInfo;
         }
         else
-        {
             return null!;
-        }
     }
 
-    public void DeleteRoom(int roomId)
-    {
-        rooms.TryRemove(roomId, out _);
-    }
+    public void DeleteRoom(int roomId) => rooms.TryRemove(roomId, out _);
 
     public void DeleteRoom(string connectionId)
     {
         int? correspondingRoomId = null;
         foreach (var pair in rooms)
-        {
             if (pair.Value.HostConnectionId!.Equals(connectionId))
-            {
                 correspondingRoomId = pair.Key;
-            }
-        }
 
         if (correspondingRoomId.HasValue)
-        {
             rooms.TryRemove(correspondingRoomId.Value, out _);
-        }
     }
 
-    public List<RoomInfo> GetAllRoomInfo()
-    {
-        return rooms.Values.ToList();
-    }
+    public List<RoomInfo> GetAllRoomInfo() => rooms.Values.ToList();
 }
 
 public class RoomInfo

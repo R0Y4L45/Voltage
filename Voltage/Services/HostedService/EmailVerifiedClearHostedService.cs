@@ -9,10 +9,8 @@ public class EmailVerifiedClearHostedService : IHostedService, IDisposable
     private IUserManagerService? _userManagerService;
     private Timer? _timer;
 
-    public EmailVerifiedClearHostedService(IServiceProvider provider)
-    {
+    public EmailVerifiedClearHostedService(IServiceProvider provider) =>
         _provider = provider;
-    }
 
     private void DoWork(object state)
     {

@@ -1,33 +1,25 @@
+const conn = new signalR.HubConnectionBuilder().withUrl("/WebRTCHub").build(),
+    configuration = {
+        'iceServers': [{
+            'urls': 'stun:stun.l.google.com:19302'
+        }]
+    },
+    peerConn = new RTCPeerConnection(configuration),
+    roomNameTxt = document.getElementById('roomNameTxt'),
+    createRoomBtn = document.getElementById('createRoomBtn'),
+    roomTable = document.getElementById('roomTable'),
+    connStatusMessage = document.getElementById('connStatusMessage'),
+    fileInput = document.getElementById('fileInput'),
+    sendFileBtn = document.getElementById('sendFileBtn'),
+    fileTable = document.getElementById('fileTable'),
+    localVideo = document.getElementById('localVideo'),
+    remoteVideo = document.getElementById('remoteVideo')
 
-var conn = new signalR.HubConnectionBuilder().withUrl("/webRTCHub").build();
-
-/****************************************************************************
-* Initial setup
-****************************************************************************/
-
-const configuration = {
-    'iceServers': [{
-        'urls': 'stun:stun.l.google.com:19302'
-    }]
-};
-const peerConn = new RTCPeerConnection(configuration);
-
-const roomNameTxt = document.getElementById('roomNameTxt');
-const createRoomBtn = document.getElementById('createRoomBtn');
-const roomTable = document.getElementById('roomTable');
-const connStatusMessage = document.getElementById('connStatusMessage');
-const fileInput = document.getElementById('fileInput');
-const sendFileBtn = document.getElementById('sendFileBtn');
-const fileTable = document.getElementById('fileTable');
-const localVideo = document.getElementById('localVideo');
-const remoteVideo = document.getElementById('remoteVideo');
-
-let myRoomId;
-let localStream;
-let remoteStream;
-let fileReader;
-let isInitiator = false;
-let hasRoomJoined = false;
+let myRoomId,
+    localStream,
+    remoteStream,
+    fileReader,
+    isInitiator = hasRoomJoined = false;
 
 fileInput.disabled = true;
 sendFileBtn.disabled = true;
@@ -53,14 +45,13 @@ grabWebCamVideo();
 ****************************************************************************/
 
 // Connect to the signaling server
-conn.start().then(function () {
-
-    conn.on('updateRoom', function (data) {
-        var obj = JSON.parse(data);
+conn.start().then(() => {
+    conn.on('updateRoom', data => {
+        let obj = JSON.parse(data);
         $(roomTable).DataTable().clear().rows.add(obj).draw();
     });
 
-    conn.on('created', function (roomId) {
+    conn.on('created', roomId => {
         console.log('Created room', roomId);
         roomNameTxt.disabled = true;
         createRoomBtn.disabled = true;
@@ -70,17 +61,15 @@ conn.start().then(function () {
         isInitiator = true;
     });
 
-    conn.on('joined', function (roomId) {
+    conn.on('joined', roomId => {
         console.log('This peer has joined room', roomId);
         myRoomId = roomId;
         isInitiator = false;
     });
 
-    conn.on('error', function (message) {
-        alert(message);
-    });
+    conn.on('error', message => alert(message));
 
-    conn.on('ready', function () {
+    conn.on('ready', () => {
         console.log('Socket is ready');
         roomNameTxt.disabled = true;
         createRoomBtn.disabled = true;
@@ -89,7 +78,7 @@ conn.start().then(function () {
         createPeerConnection(isInitiator, configuration);
     });
 
-    conn.on('message', function (message) {
+    conn.on('message', message => {
         console.log('Client received message:', message);
         signalingMessageCallback(message);
     });
@@ -100,66 +89,49 @@ conn.start().then(function () {
         connStatusMessage.innerText = `Other peer left room ${myRoomId}.`;
     });
 
-    window.addEventListener('unload', function () {
+    window.addEventListener('unload', () => {
         if (hasRoomJoined) {
             console.log(`Unloading window. Notifying peers in ${myRoomId}.`);
-            conn.invoke("LeaveRoom", myRoomId).catch(function (err) {
-                return console.error(err.toString());
-            });
+            conn.invoke("LeaveRoom", myRoomId).catch(err => console.error(err.toString()));
         }
     });
 
     //Get room list.
-    conn.invoke("GetRoomInfo").catch(function (err) {
-        return console.error(err.toString());
-    });
+    conn.invoke("GetRoomInfo").catch(err => console.error(err.toString()));
 
-}).catch(function (err) {
-    return console.error(err.toString());
-});
+}).catch(err => console.error(err.toString()));
 
 /**
 * Send message to signaling server
 */
 function sendMessage(message) {
     console.log('Client sending message: ', message);
-    conn.invoke("SendMessage", myRoomId, message).catch(function (err) {
-        return console.error(err.toString());
-    });
+    conn.invoke("SendMessage", myRoomId, message).catch(err => console.error(err.toString()));
 }
 
 /****************************************************************************
 * Room management
 ****************************************************************************/
 
-$(createRoomBtn).click(function () {
-    var name = roomNameTxt.value;
-    conn.invoke("CreateRoom", name).catch(function (err) {
-        return console.error(err.toString());
-    });
+$(createRoomBtn).click(() => {
+    let name = roomNameTxt.value;
+    conn.invoke("CreateRoom", name).catch(err => console.error(err.toString()));
 });
 
-$('#roomTable tbody').on('click', 'button', function () {
-    if (hasRoomJoined) {
-        alert('You already joined the room. Please use a new tab or window.');
-    } else {
-        var data = $(roomTable).DataTable().row($(this).parents('tr')).data();
-        conn.invoke("Join", data.RoomId).catch(function (err) {
-            return console.error(err.toString());
-        });
+$('#roomTable tbody').on('click', 'button', () => {
+    if (hasRoomJoined) alert('You already joined the room. Please use a new tab or window.');
+    else {
+        let data = $(roomTable).DataTable().row($(this).parents('tr')).data();
+        conn.invoke("Join", data.RoomId).catch(err => console.error(err.toString()));
     }
 });
 
-$(fileInput).change(function () {
+$(fileInput).change(() => {
     let file = fileInput.files[0];
-    if (file) {
-        sendFileBtn.disabled = false;
-    } else {
-        sendFileBtn.disabled = true;
-    }
+    sendFileBtn.disabled = file ? false : true;
 });
 
-$(sendFileBtn).click(function () {
+$(sendFileBtn).click(() => {
     sendFileBtn.disabled = true;
     sendFile();
 });
@@ -174,10 +146,8 @@ function grabWebCamVideo() {
         audio: true,
         video: true
     })
-        .then(gotStream)
-        .catch(function (e) {
-            alert('getUserMedia() error: ' + e.name);
-        });
+        .then(gotStream())
+        .catch(e => alert('getUserMedia() error: ' + e.name));
 }
 
 function gotStream(stream) {

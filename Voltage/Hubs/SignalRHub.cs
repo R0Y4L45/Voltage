@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using System.Collections.Concurrent;
-using System.Text.Json;
-using Voltage.Entities.Models.Dtos;
 
 namespace Voltage.Hubs;
 
@@ -15,8 +12,4 @@ public class SignalRHub : Hub
         await Clients.User(id).SendAsync("ReceiveRequests", user, status);
     public string GetConnectionId() => Context.UserIdentifier!;
     public string GetUserName() => Context.User?.Identity?.Name!;
-    private static RoomManager roomManager = new RoomManager();
-
 }
-
-

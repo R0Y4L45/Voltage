@@ -4,7 +4,7 @@
 
 namespace Voltage.Entities.Migrations;
 
-public partial class VoltageMigration : Migration
+public partial class Voltage_Migrations : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
@@ -61,7 +61,7 @@ public partial class VoltageMigration : Migration
                 SenderId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 ReceiverName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 ReceiverId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                RequestStatus = table.Column<int>(type: "int", nullable: false),
+                RequestStatus = table.Column<int>(type: "int", nullable: true),
                 RequestedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                 AcceptedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
             },

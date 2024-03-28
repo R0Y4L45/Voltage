@@ -261,15 +261,9 @@ public class AccountController : Controller
 
 
     #region errors
-    public IActionResult NotFound()
-    {
-        return View("NotFound");
-    }
+    public IActionResult NotFound() => View("NotFound");
 
-    public IActionResult ServerError()
-    {
-        return View("ServerError");
-    }
+    public IActionResult ServerError() => View("ServerError");
     #endregion
 
 }
