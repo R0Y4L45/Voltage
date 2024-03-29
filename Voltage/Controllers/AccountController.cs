@@ -74,6 +74,7 @@ public class AccountController : Controller
                     _emailService.SendEmail(message);
 
                     SignUpViewModel nvvm = new SignUpViewModel { UserName = model.UserName, Email = model.Email };
+
                     return View("MailCheck", nvvm);
                 }
                 result.Errors.ToList().ForEach(_ => ModelState.AddModelError(_.Code, _.Description));
@@ -197,7 +198,7 @@ public class AccountController : Controller
                 newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
                 E_Message message = new E_Message(new string[] { user.Email }, "Forgot password link", newlink!);
 
-                _emailService.SendEmail(message);
+                _emailService.SendEmail(message); 
                 return View("ForgotPasswordConfirmation");
             }
 
@@ -233,10 +234,7 @@ public class AccountController : Controller
                     if (result.Succeeded)
                         return View("ResetPasswordConfirmation");
 
-                    result.Errors.ToList().ForEach(_ =>
-                    {
-                        ModelState.AddModelError("Errors", _.Description);
-                    });
+                    result.Errors.ToList().ForEach(_ => ModelState.AddModelError("Errors", _.Description));
                 }
 
                 ModelState.AddModelError("PasswordErrors", "Password was used");

@@ -1,4 +1,4 @@
-﻿using Voltage.Business.Services.Abstract;
+﻿using Voltage.Entities.DataBaseContext;
 using Voltage.Entities.Entity;
 
 namespace Voltage.Services.HostedService;
@@ -6,7 +6,6 @@ namespace Voltage.Services.HostedService;
 public class EmailVerifiedClearHostedService : IHostedService, IDisposable
 {
     private readonly IServiceProvider _provider;
-    private IUserManagerService? _userManagerService;
     private Timer? _timer;
 
     public EmailVerifiedClearHostedService(IServiceProvider provider) =>
@@ -14,11 +13,16 @@ public class EmailVerifiedClearHostedService : IHostedService, IDisposable
 
     private void DoWork(object state)
     {
-        _userManagerService = _provider.CreateScope().ServiceProvider.GetService<IUserManagerService>();
+        using VoltageDbContext? context = _provider.CreateScope().ServiceProvider.GetService<VoltageDbContext>();
+        
+        if (context is not null)
+        {
+            foreach (User user in context.Users)
+                if (!user.EmailConfirmed)
+                    context.Users.Remove(user);
 
-        foreach (User item in _userManagerService!.GetAllUsers().Result)
-            if(!item.EmailConfirmed)
-                _userManagerService.DeleteAsync(item).Wait();
+            context.SaveChanges();
+        }
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
