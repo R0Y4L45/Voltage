@@ -14,12 +14,11 @@ public class GenerateUserName
     public async Task<string> GenerateRandomUsername(string originalName, int minLength = 8)
     {
         var random = new Random();
-        var allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0";
-        var allowedNumbers = "123456789";
-        var specialChars = "-._";
-
-        var baseName = originalName.Split()[0];
-        var username = baseName;
+        string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0",
+            allowedNumbers = "123456789",
+            specialChars = "-._",
+            baseName = originalName.Split()[0],
+            username = baseName;
 
         username = char.IsDigit(username[0]) ? allowedChars[random.Next(0, allowedChars.Length)] + username.Substring(1) : username;
         username += specialChars[random.Next(0, specialChars.Length)];

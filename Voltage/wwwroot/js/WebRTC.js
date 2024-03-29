@@ -46,10 +46,7 @@ grabWebCamVideo();
 
 // Connect to the signaling server
 conn.start().then(() => {
-    conn.on('updateRoom', data => {
-        let obj = JSON.parse(data);
-        $(roomTable).DataTable().clear().rows.add(obj).draw();
-    });
+    conn.on('updateRoom', data => $(roomTable).DataTable().clear().rows.add(JSON.parse(data)).draw());
 
     conn.on('created', roomId => {
         console.log('Created room', roomId);

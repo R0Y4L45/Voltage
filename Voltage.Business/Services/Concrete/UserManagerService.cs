@@ -9,12 +9,14 @@ namespace Voltage.Business.Services.Concrete;
 public class UserManagerService : IUserManagerService
 {
     private readonly UserManager<User> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly VoltageDbContext _dbContext;
 
-    public UserManagerService(UserManager<User> userManager,VoltageDbContext dbContext)
+    public UserManagerService(UserManager<User> userManager, VoltageDbContext dbContext, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _dbContext = dbContext;
+        _roleManager = roleManager;
     }
 
     #region Methods
@@ -22,8 +24,16 @@ public class UserManagerService : IUserManagerService
     public async Task<IdentityResult> AddLoginAsync(User user, ExternalLoginInfo info) =>
         await _userManager.AddLoginAsync(user, info);
 
-    public async Task<IdentityResult> AddToRoleAsync(User user, string roleName) =>
-        await _userManager.AddToRoleAsync(user, roleName);
+    public async Task<IdentityResult> AddToRoleAsync(User user, string roleName)
+    {
+        if (!await _roleManager.RoleExistsAsync("User"))
+        {
+            IdentityResult roleResult = await AddRole("User");
+            if (!roleResult.Succeeded)
+                return roleResult;
+        }
+        return await _userManager.AddToRoleAsync(user, roleName);
+    }
 
     public async Task<bool> CheckPasswordAsync(User user, string password) =>
         await _userManager.CheckPasswordAsync(user, password);
@@ -33,6 +43,7 @@ public class UserManagerService : IUserManagerService
 
     public async Task<IdentityResult> CreateAsync(User user) =>
         await _userManager.CreateAsync(user);
+
     public async Task<IdentityResult> CreateAsync(User user, string password) =>
         await _userManager.CreateAsync(user, password);
 
@@ -65,32 +76,34 @@ public class UserManagerService : IUserManagerService
 
     public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password) =>
         await _userManager.ResetPasswordAsync(user, token, password);
+
     public async Task<IdentityResult> DeleteAsync(User user) =>
         await _userManager.DeleteAsync(user);
 
-    public async Task<IdentityResult> UpdateAsync(User user) => 
+    public async Task<IdentityResult> UpdateAsync(User user) =>
         await _userManager.UpdateAsync(user);
 
-    public async Task<User> FindByIdAsync(string Id)=>
+    public async Task<User> FindByIdAsync(string Id) =>
         await _userManager.FindByIdAsync(Id);
 
-    public async Task BeginTransactionAsync()=>
+    public async Task BeginTransactionAsync() =>
         await _dbContext.Database.BeginTransactionAsync();
-    
-    public async Task CommitTransactionAsync()=>
+
+    public async Task CommitTransactionAsync() =>
         await _dbContext.Database.CommitTransactionAsync();
 
-    public async Task RollbackTransactionAsync()=>
+    public async Task RollbackTransactionAsync() =>
         await _dbContext.Database.RollbackTransactionAsync();
 
-    public async Task<bool> IsEmailConfirmedAsync(User user)=>
+    public async Task<bool> IsEmailConfirmedAsync(User user) =>
         await _userManager.IsEmailConfirmedAsync(user);
 
-    public async Task<string?> GetProfilePhotoAsync(string userName)
-    {
-        var user = await _userManager.FindByNameAsync(userName);
-        return user?.Photo;
-    }
+    public async Task<string?> GetProfilePhotoAsync(string userName) => (await _userManager.FindByNameAsync(userName)).Photo;
 
+    private async Task<IdentityResult> AddRole(string roleName) =>
+    await _roleManager.CreateAsync(new IdentityRole
+    {
+        Name = roleName
+    });
     #endregion
 }

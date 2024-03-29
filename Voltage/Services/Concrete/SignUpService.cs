@@ -10,14 +10,10 @@ namespace Voltage.Services.Concrete;
 public class SignUpService : ISignUpService
 {
     private IUserManagerService _userManagerService;
-    private RoleManager<IdentityRole> _roleManager;
 
-    public SignUpService(RoleManager<IdentityRole> roleManager, IUserManagerService userManagerService)
-    {
-        _roleManager = roleManager;
+    public SignUpService(IUserManagerService userManagerService) =>
         _userManagerService = userManagerService;
-    }
-
+     
     public async Task<IdentityResult> SignUpAsync(SignUpViewModel model)
     {
         if (await _userManagerService.FindByEmailAsync(model.Email) == null)
@@ -35,16 +31,7 @@ public class SignUpService : ISignUpService
 
                 IdentityResult result = await _userManagerService.CreateAsync(user, model.Password);
                 if (result.Succeeded)
-                {
-                    if (!await _roleManager.RoleExistsAsync("User"))
-                    {
-                        IdentityResult roleResult = await AddRole("User");
-                        if (!roleResult.Succeeded)
-                            return roleResult;
-                    }
-
                     return await _userManagerService.AddToRoleAsync(user, "User");
-                }
 
                 return result;
             }
@@ -54,9 +41,4 @@ public class SignUpService : ISignUpService
 
         throw new Exception("This email was used");
     }
-    private async Task<IdentityResult> AddRole(string roleName) =>
-        await _roleManager.CreateAsync(new IdentityRole
-        {
-            Name = roleName
-        });
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using Voltage.Entities.Entity;
 using Voltage.Entities.Models.ViewModels;
 using Voltage.Business.Services.Abstract;
@@ -79,10 +78,7 @@ public class AccountController : Controller
                 }
                 result.Errors.ToList().ForEach(_ => ModelState.AddModelError(_.Code, _.Description));
             }
-            else
-            {
-                ModelState.AddModelError("Agree", "You must agree to the terms and policy to register.");
-            }
+            else ModelState.AddModelError("Agree", "You must agree to the terms and policy to register.");
         }
         catch (Exception ex)
         {
@@ -132,17 +128,11 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> ExternalLoginCallback(string returnUrl, string remoteError)
     {
-        if (remoteError != null)
-        {
-            return RedirectToAction("Login");
-        }
+        if (remoteError != null) return RedirectToAction("Login");
 
         ExternalLoginInfo externalLoginInfo = await _signInManagerService.GetExternalLoginInfoAsync();
 
-        if (externalLoginInfo == null)
-        {
-            return NotFound();
-        }
+        if (externalLoginInfo == null) return NotFound();
 
         var result = await _signInManagerService.ExternalLoginSignInAsync(externalLoginInfo);
         if (result.Succeeded)
@@ -173,7 +163,6 @@ public class AccountController : Controller
             var generatedUsername = await usernameGenerator.GenerateRandomUsername(userName);
 
             var user = new User { UserName = generatedUsername, Email = userEmail };
-
 
             var createdResult = _userManagerService.CreateAsync(user).Result;
             if (createdResult.Succeeded)

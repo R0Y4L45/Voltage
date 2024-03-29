@@ -12,20 +12,19 @@ public class WebRTCHub : Hub
     {
         roomManager.DeleteRoom(Context.ConnectionId);
         _ = NotifyRoomInfoAsync(false);
-        return base.OnDisconnectedAsync(exception);
+        return OnDisconnectedAsync(exception);
     }
 
     public async Task CreateRoom(string name)
     {
         RoomInfo roomInfo = roomManager.CreateRoom(Context.ConnectionId, name);
-        if (roomInfo != null)
+        if (roomInfo != null && roomInfo.RoomId != null)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomInfo.RoomId);
             await Clients.Caller.SendAsync("created", roomInfo.RoomId);
             await NotifyRoomInfoAsync(false);
         }
-        else
-            await Clients.Caller.SendAsync("error", "error occurred when creating a new room.");
+        else await Clients.Caller.SendAsync("error", "error occurred when creating a new room.");
     }
 
     public async Task Join(string roomId)
@@ -63,10 +62,8 @@ public class WebRTCHub : Hub
                    };
         var data = JsonSerializer.Serialize(list);
 
-        if (notifyOnlyCaller)
-            await Clients.Caller.SendAsync("updateRoom", data);
-        else
-            await Clients.All.SendAsync("updateRoom", data);
+        if (notifyOnlyCaller) await Clients.Caller.SendAsync("updateRoom", data);
+        else await Clients.All.SendAsync("updateRoom", data);
     }
 }
 
@@ -98,9 +95,8 @@ public class RoomManager
             Name = name,
             HostConnectionId = connectionId
         };
-        bool result = rooms.TryAdd(nextRoomId, roomInfo);
-
-        if (result)
+        
+        if (rooms.TryAdd(nextRoomId, roomInfo))
         {
             nextRoomId++;
             return roomInfo;
