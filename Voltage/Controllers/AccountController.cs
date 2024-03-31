@@ -38,19 +38,19 @@ public class AccountController : Controller
             try
             {
                 var (isLocked, remainingLockoutTime) = await _logInService.LogInAsync(model);
-                
+
                 if (isLocked)
                     ViewBag.RemainingLockoutTime = remainingLockoutTime;
                 else
                     return RedirectToAction("Index", "MainPage", new { area = "User" });
-                
+
                 return View();
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("Error", ex.Message);
             }
-        
+
         return View();
     }
 
@@ -107,13 +107,8 @@ public class AccountController : Controller
     public async Task<IActionResult> ConfirmEmail(string token, string email)
     {
         if (await _userManagerService.FindByEmailAsync(email) is User user)
-        {
             if ((await _userManagerService.ConfirmEmailAsync(user, token)).Succeeded)
-            {
-                SignUpViewModel model = new SignUpViewModel { UserName = user.UserName };
-                return View("SuccessPage", model);
-            }
-        }
+                return View("SuccessPage", new SignUpViewModel { UserName = user.UserName });
 
         return View();
     }
@@ -121,7 +116,7 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> ExternalLogin(string returnUrl)
     {
-        var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "", returnUrl });
+        string? redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { area = "", returnUrl });
         return new ChallengeResult("Google", await _signInManagerService.GetExternalLoginProperties("Google", redirectUrl!));
     }
 
@@ -130,13 +125,10 @@ public class AccountController : Controller
     public async Task<IActionResult> ExternalLoginCallback(string returnUrl, string remoteError)
     {
         if (remoteError != null) return RedirectToAction("Login");
+        
+        if (await _signInManagerService.GetExternalLoginInfoAsync() is not ExternalLoginInfo externalLoginInfo) return NotFound();
 
-        ExternalLoginInfo externalLoginInfo = await _signInManagerService.GetExternalLoginInfoAsync();
-
-        if (externalLoginInfo == null) return NotFound();
-
-        var result = await _signInManagerService.ExternalLoginSignInAsync(externalLoginInfo);
-        if (result.Succeeded)
+        if ((await _signInManagerService.ExternalLoginSignInAsync(externalLoginInfo)).Succeeded)
         {
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
@@ -144,16 +136,12 @@ public class AccountController : Controller
                 return RedirectToAction("index", "MainPage", new { area = "User" });
         }
 
-        var existsUser = await _userManagerService.FindByLoginAsync(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
-        if (existsUser != null)
+        if (await _userManagerService.FindByLoginAsync(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey) is User)
         {
-            var signInResult = await _signInManagerService.ExternalLoginSignInAsync(externalLoginInfo);
-            if (signInResult.Succeeded)
+            if ((await _signInManagerService.ExternalLoginSignInAsync(externalLoginInfo)).Succeeded)
             {
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    return Redirect(returnUrl);
-                else
-                    return RedirectToAction("index", "MainPage", new { area = "User" });
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)) return Redirect(returnUrl);
+                else return RedirectToAction("index", "MainPage", new { area = "User" });
             }
         }
         else
@@ -161,25 +149,21 @@ public class AccountController : Controller
             var userEmail = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email);
             var userName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Name);
             var usernameGenerator = new GenerateUserName(_userManagerService);
-            var generatedUsername = await usernameGenerator.GenerateRandomUsername(userName);
-
+            var generatedUsername = userEmail.Split('@').First();
+            generatedUsername = generatedUsername.Replace(generatedUsername.First(), char.ToUpper(generatedUsername.First()));
             var user = new User { UserName = generatedUsername, Email = userEmail };
-
-            var createdResult = _userManagerService.CreateAsync(user).Result;
-            if (createdResult.Succeeded)
+            
+            if ((await _userManagerService.CreateAsync(user)).Succeeded)
             {
-                var addLoginResult = _userManagerService.AddLoginAsync(user, externalLoginInfo).Result;
-                if (addLoginResult.Succeeded)
+                if ((await _userManagerService.AddLoginAsync(user, externalLoginInfo)).Succeeded)
                 {
                     await _userManagerService.AddToRoleAsync(user, "User");
                     string? token = await _userManagerService.GenerateEmailTokenAsync(await _userManagerService.FindByEmailAsync(user.Email)),
                     callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
 
-                    E_Message message = new E_Message(new string[] { user.Email }, "Confirmation Email Link", callbackUrl!);
-                    _emailService.SendEmail(message);
+                    _emailService.SendEmail(new E_Message(new string[] { user.Email }, "Confirmation Email Link", callbackUrl!));
 
-                    SignUpViewModel nvvm = new SignUpViewModel { UserName = user.UserName, Email = user.Email };
-                    return View("MailCheck", nvvm);
+                    return View("MailCheck", new SignUpViewModel { UserName = user.UserName, Email = user.Email });
                 }
             }
         }
@@ -194,11 +178,18 @@ public class AccountController : Controller
         {
             if (await _userManagerService.FindByEmailAsync(model.Email) is User user)
             {
-                string? token = await _userManagerService.GenerateResetTokenAsync(user),
-                newlink = Url.Action("ResetPassword", "Account", new { area = "", token, email = user.Email }, Request.Scheme);
-                E_Message message = new E_Message(new string[] { user.Email }, "Forgot password link", newlink!);
+                string? newlink = Url.Action(
+                    "ResetPassword",
+                    "Account",
+                    new
+                    {
+                        area = "",
+                        token = await _userManagerService.GenerateResetTokenAsync(user),
+                        email = user.Email
+                    },
+                    Request.Scheme);
 
-                _emailService.SendEmail(message); 
+                _emailService.SendEmail(new E_Message(new string[] { user.Email }, "Forgot password link", newlink!));
                 return View("ForgotPasswordConfirmation");
             }
 
@@ -248,7 +239,7 @@ public class AccountController : Controller
 
 
     #region errors
-    public IActionResult NotFound() => View("NotFound");
+    public IActionResult NotFoundView() => View("NotFoundView");
 
     public IActionResult ServerError() => View("ServerError");
     #endregion

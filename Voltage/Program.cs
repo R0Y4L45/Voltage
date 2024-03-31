@@ -80,7 +80,7 @@ public class Program
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
-        app.UseStatusCodePagesWithReExecute("/Account/NotFound", "?statusCode={0}");
+        app.UseStatusCodePagesWithReExecute("/Account/NotFoundView", "?statusCode={0}");
             
         app.MapHub<SignalRHub>("/signalRHub");
         app.MapHub<WebRTCHub>("/webRTCHub");

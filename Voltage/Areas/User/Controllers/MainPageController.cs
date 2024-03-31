@@ -5,6 +5,7 @@ using Voltage.Business.CustomHelpers;
 using Voltage.Business.Services.Abstract;
 using Voltage.Entities.Models.HelperModels;
 using Voltage.Entities.Models.ViewModels;
+using UserEntity = Voltage.Entities.Entity.User;
 
 namespace Voltage.Areas.User.Controllers;
 
@@ -41,15 +42,7 @@ public class MainPageController : Controller
         return View();
     }
 
-    public IActionResult WebRTC()
-    {
-        return View();
-    }
-
-    public IActionResult Test()
-    {
-        return View();
-    }
+    public IActionResult WebRTC() => View();
 
     public IActionResult FriendshipRequests()
     {
@@ -69,18 +62,16 @@ public class MainPageController : Controller
     }
     public async Task<IActionResult> Profile(string Id)
     {
-        var user = await _userManagerService.FindByIdAsync(Id);
-        if (user == null)
-            return NotFound();
-        var viewmodel = new EditProfileViewModel
-        {
-            UserName = user.UserName,
-            Email = user.Email,
-            DateOfBirth = user.DateOfBirth,
-            PhotoUrl = user.Photo,
-        };
-
-        return View(viewmodel);
+        if (await _userManagerService.FindByIdAsync(Id) is UserEntity user)
+            return View(new EditProfileViewModel
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                DateOfBirth = user.DateOfBirth,
+                PhotoUrl = user.Photo,
+            });
+            
+        return NotFound();
     }
 
     [HttpPost]
@@ -107,20 +98,10 @@ public class MainPageController : Controller
                         string? token = await _userManagerService.GenerateEmailTokenAsync(await _userManagerService.FindByEmailAsync(user.Email)),
                         callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", token, email = viewModel.Email }, Request.Scheme);
 
-                        E_Message message = new E_Message(new string[] { viewModel.Email }, "Confirmation Email Link", callbackUrl!);
-                        _emailService.SendEmail(message);
+                        _emailService.SendEmail(new E_Message(new string[] { viewModel.Email }, "Confirmation Email Link", callbackUrl!));
                         user.Email = viewModel.Email;
                         await _userManagerService.UpdateAsync(user);
                         return Redirect("Index");
-                        //string? token = await _userManagerService.GenerateEmailTokenAsync(user);
-                        //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "User", token, email = viewModel.Email }, Request.Scheme);
-                        //E_Message message = new E_Message(new string[] { viewModel.Email }, "Confirmation Email Link", callbackUrl!);
-                        //_emailService.SendEmail(message);
-                        //if (await _userManagerService.IsEmailConfirmedAsync(user))
-                        //    user.Email = viewModel.Email;
-                        //
-                        //else
-                        //    user.Email = oldEmail;
                     }
                     await _userManagerService.UpdateAsync(user);
                     return RedirectToAction("Profile", new { name = viewModel.UserName });
