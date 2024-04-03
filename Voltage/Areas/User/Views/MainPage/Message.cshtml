@@ -166,7 +166,9 @@
     //}, 5000);
 
     
-
+    document.getElementById("messageInput").addEventListener("keypress", async event => {
+        if (event.key === "Enter") await sendMessage(event)
+    });
 
 
 

@@ -5,7 +5,36 @@ namespace Voltage.Hubs;
 public class SignalRHub : Hub
 {
 
-    
+    private static Dictionary<string, string> activeUsers = new Dictionary<string, string>();
+
+    public override async Task OnConnectedAsync()
+    {
+        string userId = Context.UserIdentifier!;
+        string userName = Context.User!.Identity!.Name!;
+
+        if (!activeUsers.ContainsKey(userId))
+        {
+            activeUsers.Add(userId, userName);
+            await Clients.All.SendAsync("UserConnected", userName);
+        }
+
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        string userId = Context.UserIdentifier!;
+        string? userName = activeUsers.GetValueOrDefault(userId);
+
+        if (userName != null)
+        {
+            activeUsers.Remove(userId);
+            await Clients.All.SendAsync("UserDisconnected", userName);
+        }
+
+        await base.OnDisconnectedAsync(exception);
+    }
+
 
     public async Task SendToUser(string userId, string message) =>
         await Clients.User(userId).SendAsync("ReceiveMessage", Context.User?.Identity?.Name, message, DateTime.Now);

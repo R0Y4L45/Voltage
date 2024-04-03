@@ -10,12 +10,17 @@
         userName: '',
         skip: 0
     },
-    usernameFlag, keySaverArr = [], readMessages = [],isEndOfMessages = false;
+    usernameFlag, typingTimeout,
+    onlineUsers = [], keySaverArr = [], readMessages = [],
+    isEndOfMessages = false, lastMessageRead = false, isTyping = false;
 
 
 
 
 //#region SignalR Connection and its events
+
+
+
 
 function showNotification(sender, message, messageKey) {
     if (Notification.permission === 'granted') {
@@ -43,10 +48,10 @@ function showNotification(sender, message, messageKey) {
     }
 }
 
-overChatBubble.addEventListener("scroll", () => {
-    readMessages = [...new Set(keySaverArr)];
-    console.log(readMessages);
-});
+//overChatBubble.addEventListener("scroll", () => {
+//    readMessages = [...new Set(keySaverArr)];
+//    console.log(readMessages);
+//});
 
 
 //Messages Receiver
@@ -65,6 +70,22 @@ connection.on("ReceiveMessage", (user, message, createdTime) => {
         overChatBubble.scrollTop = overChatBubble.scrollHeight;
     }
 });
+
+
+connection.on("UserConnected", (userName) => {
+    console.log(userName + " connected");
+    if (!onlineUsers.includes(userName)) 
+        onlineUsers.push(userName);
+    
+});
+
+connection.on("UserDisconnected", (userName) => {
+    console.log(userName + " disconnected");
+    const index = onlineUsers.indexOf(userName);
+    if (index !== -1) 
+        onlineUsers.splice(index, 1);
+});
+
 
 //#endregion
 
@@ -124,9 +145,7 @@ function showMessagesClick() {
     });
 }
 
-document.getElementById("messageInput").addEventListener("keypress", async event => {
-    if (event.key === "Enter") await sendMessage(event)
-});
+
 
 async function clickToUser(username) {
     if (window.innerWidth <= 993) usernameFlag = '';
@@ -139,7 +158,6 @@ async function clickToUser(username) {
             usernameElement = chatHeader.querySelector('.col-auto.ms-2 h4'),
             clickedElement = document.querySelector(`[data-user-name="${username}"]`),
             userPhoto = clickedElement.getAttribute('data-user-photo'),
-            userStatus = clickedElement.getAttribute('data-user-status'),
             h5Element, msgArr;
 
         showMessagesClick();
@@ -147,9 +165,11 @@ async function clickToUser(username) {
         document.querySelector(".chat-bubbles").innerHTML = '';
         avatarElement.style.backgroundImage = `url('${userPhoto}')`;
         usernameElement.textContent = username;
-
+            
         h5Element = chatHeader.querySelector('.col-auto.ms-2 h5');
-        h5Element.innerHTML = `${userStatus}<span class="badge bg-green badge-blink ms-1"></span>`;
+
+        if (checkUserOnline(username)) h5Element.innerHTML = `online<span class="badge bg-green badge-blink ms-1"></span>`;
+        else h5Element.innerHTML = `offline<span class="badge bg-red badge-blink ms-1"></span>`;
 
         recUserName = username
         recUserId = await getUserInfo(username);
@@ -178,6 +198,21 @@ async function clickToUser(username) {
                 messageCreater(item.value[i], prmtr)
             }
         });
+        //let lastMessage = msgArr[msgArr.length - 1];
+        //let lastMessageKey = lastMessage.key;
+        //let lastMessageRead = readMessages.includes(lastMessageKey);
+        //console.log('lastMessage',lastMessage);
+        //console.log('lastMessageKey',lastMessageKey);
+        //console.log('lastMessageRead',lastMessageRead);
+        //
+        //if (lastMessageRead) {
+        //    console.log("last msg readed.");
+        //} else {
+        //    console.log("last msg readed.");
+        //}
+
+
+
 
         overChatBubble.scrollTop = overChatBubble.scrollHeight;
         usernameFlag = username;
@@ -241,7 +276,7 @@ let scrollLoad = (async _ => {
     }
 });
 
-overChatBubble.addEventListener("scroll", scrollLoad);
+if (overChatBubble)overChatBubble.addEventListener("scroll", scrollLoad);
 
 //#endregion
 
@@ -264,6 +299,10 @@ async function messageSaver(message, sender, receiver) {
 //#endregion
 
 //#region HelperMethods
+
+function checkUserOnline(username) {
+    return onlineUsers.includes(username);
+}
 
 async function sendMessage(event) {
     let message = document.getElementById("messageInput").value;
@@ -333,6 +372,6 @@ function showStylishDiv() {
     }, 1000);
 }
 
-document.getElementById("overChatBubbles").addEventListener("scroll", showStylishDiv);
+if (overChatBubble) overChatBubble.addEventListener("scroll", showStylishDiv);
 
 //#endregion
