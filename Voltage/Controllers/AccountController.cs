@@ -124,15 +124,13 @@ public class AccountController : Controller
     public async Task<IActionResult> ExternalLoginCallback(string returnUrl, string remoteError)
     {
         if (remoteError != null) return RedirectToAction("Login");
-        
+
         if (await _signInManagerService.GetExternalLoginInfoAsync() is not ExternalLoginInfo externalLoginInfo) return NotFound();
 
         if ((await _signInManagerService.ExternalLoginSignInAsync(externalLoginInfo)).Succeeded)
         {
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                return Redirect(returnUrl);
-            else
-                return RedirectToAction("index", "MainPage", new { area = "User" });
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)) return Redirect(returnUrl);
+            else return RedirectToAction("index", "MainPage", new { area = "User" });
         }
 
         if (await _userManagerService.FindByLoginAsync(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey) is User)
@@ -145,13 +143,12 @@ public class AccountController : Controller
         }
         else
         {
-            var userEmail = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email);
-            var userName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Name);
-            var usernameGenerator = new GenerateUserName(_userManagerService);
-            var generatedUsername = userEmail.Split('@').First();
-            generatedUsername = generatedUsername.Replace(generatedUsername.First(), char.ToUpper(generatedUsername.First()));
-            var user = new User { UserName = generatedUsername, Email = userEmail };
-            
+            GenerateUserName gun = new(_userManagerService);
+            string userEmail = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email),
+                generatedUsername = gun.GenerateUserNameByEmail(userEmail);
+
+            User user = new() { UserName = generatedUsername, Email = userEmail };
+
             if ((await _userManagerService.CreateAsync(user)).Succeeded)
             {
                 if ((await _userManagerService.AddLoginAsync(user, externalLoginInfo)).Succeeded)
