@@ -30,3 +30,4 @@ function createAlert(isSuccess, text) {
         }, 1000);
     }, 10000);
 }
+

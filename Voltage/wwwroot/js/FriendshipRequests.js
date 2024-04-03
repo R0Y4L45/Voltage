@@ -61,6 +61,7 @@ function gotRequest(user) {
     }
 }
 
+
 function cancelledRequest(user) {
     tbody.removeChild(document.getElementById(`tr${user}`));
 }
@@ -68,6 +69,8 @@ function cancelledRequest(user) {
 async function acceptRequest(name) {
     await fetchApiPost('/RequestApi/AcceptRequest', name);
     createAlert(true, "Succsesfuly Accepted");
+    var audio = new Audio('/staticMusic/frndnotfmusic.mp3');
+    audio.play();
     tbody.removeChild(document.getElementById(`tr${name}`));
 }
 

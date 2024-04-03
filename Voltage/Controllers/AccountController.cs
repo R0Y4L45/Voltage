@@ -95,7 +95,6 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult TermsPolicy() => View();
 
-
     [HttpGet]
     public async Task<IActionResult> Logout()
     {

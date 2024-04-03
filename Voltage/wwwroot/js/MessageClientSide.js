@@ -10,111 +10,49 @@
         userName: '',
         skip: 0
     },
-    usernameFlag, keySaverArr = [], isEndOfMessages = false;
+    usernameFlag, keySaverArr = [], readMessages = [],isEndOfMessages = false;
 
-
-
-/*overChatBubble.addEventListener("dragover", (event) => {
-    event.preventDefault();
-    showFileDropArea();
-});
-
-overChatBubble.addEventListener("dragleave", () => {
-    hideFileDropArea();
-});
-
-
-overChatBubble.addEventListener("drop", (event) => {
-    event.preventDefault();
-    const files = event.dataTransfer.files;
-    handleFileDrop(files, event.clientX, event.clientY);
-    hideFileDropArea();
-});
-
-
-fileDropArea.addEventListener("drop", (event) => {
-    event.preventDefault();
-    hideFileDropArea();
-    const files = event.dataTransfer.files;
-    handleFileDrop(files);
-});
-function showFileDropArea() {
-    fileDropArea.style.display = "block";
-}
-
-function hideFileDropArea() {
-    fileDropArea.style.display = "none";
-}
-
-
-fileDropArea.addEventListener("dragleave", () => {
-    fileDropArea.style.border = "2px dashed #ccc";
-});
-
-
-
-fileDropArea.addEventListener("drop", (event) => {
-    event.preventDefault();
-    fileDropArea.style.border = "2px dashed #ccc";
-    handleFileDrop(event.dataTransfer.files);
-});
-
-function handleFileDrop(files) {
-    for (const file of files) {
-        if (file.type.startsWith('image/')) {
-            handleImageDrop(file);
-        } else if (file.type === 'application/zip') {
-            handleZipDrop(file);
-        } else {
-            console.log('Unsupported file type: ', file.type);
-        }
-    }
-}
-function handleImageDrop(imageFile) {
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-        const imageUrl = event.target.result;
-        const img = new Image();
-        img.src = imageUrl;
-        img.style.maxWidth = '100%';
-        img.style.maxHeight = '100%';
-
-        fileDropArea.innerHTML = '';
-        fileDropArea.appendChild(img);
-    };
-
-    reader.readAsDataURL(imageFile);
-}
-
-
-function handleImageDrop(imageFile) {
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-        const imageUrl = event.target.result;
-        fileDropArea.innerHTML = `<img src="${imageUrl}" style="max-width: 100%; max-height: 100%;">`;
-    };
-
-    reader.readAsDataURL(imageFile);
-}
-
-function handleZipDrop(zipFile) {
-    console.log('Zip file dropped: ', zipFile.name);
-    fileDropArea.innerHTML = `<p>Selected file: ${zipFile.name}</p>`;
-}
-
-function handleSend() {
-    const description = fileDescription.value;
-    console.log('Description:', description);
-}*/
 
 
 
 //#region SignalR Connection and its events
 
+function showNotification(sender, message, messageKey) {
+    if (Notification.permission === 'granted') {
+        if (!readMessages.includes(messageKey)) {
+            let notification = new Notification('New Message from: ' + sender, {
+                body: message,
+                icon: '/dist/img/logos/logo-white.svg',
+                vibrate:[200,100,200],
+            });
+            console.log("1 ci :", notification);
+        }
+    } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(function (permission) {
+            if (permission === 'granted') {
+                if (!readMessages.includes(messageKey)) {
+                    let notification = new Notification('New Message from:' + sender, {
+                        body: message,
+                        icon: '/dist/img/logos/logo-white.svg',
+                        vibrate: [200, 100, 200],
+                    });
+                    console.log("2 ci :", notification);
+                }
+            }
+        });
+    }
+}
+
+overChatBubble.addEventListener("scroll", () => {
+    readMessages = [...new Set(keySaverArr)];
+    console.log(readMessages);
+});
+
+
 //Messages Receiver
 connection.on("ReceiveMessage", (user, message, createdTime) => {
+    playNotificationSound();
+    showNotification(user, message);
     let msgObj = { //new message obj created to send function
         sender: user,
         receiver: curUserName,
@@ -140,6 +78,13 @@ function backFriendList() {
 
     isBckButtonPressed = true;
 }
+
+function playNotificationSound() {
+    var audio = new Audio('/staticMusic/msgnotfmusic.mp3');
+    console.log(audio);
+    audio.play();
+}
+
 
 function showMessagesClick() {
     const messageFriendList = document.getElementById("MessageFriendList"),
@@ -240,6 +185,8 @@ async function clickToUser(username) {
         overChatBubble.addEventListener('scroll', scrollLoad);
     }
 }
+
+
 
 function convert(obj) {
     return Object.keys(obj).map(key => ({
