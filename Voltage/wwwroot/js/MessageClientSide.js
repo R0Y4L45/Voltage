@@ -2,6 +2,7 @@
     overChatBubble = document.getElementById("overChatBubbles"),
     fileDropArea = document.getElementById("fileDropArea"),
     fileInput = document.getElementById("fileInput"),
+    userStatus = document.getElementById("userStatus"),
     fileDescription = document.getElementById("fileDescription"),
     list = document.getElementById("messagesList"),
     count, messageSection = document.getElementById("MessageSection"),
@@ -13,6 +14,7 @@
     usernameFlag, typingTimeout,
     onlineUsers = [], keySaverArr = [], readMessages = [],
     isEndOfMessages = false, lastMessageRead = false, isTyping = false;
+
 
 
 
@@ -48,6 +50,23 @@ function showNotification(sender, message, messageKey) {
     }
 }
 
+connection.on("ReceiveTypingNotification", function (sender, messageText) {
+    let typingIndicator = document.getElementById("typingIndicator");
+    typingIndicator.textContent = sender + " печатает...";
+
+    setTimeout(function () {
+        typingIndicator.textContent = "";
+    }, 3000);
+});
+
+function sendTypingNotification() {
+    let messageText = getMessageText(); 
+    connection.invoke("SendTypingNotification", curUserName, messageText).catch(err => console.error(err.toString()));
+}
+
+
+
+
 //overChatBubble.addEventListener("scroll", () => {
 //    readMessages = [...new Set(keySaverArr)];
 //    console.log(readMessages);
@@ -74,16 +93,22 @@ connection.on("ReceiveMessage", (user, message, createdTime) => {
 
 connection.on("UserConnected", (userName) => {
     console.log(userName + " connected");
-    if (!onlineUsers.includes(userName)) 
+    if (!onlineUsers.includes(userName)) {
         onlineUsers.push(userName);
+        if (userName === usernameFlag) 
+            updateOnlineStatus(userName, true);
+    }
     
 });
 
 connection.on("UserDisconnected", (userName) => {
     console.log(userName + " disconnected");
     const index = onlineUsers.indexOf(userName);
-    if (index !== -1) 
+    if (index !== -1) {
         onlineUsers.splice(index, 1);
+        if (userName === usernameFlag) 
+            updateOnlineStatus(userName, false);
+    }
 });
 
 
@@ -157,19 +182,17 @@ async function clickToUser(username) {
             avatarElement = chatHeader.querySelector('.avatar'),
             usernameElement = chatHeader.querySelector('.col-auto.ms-2 h4'),
             clickedElement = document.querySelector(`[data-user-name="${username}"]`),
-            userPhoto = clickedElement.getAttribute('data-user-photo'),
-            h5Element, msgArr;
+            userPhoto = clickedElement.getAttribute('data-user-photo'),msgArr;
+
+
 
         showMessagesClick();
 
         document.querySelector(".chat-bubbles").innerHTML = '';
         avatarElement.style.backgroundImage = `url('${userPhoto}')`;
         usernameElement.textContent = username;
-            
-        h5Element = chatHeader.querySelector('.col-auto.ms-2 h5');
 
-        if (checkUserOnline(username)) h5Element.innerHTML = `online<span class="badge bg-green badge-blink ms-1"></span>`;
-        else h5Element.innerHTML = `offline<span class="badge bg-red badge-blink ms-1"></span>`;
+        updateOnlineStatus(username, checkUserOnline(username));
 
         recUserName = username
         recUserId = await getUserInfo(username);
@@ -213,12 +236,17 @@ async function clickToUser(username) {
 
 
 
-
         overChatBubble.scrollTop = overChatBubble.scrollHeight;
         usernameFlag = username;
 
         overChatBubble.addEventListener('scroll', scrollLoad);
     }
+}
+
+function updateOnlineStatus(username, isOnline) {
+    console.log(username, isOnline);
+    userStatus.innerHTML = isOnline ? `online<span class="badge bg-green badge-blink ms-1"></span>`
+            : `offline<span class="badge bg-red badge-blink ms-1"></span>`;
 }
 
 

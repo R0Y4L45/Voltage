@@ -35,6 +35,9 @@ public class SignalRHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
+    public async Task SendTypingNotification(string userName, string messageText) =>
+        await Clients.AllExcept(Context.ConnectionId).SendAsync("ReceiveTypingNotification", userName, messageText);
+
 
     public async Task SendToUser(string userId, string message) =>
         await Clients.User(userId).SendAsync("ReceiveMessage", Context.User?.Identity?.Name, message, DateTime.Now);
