@@ -13,7 +13,10 @@
     <link href="~/dist/css/tabler-vendors.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/dist/css/demo.min.css" rel="stylesheet" asp-append-version="true"/>
     <link href="/css/site.css" rel="stylesheet" asp-append-version="true" />
+    
+    @* <link href="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/introjs.min.css" rel="stylesheet" asp-append-version="true"> *@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.css" rel="stylesheet" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/6.0.0/introjs.min.css" asp-append-version="true" rel="stylesheet" />
 </head>
 <body>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.11/signalr.min.js"></script>
@@ -57,6 +60,7 @@
 
     <script src="~/js/MessageClientSide.js"></script>
 
+    
     <!--js lib-->
     <script src="~/dist/libs/apexcharts/dist/apexcharts.min.js?1692870487" defer asp-append-version="true"></script>
     <script src="~/dist/libs/jsvectormap/dist/js/jsvectormap.min.js?1692870487" defer asp-append-version="true"></script>
@@ -69,4 +73,8 @@
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/6.0.0/intro.min.js"></script>
+    <script src="/js/IntroAll.js">
+    </script>
+
 </html>

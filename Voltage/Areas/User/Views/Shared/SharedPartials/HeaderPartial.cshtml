@@ -22,7 +22,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
                 </button>
             </div>
-            <div class="nav-item dropdown">
+            <div class="nav-item dropdown profileNavSec">
                 <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
                     <span class="avatar avatar-sm" style="background-image: url('@Context.Session.GetString("ProfilePhoto")')"></span>
                     <div class="d-none d-xl-block ps-2">
@@ -32,7 +32,6 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                     <a asp-area="User" asp-controller="MainPage" asp-action="Profile" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)" class="dropdown-item">Profile</a>
-                    <a href="#" class="dropdown-item">Feedback</a>
                     <div class="dropdown-divider"></div>
                     <a asp-action="Logout" asp-controller="Account" asp-area="" class="dropdown-item">Logout</a>
                 </div>
@@ -56,7 +55,7 @@
                             <span class="nav-link-icon d-md-none d-lg-inline-block">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 9h8" /><path d="M8 13h6" /><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" /></svg>
                             </span>
-                            <span class="nav-link-title">
+                            <span class="nav-link-title messagesNavSection">
                                 Messages
                             </span>
                         </a>
@@ -66,7 +65,7 @@
                             <span class="nav-link-icon d-md-none d-lg-inline-block">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg>
                             </span>
-                            <span class="nav-link-title">
+                            <span class="nav-link-title connectionNavSection">
                                 Connection
                                 <span id="requestCounter" class=" badge bg-red text-red-fg ms-2">0</span>
                             </span>

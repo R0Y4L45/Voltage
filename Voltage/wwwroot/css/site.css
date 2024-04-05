@@ -34,6 +34,15 @@ body {
     align-items:center;
 }
 
+.introjs-tooltip-header {
+    color: black;
+}
+
+.introjs-tooltiptext{
+    color:black;
+}
+
+
 @media (max-width: 993px) {
     .hide-on-small-screen {
         display: none !important;
