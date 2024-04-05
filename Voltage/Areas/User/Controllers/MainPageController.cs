@@ -35,6 +35,7 @@ public class MainPageController : Controller
 
     public async Task<IActionResult> Index()
     {
+        ViewData["ShowFooter"] = false;
         string? profilePhoto = await _userManagerService.GetProfilePhotoAsync(User.Identity!.Name!);
         ViewBag.UserManagerService = _userManagerService;
         if (profilePhoto != null)
