@@ -43,7 +43,7 @@
                     <img src="/dist/img/logos/logo-white.svg" width="110" height="32" alt="Tabler" class="navbar-brand-image">
                 </a>
             </div>
-            <form class="card card-md" href="/Account/SignUp" method="post" autocomplete="off" enctype="multipart/form-data" novalidate>
+            <form class="card card-md" id="signupForm" href="/Account/SignUp" method="post" autocomplete="off" enctype="multipart/form-data" novalidate>
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Create new account</h2>
                     <div class="mb-3">
@@ -133,6 +133,7 @@
                         </label>
                     </div>
                     <div asp-validation-summary="All" class="text-danger"></div>
+                    <div id="clientValidation" class="text-danger"></div>
                     <div class="form-footer">
                         <button type="submit" class="btn btn-primary w-100">Create new account</button>
                     </div>
@@ -164,6 +165,19 @@
     <script src="/dist/libs/nouislider//dist/nouislider.min.js"></script>
     <script src="/js/CountrySelect.js"></script>
     <script src="/js/SignUpMain.js"></script>
-    <!--<script src="./dist/libs/litepicker/dist/litepicker.js?1692870487" defer></script>-->
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function (event) {
+            var userNameValue = document.querySelector('[name="UserName"]').value;
+            var emailValue = document.querySelector('[name="Email"]').value;
+            var passwordValue = document.querySelector('[name="Password"]').value;
+            var confirmPasswordValue = document.querySelector('[name="ConfirmPassword"]').value;
+            var agreeChecked = document.querySelector('[name="Agree"]').checked;
+
+            if (!userNameValue.trim() || !emailValue.trim() || !passwordValue.trim() || !confirmPasswordValue.trim() || !agreeChecked) {
+                event.preventDefault();
+                document.getElementById("clientValidation").innerText = 'Please fill in all required fields.';
+            }
+        });
+    </script>
 </body>
 </html>

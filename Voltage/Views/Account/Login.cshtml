@@ -47,7 +47,7 @@
             <div class="card card-md">
                 <div class="card-body">
                     <h2 class="h2 text-center mb-4">Login to your account</h2>
-                    <form asp-area="" asp-controller="Account" asp-action="Login" autocomplete="off" novalidate>
+                    <form asp-area="" asp-controller="Account" asp-action="Login" autocomplete="off" novalidate id="loginForm">
                         <div class="mb-3">
                             <label class="form-label">Email address</label>
                             <input type="email" asp-for="Email" class="form-control" placeholder="example@email.com" autocomplete="off">
@@ -82,6 +82,7 @@
                         </div>
                         <p id="lockoutMessage" style="display: none;color:darkred">User is locked out:<br /> Remaining time: <span id="remainingLockoutTime"></span></p>
                         <div asp-validation-summary="All" class="text-danger"></div>
+                        <div id="clientValidation" class="text-danger"></div>
                         <div class="form-footer">
                             <button type="submit" class="btn btn-primary w-100">Sign in</button>
                         </div>
@@ -130,6 +131,17 @@
         } else {
             document.getElementById("remainingLockoutTime").innerText = "User is not locked out.";
         }
+
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            var emailValue = document.querySelector('[name="Email"]').value;
+            var passwordValue = document.querySelector('[name="Password"]').value;
+
+            if (!emailValue.trim() || !passwordValue.trim()) {
+                event.preventDefault();
+                document.getElementById("clientValidation").innerText = 'Please fill in all required fields.';
+            }
+        });
     </script>
+
 </body>
 </html>
