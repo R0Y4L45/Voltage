@@ -2,12 +2,15 @@ let tbody = document.querySelector('tbody');
 
 connection.on("ReceiveRequests", (user, status) => {
     if (user != null) {
-        if (status === 'request')
+        if (status === 'request') {
             gotRequest(user);
-        else if (status === 'cancelled')
+        }
+        else if (status === 'cancelled') {
             cancelledRequest(user);
+        }
     }
 })
+
 
 window.onload = getRequestList();
 
@@ -72,9 +75,27 @@ async function acceptRequest(name) {
     var audio = new Audio('/staticMusic/frndnotfmusic.mp3');
     audio.play();
     tbody.removeChild(document.getElementById(`tr${name}`));
+
+    let currentCount = parseInt(localStorage.getItem('requestCount') || '0');
+    currentCount--;
+    updateRequestCounter(currentCount);
 }
 
 async function declineRequest(name) {
     await fetchApiPost('/RequestApi/DeclineRequest', name);
     tbody.removeChild(document.getElementById(`tr${name}`));
+
+    let currentCount = parseInt(localStorage.getItem('requestCount') || '0');
+    currentCount--;
+    updateRequestCounter(currentCount);
+}
+
+function updateRequestCounter(currentCount) {
+    requestCounter.textContent = currentCount.toString();
+    localStorage.setItem('requestCount', currentCount.toString());
+    if (currentCount === 0) 
+        requestCounter.style.display = 'none';
+     else 
+        requestCounter.style.display = 'inline-block';
+    
 }

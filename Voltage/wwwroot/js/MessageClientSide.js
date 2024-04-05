@@ -5,7 +5,7 @@
     userStatus = document.getElementById("userStatus"),
     fileDescription = document.getElementById("fileDescription"),
     list = document.getElementById("messagesList"),
-    count, messageSection = document.getElementById("MessageSection"),
+    messageSection = document.getElementById("MessageSection"),
     animationArea = document.getElementById("animationtext"), isBckButtonPressed = false,
     obj = {
         userName: '',
