@@ -5,40 +5,99 @@
 }
 
 .video-text {
-    position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 24px;
+    font-size: 8vw;
     font-weight: bold;
-    text-align: center;
-    z-index: 1;
+    color: white;
+}
+
+.get-started-btn button {
+    border-radius: 20px; 
+    padding:15px;
+    border-color:transparent;
+}
+
+.get-started-btn {
+    position: absolute;
+    top: 60%; 
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.get-started-btn button:hover {
+    background-color: #4d4d4d;
+    color: #ffffff;
+}
+
+.mainstylercontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 video {
-    height: 100vh;
+    height: 83vh;
     width: 100%;
     object-fit: cover;
     filter: blur(5px);
 }
 
-    video::-webkit-media-controls {
-        display: none !important;
-    }
+video::-webkit-media-controls {
+    display: none !important;
+}
 
-    video::-webkit-media-controls-enclosure {
-        display: none !important;
-    }
+video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
 
-    video::-webkit-media-slider-container {
-        display: none !important;
-    }
+video::-webkit-media-slider-container {
+    display: none !important;
+}
 
-    video::-webkit-media-slider {
-        display: none !important;
-    }
+video::-webkit-media-slider {
+    display: none !important;
+}
 
-    video::-webkit-media-slider-thumb {
-        display: none !important;
+video::-webkit-media-slider-thumb {
+    display: none !important;
+}
+
+
+.btn-shine{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    padding: 12px 48px;
+    color: #ffffff;
+    background: linear-gradient(to right, #4d4d4d 0, white 10%, #4d4d4d 20%);
+    background-position: 0;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 4s infinite linear;
+    animation-fill-mode: forwards;
+    -webkit-text-size-adjust: none;
+    font-weight: 600;
+    font-size: 45px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+@keyframes shine{
+    0%{
+        background-position: 0;
     }
+    60%{
+        background-position: 180px;
+    }
+    100%{
+        background-position: 380px
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .video-text {
+        font-size: 6vw;
+    }
+}
