@@ -35,7 +35,7 @@ function gotRequest(user) {
                     </div>
                 </td>
                 <td class="text-sm-center">
-                    <span class="flag flag-xs flag-country-az me-2"></span>
+                    <span class="me-2"></span>
                     ${user.country}
                 </td>
                 <td class="text-secondary text-sm-center" data-label="Role">
